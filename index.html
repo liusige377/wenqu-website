@@ -2,262 +2,116 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>问渠 — 有问必有答</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>问渠 — 有问必答百科工具站</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif;background:#0a0a0f;color:#e8e8e8;min-height:100vh;overflow-x:hidden}
 canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
-.container{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 20px}
-header{padding:40px 0 30px;text-align:center}
-header h1{font-size:clamp(2.5rem,6vw,4rem);font-weight:700;color:#d4af37;letter-spacing:.15em;text-shadow:0 0 40px rgba(212,175,55,.3);cursor:pointer}
-header p{color:#888;margin-top:8px;font-size:1rem;letter-spacing:.2em}
-.nav-back{display:inline-flex;align-items:center;gap:6px;color:#d4af37;text-decoration:none;font-size:.9rem;padding:8px 16px;border:1px solid rgba(212,175,55,.3);border-radius:8px;transition:all .3s}
-.nav-back:hover{background:rgba(212,175,55,.1)}
-.section-title{font-size:1.4rem;color:#d4af37;margin:50px 0 20px;padding-bottom:12px;border-bottom:1px solid rgba(212,175,55,.2);display:flex;align-items:center;gap:10px}
-.section-title .icon{font-size:1.6rem}
-.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
-.tool-card{background:rgba(255,255,255,.04);border:1px solid rgba(212,175,55,.18);border-radius:12px;padding:24px 20px;cursor:pointer;transition:all .3s;text-decoration:none;color:inherit;display:block}
-.tool-card:hover{background:rgba(212,175,55,.08);border-color:rgba(212,175,55,.4);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.4)}
-.tool-card h3{color:#d4af37;font-size:1.05rem;margin-bottom:8px}
-.tool-card p{color:#999;font-size:.85rem;line-height:1.5}
-footer{text-align:center;padding:40px 0;color:#555;font-size:.8rem;margin-top:60px}
-.back-top{display:inline-flex;align-items:center;gap:6px;color:#888;text-decoration:none;font-size:.85rem;margin-top:30px}
-.back-top:hover{color:#d4af37}
+.container{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 24px}
+.hero{text-align:center;padding:60px 0 40px}
+.hero h1{font-size:clamp(3.5rem,10vw,6.5rem);font-weight:700;color:#d4af37;letter-spacing:.3em;text-shadow:0 0 60px rgba(212,175,55,.35)}
+.hero .slogan{color:#c4a855;font-size:1.15rem;letter-spacing:.4em;margin-top:14px;font-weight:300}
+.hero .poem{margin-top:30px;color:#999;font-size:1.02rem;line-height:2.4;letter-spacing:.12em}
+.hero .poem .hl{color:#d4af37;font-weight:600}
+.hero .poem .au{color:#555;font-size:.85rem;margin-top:6px;letter-spacing:.08em}
+.hero .divider{width:60px;height:1px;background:linear-gradient(90deg,transparent,#d4af37,transparent);margin:24px auto 0}
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px;padding-bottom:60px}
+.cat-card{background:rgba(255,255,255,.03);border:1px solid rgba(212,175,55,.15);border-radius:16px;padding:32px 24px;text-align:center;cursor:pointer;transition:all .4s cubic-bezier(.25,.8,.25,1);text-decoration:none;color:inherit;display:block;position:relative;overflow:hidden}
+.cat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#d4af37,transparent);opacity:0;transition:opacity .4s}
+.cat-card:hover{background:rgba(212,175,55,.08);border-color:rgba(212,175,55,.4);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.5),0 0 30px rgba(212,175,55,.08)}
+.cat-card:hover::before{opacity:1}
+.cat-card .icon{font-size:2.5rem;display:block;margin-bottom:14px}
+.cat-card h3{color:#d4af37;font-size:1.1rem;margin-bottom:6px;letter-spacing:.08em}
+.cat-card p{color:#777;font-size:.82rem;line-height:1.5}
+.cat-card .count{color:#555;font-size:.75rem;margin-top:10px}
+footer{text-align:center;padding:40px 0;color:#444;font-size:.8rem}
 </style>
 </head>
 <body>
 <canvas id="bg"></canvas>
 <div class="container">
-  <header>
-    <h1 onclick="location.href='index.html'">问 渠</h1>
-    <p>有问必有答 · 百科工具站</p>
-  </header>
-
-  <div class="section-title"><span class="icon">📜</span>历史文化</div>
-  <div class="tools-grid">
-    <div class="tool-card" onclick="location.href='history.html#converter'">
-      <h3>🏛️ 朝代年份换算</h3>
-      <p>输入公元年，自动推算所属朝代、皇帝年号、都城方位</p>
-    </div>
-    <div class="tool-card" onclick="location.href='history.html#person-age'">
-      <h3>👤 历史人物年龄</h3>
-      <p>输入生年卒年，计算享年、属相、年代定位</p>
-    </div>
-    <div class="tool-card" onclick="location.href='history.html#coin'">
-      <h3>💰 古代货币换算</h3>
-      <p>铜钱/两/贯与现代人民币参考换算</p>
-    </div>
-    <div class="tool-card" onclick="location.href='history.html#zodiac'">
-      <h3>🐉 生肖属相查询</h3>
-      <p>输入年份，查询属相、五行、纳音、幸运色</p>
-    </div>
-    <div class="tool-card" onclick="location.href='history.html#era'">
-      <h3>📅 纪年对照</h3>
-      <p>民国年/公元年/干支年三向互转</p>
-    </div>
-    <div class="tool-card" onclick="location.href='history.html#surname'">
-      <h3>📖 百家姓查询</h3>
-      <p>输入姓氏，查询历史排名与常见复姓提示</p>
+  <div class="hero">
+    <h1>问 渠</h1>
+    <div class="slogan">有问必答 · 百科工具站</div>
+    <div class="divider"></div>
+    <div class="poem">
+      半亩方塘一鉴开，天光云影共徘徊。<br>
+      <span class="hl">问渠那得清如许？</span>为有源头活水来。<br>
+      <span class="au">—— 朱熹《观书有感》</span>
     </div>
   </div>
 
-  <div class="section-title"><span class="icon">🌍</span>天文地理</div>
-  <div class="tools-grid">
-    <div class="tool-card" onclick="location.href='geography.html#astro'">
-      <h3>🚀 天文单位换算</h3>
-      <p>光年/AU/秒差距/公里实时互转</p>
-    </div>
-    <div class="tool-card" onclick="location.href='geography.html#density'">
-      <h3>👥 人口密度计算</h3>
-      <p>输入人口与面积，计算人/平方公里</p>
-    </div>
-    <div class="tool-card" onclick="location.href='geography.html#coord'">
-      <h3>📍 经纬度格式转换</h3>
-      <p>度分秒 ↔ 小数度数互转，支持负数</p>
-    </div>
-    <div class="tool-card" onclick="location.href='geography.html#altitude'">
-      <h3>⛰️ 海拔气压换算</h3>
-      <p>输入海拔，输出大气压(hPa)与沸点(℃)</p>
-    </div>
-    <div class="tool-card" onclick="location.href='geography.html#country'">
-      <h3>🌐 国家城市查询</h3>
-      <p>选择国家查看面积、人口、首都、货币（30国）</p>
-    </div>
-  </div>
-
-  <div class="section-title"><span class="icon">💻</span>现代科技</div>
-  <div class="tools-grid">
-    <div class="tool-card" onclick="location.href='tech.html#byte'">
-      <h3>📦 字节换算</h3>
-      <p>Bit/Byte/KB/MB/GB/TB/PB互转（IEC标准）</p>
-    </div>
-    <div class="tool-card" onclick="location.href='tech.html#radix'">
-      <h3>🔢 进制转换</h3>
-      <p>二/八/十/十六进制实时互转</p>
-    </div>
-    <div class="tool-card" onclick="location.href='tech.html#ascii'">
-      <h3>⌨️ ASCII码查询</h3>
-      <p>字符↔ASCII码双向查询，支持可见字符</p>
-    </div>
-    <div class="tool-card" onclick="location.href='tech.html#prog'">
-      <h3>⚙️ 编程单位换算</h3>
-      <p>KB/MB/GB/TB换算（1024进制）</p>
-    </div>
-    <div class="tool-card" onclick="location.href='tech.html#flops'">
-      <h3>🤖 AI算力换算</h3>
-      <p>TFLOPS/PFLOPS/EFLOPS互转与说明</p>
-    </div>
-  </div>
-
-  <div class="section-title"><span class="icon">🌾</span>农业百科</div>
-  <div class="tools-grid">
-    <div class="tool-card" onclick="location.href='agriculture.html#mu'">
-      <h3>🌱 亩公顷换算</h3>
-      <p>亩/公顷/平方米三向换算</p>
-    </div>
-    <div class="tool-card" onclick="location.href='agriculture.html#yield'">
-      <h3>📈 农作物产量计算</h3>
-      <p>输入面积与亩产，计算水稻/小麦/玉米/大豆总产量</p>
-    </div>
-    <div class="tool-card" onclick="location.href='agriculture.html#feed'">
-      <h3>🐄 饲料配比计算</h3>
-      <p>输入总重量与各成分比例，精确配比</p>
-    </div>
-    <div class="tool-card" onclick="location.href='agriculture.html#fert'">
-      <h3>🧪 化肥用量计算</h3>
-      <p>尿素/复合肥/磷肥按面积用量计算</p>
-    </div>
-    <div class="tool-card" onclick="location.href='agriculture.html#breed'">
-      <h3>🐟 养殖密度计算</h3>
-      <p>池塘面积与放养量智能计算</p>
-    </div>
-  </div>
-
-  <div class="section-title"><span class="icon">🔮</span>玄学民俗</div>
-  <div class="tools-grid">
-    <div class="tool-card" onclick="location.href='metaphysics.html#zhu'">
-      <h3>🎋 竹筒抽签</h3>
-      <p>传统竹筒签卦，60甲子轮转，抽签解签</p>
-    </div>
-    <div class="tool-card" onclick="location.href='metaphysics.html#bagua'">
-      <h3>☯️ 八卦计算器</h3>
-      <p>三枚硬币掷六次，得卦象与卦辞</p>
-    </div>
-    <div class="tool-card" onclick="location.href='metaphysics.html#bazi'">
-      <h3>📆 八字天干地支</h3>
-      <p>输入年月日时，显示天干地支与五行属性</p>
-    </div>
-    <div class="tool-card" onclick="location.href='metaphysics.html#huangli'">
-      <h3>📅 黄历宜忌</h3>
-      <p>每日宜忌查询，冲煞吉凶一目了然</p>
-    </div>
-    <div class="tool-card" onclick="location.href='metaphysics.html#sxwx'">
-      <h3>🎎 生肖五行查询</h3>
-      <p>属相五行、纳音、幸运色与幸运数字</p>
-    </div>
-  </div>
-
-  <div class="section-title"><span class="icon">⚖️</span>计量单位</div>
-  <div class="tools-grid">
-    <div class="tool-card" onclick="location.href='units.html#universal'">
-      <h3>🔄 万能单位换算</h3>
-      <p>长度/重量/体积/温度/面积/速度全覆盖</p>
-    </div>
-    <div class="tool-card" onclick="location.href='units.html#heat'">
-      <h3>🔥 热量能量换算</h3>
-      <p>焦耳/卡路里/千瓦时/天然气热值换算</p>
-    </div>
-    <div class="tool-card" onclick="location.href='units.html#ancient'">
-      <h3>🏺 古代度量衡</h3>
-      <p>尺/寸/升/斗/两/斤→现代单位（可选朝代）</p>
-    </div>
-  </div>
-
-  <div class="section-title"><span class="icon">📐</span>数理医学</div>
-  <div class="tools-grid">
-    <div class="tool-card" onclick="location.href='math.html#formula'">
-      <h3>📐 数学公式计算</h3>
-      <p>勾股定理/利率/排列组合/等差等比数列</p>
-    </div>
-    <div class="tool-card" onclick="location.href='math.html#geo'">
-      <h3>📊 几何面积体积</h3>
-      <p>圆/三角/矩形/球体/圆柱精准计算</p>
-    </div>
-    <div class="tool-card" onclick="location.href='math.html#dose'">
-      <h3>💊 药量剂量计算</h3>
-      <p>按体重与每kg剂量计算总剂量（仅供参考）</p>
-    </div>
-    <div class="tool-card" onclick="location.href='math.html#bmi'">
-      <h3>⚖️ BMI身体质量指数</h3>
-      <p>身高体重计算BMI值与健康范围判定</p>
-    </div>
-    <div class="tool-card" onclick="location.href='math.html#tizhi'">
-      <h3>🧘 中医体质测试</h3>
-      <p>10题问卷，识别体质类型与调理建议</p>
-    </div>
-  </div>
-
-  <div class="section-title"><span class="icon">🏠</span>生活综合</div>
-  <div class="tools-grid">
-    <div class="tool-card" onclick="location.href='life.html#tax'">
-      <h3>💰 个税计算器</h3>
-      <p>月薪年终奖分别计税，税后收入精确</p>
-    </div>
-    <div class="tool-card" onclick="location.href='life.html#loan'">
-      <h3>🏦 房贷商贷计算</h3>
-      <p>输入贷款额/利率/年限，计算月供与总利息</p>
-    </div>
-    <div class="tool-card" onclick="location.href='life.html#random'">
-      <h3>🎲 随机决定器</h3>
-      <p>选项太多？让命运来选择</p>
-    </div>
-    <div class="tool-card" onclick="location.href='life.html#date'">
-      <h3>📆 日期计算器</h3>
-      <p>日期间隔、工作日计算、农历查询</p>
-    </div>
-    <div class="tool-card" onclick="location.href='life.html#idcard'">
-      <h3>🪪 身份证查询</h3>
-      <p>输入身份证号，解析户籍地、生日、性别</p>
-    </div>
-    <div class="tool-card" onclick="location.href='life.html#kinship'">
-      <h3>👨‍👩‍👧 亲戚关系计算</h3>
-      <p>我叫你什么？亲戚称呼一键换算</p>
-    </div>
-    <div class="tool-card" onclick="location.href='life.html#capital'">
-      <h3>🔢 数字大写转换</h3>
-      <p>阿拉伯数字→中文大写（财务标准）</p>
-    </div>
-    <div class="tool-card" onclick="location.href='life.html#penalty'">
-      <h3>⚡ 违约金计算</h3>
-      <p>LPR倍率灵活可调，违约金精确算</p>
-    </div>
-  </div>
-
-  <div style="text-align:center;margin-top:50px;padding:30px 0">
-    <a href="index.html" class="back-top">← 返回首页</a>
+  <div class="cat-grid">
+    <a class="cat-card" href="history.html">
+      <span class="icon">📜</span>
+      <h3>历史文化</h3>
+      <p>朝代纪年、人物年龄、古币换算、百家姓</p>
+      <div class="count">6 项工具</div>
+    </a>
+    <a class="cat-card" href="geography.html">
+      <span class="icon">🌍</span>
+      <h3>天文地理</h3>
+      <p>天文单位、人口密度、经纬度、海拔气压</p>
+      <div class="count">5 项工具</div>
+    </a>
+    <a class="cat-card" href="tech.html">
+      <span class="icon">💻</span>
+      <h3>现代科技</h3>
+      <p>字节换算、进制转换、ASCII码、AI算力</p>
+      <div class="count">5 项工具</div>
+    </a>
+    <a class="cat-card" href="agriculture.html">
+      <span class="icon">🌾</span>
+      <h3>农业百科</h3>
+      <p>亩产计算、饲料配比、化肥用量、养殖密度</p>
+      <div class="count">5 项工具</div>
+    </a>
+    <a class="cat-card" href="metaphysics.html">
+      <span class="icon">🔮</span>
+      <h3>玄学民俗</h3>
+      <p>竹筒抽签、八卦占卜、八字命理、黄历宜忌</p>
+      <div class="count">5 项工具</div>
+    </a>
+    <a class="cat-card" href="units.html">
+      <span class="icon">⚖️</span>
+      <h3>计量单位</h3>
+      <p>万能换算、热量能量、古代度量衡</p>
+      <div class="count">3+ 项工具</div>
+    </a>
+    <a class="cat-card" href="math.html">
+      <span class="icon">📐</span>
+      <h3>数理医学</h3>
+      <p>数学公式、几何计算、药量、BMI、体质测试</p>
+      <div class="count">5 项工具</div>
+    </a>
+    <a class="cat-card" href="life.html">
+      <span class="icon">🏠</span>
+      <h3>生活综合</h3>
+      <p>个税房贷、身份证、亲戚关系、数字大写</p>
+      <div class="count">8 项工具</div>
+    </a>
   </div>
 
   <footer>© 2026 问渠 · 有问必有答</footer>
 </div>
 <script>
-// 粒子背景
 (function(){
   var canvas=document.getElementById('bg'),ctx=canvas.getContext('2d'),particles=[],w,h;
   function resize(){w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight}
   resize();window.addEventListener('resize',resize);
-  for(var i=0;i<80;i++)particles.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.5+0.3,vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,alpha:Math.random()*0.5+0.1});
+  for(var i=0;i<100;i++)particles.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.5+0.3,vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,alpha:Math.random()*0.5+0.1});
   function draw(){
     ctx.clearRect(0,0,w,h);
     for(var p of particles){
       p.x+=p.vx;p.y+=p.vy;
       if(p.x<0||p.x>w)p.vx*=-1;if(p.y<0||p.y>h)p.vy*=-1;
       ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-      ctx.fillStyle=`rgba(212,175,55,${p.alpha})`;ctx.fill();
+      ctx.fillStyle='rgba(212,175,55,'+p.alpha+')';ctx.fill();
     }
     for(var i=0;i<particles.length;i++)for(var j=i+1;j<particles.length;j++){
       var dx=particles[i].x-particles[j].x,dy=particles[i].y-particles[j].y,dist=Math.sqrt(dx*dx+dy*dy);
-      if(dist<150){ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.strokeStyle=`rgba(212,175,55,${0.06*(1-dist/150)})`;ctx.lineWidth=0.5;ctx.stroke()}
+      if(dist<150){ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.strokeStyle='rgba(212,175,55,'+(0.06*(1-dist/150))+')';ctx.lineWidth=0.5;ctx.stroke()}
     }
     requestAnimationFrame(draw);
   }
