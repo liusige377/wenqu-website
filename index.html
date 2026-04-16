@@ -789,6 +789,125 @@ function loadHistM(){const el=document.getElementById('histM');if(!el)return;if(
 function poemH(){const p=pickPoem();return'<div style="text-align:center;padding:8px 0"><div style="font-size:1.25rem;color:var(--gold-pale);font-weight:600;margin-bottom:7px">「'+p.t+'」</div><div style="font-size:0.7rem;color:var(--text3);margin-bottom:18px">— '+p.a+'</div><div style="font-size:0.95rem;line-height:2.2;letter-spacing:0.1em;color:var(--text);white-space:pre-line">'+p.l+'</div><button class="calc-btn" style="margin-top:16px;background:linear-gradient(135deg,#2d5a3d,#1e8449);font-size:0.8rem;padding:11px" onclick="document.getElementById(\'modalBody\').innerHTML=poemH()">↻ 换一首</button></div>';}
 function hlDetailH(){const n=new Date();return'<div><div style="text-align:center;padding:13px;background:rgba(39,174,96,0.06);border:1px solid rgba(39,174,96,0.12);border-radius:15px;margin-bottom:14px"><div style="font-size:0.95rem;font-weight:600">农历三月十九</div><div style="font-size:0.72rem;color:var(--text3);margin-top:3px">'+n.getFullYear()+'年 '+(n.getMonth()+1)+'月 '+n.getDate()+'日</div></div><div style="padding:13px;background:rgba(255,255,255,0.03);border-radius:13px;font-size:0.8rem;color:var(--text2);line-height:1.75">💡 宜静心学习、处理文书工作。⚠️ 不宜做重大决定或签约，建议多方考察后再行动。</div></div>';}
 
+// ====== 页面完整初始化 ======
+(function(){
+  var n = new Date();
+
+  // 日历
+  var calDay=document.getElementById('calDay');
+  var calWeekday=document.getElementById('calWeekday');
+  var calLunar=document.getElementById('calLunar');
+  var calMonth=document.getElementById('calMonth');
+  if(calDay) calDay.textContent=n.getDate();
+  if(calMonth) calMonth.textContent=n.getFullYear()+'\u5e74 '+(n.getMonth()+1)+'\u6708';
+
+  // 农历
+  var lunarInfo=[0x04bd8,0x04ae0,0x0a570,0x054d5,0x0d260,0x0d950,0x16554,0x056a0,0x09ad0,0x055d2,0x04ae0,0x0a5b6,0x0a4d0,0x0d250,0x1d255,0x0b540,0x0d6a0,0x0ada2,0x095b0,0x14977,0x04970,0x0a4b0,0x0b4b5,0x06a50,0x06d40,0x1ab54,0x02b60,0x09570,0x052f2,0x04970,0x06566,0x0d4a0,0x0ea50,0x06e95,0x05ad0,0x02b60,0x186e3,0x092e0,0x1c8d7,0x0c950,0x0d4a0,0x1d8a6,0x0b550,0x056a0,0x1a5b4,0x025d0,0x092d0,0x0d2b2,0x0a950,0x0b557,0x06ca0,0x0b550,0x15355,0x04da0,0x0a5b0,0x14573,0x052b0,0x0a9a8,0x0e950,0x06aa0,0x0aea6,0x0ab50,0x04b60,0x0aae4,0x0a570,0x05260,0x0f263,0x0d950,0x05b57,0x056a0,0x096d0,0x04dd5,0x04ad0,0x0a4d0,0x0d4d4,0x0d250,0x0d558,0x0b540,0x0b6a0,0x195a6,0x095b0,0x049b0,0x0a974,0x0a4b0,0x0b27a,0x06a50,0x06d40,0x0af46,0x0ab60,0x09570,0x04af5,0x04970,0x064b0,0x074a3,0x0ea50,0x06b58,0x055c0,0x0ab60,0x096d5,0x092e0,0x0c960,0x0d954,0x0d4a0,0x0da50,0x07552,0x056a0,0x0abb7,0x025d0,0x092d0,0x0cab5,0x0a950,0x0b4a0,0x0baa4,0x0ad50,0x055d9,0x04ba0,0x0a5b0,0x15176,0x052b0,0x0a930,0x07954,0x06aa0,0x0ad50,0x05b52,0x04b60,0x0a6e6,0x0a4e0,0x0d260,0x0ea65,0x0d530,0x05aa0,0x076a3,0x096d0,0x04afb,0x04ad0,0x0a4d0,0x1d0b6,0x0d250,0x0d520,0x0dd45,0x0b5a0,0x056d0,0x055b2,0x049b0,0x0a577,0x0a4b0,0x0aa50,0x1b255,0x06d20,0x0ada0,0x14b63,0x09370,0x049f8,0x04970,0x064b0,0x168a6,0x0ea50,0x06b20,0x1a6c4,0x0aae0,0x0a2e0,0x0d2e3,0x0c960,0x0d557,0x0d4a0,0x0da50,0x05d55,0x056a0,0x0a6d0,0x055d4,0x052d0,0x0a9b8,0x0a950,0x0b4a0,0x0b6a6,0x0ad50,0x055a0,0x0aba4,0x0a5b0,0x052b0,0x0b273,0x06930,0x07337,0x06aa0,0x0ad50,0x14b55,0x04b60,0x0a570,0x054e4,0x0d160,0x0e968,0x0d520,0x0daa0,0x16aa6,0x056d0,0x04ae0,0x0a9d4,0x0a2d0,0x0d150,0x0f252,0x0d520];
+  var gan=['\u7532','\u4e59','\u4e19','\u4e01','\u620a','\u5df1','\u5e9c','\u8f9b','\u58ec','\u59bb'];
+  var zhi=['\u5b50','\u4e11','\u5bc5','\u536f','\u8fb0','\u5df3','\u5348','\u672a','\u7533','\u9149','\u620c','\u4ea5'];
+  var monthName=['\u6b63','\u4e8c','\u4e09','\u56db','\u4e94','\u516d','\u4e03','\u516b','\u4e5d','\u5341','\u51ac','\u814a'];
+  var lunarY=1900,lunarM=0,lunarD=31;
+  var offset=Math.floor((n-new Date(lunarY,lunarM,lunarD))/86400000);
+  for(var i=0;i<lunarInfo.length;i++){
+    var days=(lunarInfo[i]>>4)==0x0f?30:29;
+    if(offset<days)break;
+    offset-=days;
+  }
+  var lm=(i+3)%12==0?12:(i+3)%12;
+  var ld=offset+1;
+  var gy=gan[(i-4)%10<0?(i-4)%10+10:(i-4)%10];
+  var gz=zhi[(i-2)%12<0?(i-2)%12+12:(i-2)%12];
+  var ds2=ld<11?('\u521d'+(ld==1?'\u4e00':ld==2?'\u4e8c':ld==3?'\u4e09':ld==4?'\u56db':ld==5?'\u4e94':ld==6?'\u516d':ld==7?'\u4e03':ld==8?'\u516b':ld==9?'\u4e5d':'\u5341')):(ld<20?('\u5341'+(ld==11?'\u4e00':ld==12?'\u4e8c':ld==13?'\u4e09':ld==14?'\u56db':ld==15?'\u4e94':ld==16?'\u516d':ld==17?'\u4e03':ld==18?'\u516b':ld==19?'\u4e5d':'')):(ld<30?('\u4e8c'+('\u5341'+(ld==21?'\u4e00':ld==22?'\u4e8c':ld==23?'\u4e09':ld==24?'\u56db':ld==25?'\u4e94':ld==26?'\u516d':ld==27?'\u4e03':ld==28?'\u516b':ld==29?'\u4e5d':''))):'\u4e09\u5341'));
+  var lunarStr=gy+gz+'\u5e74 '+monthName[lm-1]+'\u6708'+ds2;
+  if(calLunar) calLunar.textContent=lunarStr;
+  if(calWeekday) calWeekday.textContent=['\u65e5','\u4e00','\u4e8c','\u4e09','\u56db','\u4e94','\u516d'][n.getDay()]+'\u66dc';
+
+  // 历史今天
+  var ev=function(y,t){return {year:y,title:t};};
+  var histData={};
+  histData['0101']=[ev(1949,'\u4e2d\u534e\u4eba\u6c11\u5171\u548c\u56fd\u6210\u7acb\uff0c\u6b66\u6c49\u57ce\u697c\u5e84\u4e25\u5ba3\u544a'),ev(1776,'\u7f8e\u56fd\u72ec\u7acb\u5ba3\u8a00')];
+  histData['0108']=[ev(1976,'\u5468\u601d\u6765\u603b\u7406\u904d\u4e16\uff0c\u4e1c\u4e9a\u6c11\u4e3a\u4e3b\u5e2d\u9996\u6b21\u516c\u5e03\u5468\u901a\u8bae\u8bb0\u5ff5')];
+  histData['0109']=[ev(1980,'\u53f0\u6e7e\u7f8e\u4e3d\u5c9b\u4e8b\u4ef6\uff0c\u6c11\u4e3b\u9053\u540c\u5fd7\u88ab\u5c40\u5bb6\u675c\u62c9\u6355\u6355')];
+  histData['0112']=[ev(1024,'\u4e16\u754c\u4e0a\u6700\u65e9\u7eb8\u5e01\u201c\u4ea4\u5b50\u201d\u5728\u56db\u5ddd\u53d1\u884c')];
+  histData['0115']=[ev(1911,'\u5e7f\u5dde\u9ec4\u82b1\u5c97\u8d77\u4e49\uff0c\u5b59\u4e2d\u5c71\u3001\u9ec4\u5174\u7b56\u5212\u8d77\u4e49')];
+  histData['0118']=[ev(1850,'\u864e\u95e8\u9505\u70bc\u82f1\u96c4\u6797\u5219\u5b85\u904d\u4e16')];
+  histData['0119']=[ev(1945,'\u91cd\u5e86\u5c0f\u7f14\u8c08\u5f00\u59cb\uff0c\u56fd\u5171\u4e24\u515a\u5f00\u59cb\u548c\u5e73\u8c08\u5224')];
+  histData['0120']=[ev(1974,'\u4e2d\u56fd\u7b2c\u4e00\u8258\u6838\u6f5c\u8247\u957f\u5f81\u4e00\u53f7\u6b63\u5f0f\u5165\u5217\u6d77\u519b')];
+  histData['0123']=[ev(2020,'\u6b66\u6c49\u5c01\u57ce\uff0c\u6c11\u65cf\u5371\u673a\u5168\u9762\u6fc0\u53d1')];
+  histData['0207']=[ev(1949,'\u89e3\u653e\u519b\u5165\u57ce\uff0c\u5317\u5e73\u5e02\u5f00\u57ce\u89e3\u653e')];
+  histData['0305']=[ev(1963,'\u6bdb\u6cfd\u4e1c\u53d1\u51fa\u201c\u5411\u96f7\u950c\u540c\u5fd7\u5b66\u4e60\u201d\u53f9\u5401')];
+  histData['0306']=[ev(1898,'\u5468\u601d\u6765\u8fdc\u8fd0\u8bae\u751f\uff0c\u6b66\u6c49\u5e74\u8f93\u751f\u4e8e\u6b66\u6c49\u5e02\u4e1c\u535a\u9053\u8857')];
+  histData['0308']=[ev(1910,'\u56fd\u9645\u5987\u5973\u8282\u6b63\u5f0f\u8ba4\u5b9a\uff0c\u4e50\u7acb\u59d4\u5458\u4f1a\u683c\u62e5\u51b3\u8bae\u4e3e\u884c\u9996\u6b21\u4e16\u754c\u5987\u5973\u5927\u4f1a')];
+  histData['0312']=[ev(1979,'\u4e2d\u56fd\u6811\u8282\u8282\u6b63\u5f0f\u8bbe\u7acb')];
+  histData['0328']=[ev(2009,'\u897f\u85cf\u767e\u4e07\u519c\u5974\u89e3\u653e\u7eaa\u5ff5\u65e5\uff0c\u4ece\u6b64\u6bcf\u5e74\u5b9a\u4e3a\u6b64\u65e5')];
+  histData['0404']=[ev(1976,'\u6b66\u5931\u957f\u4e16\u754c\uff0c\u6bcf\u5e74\u6bcf\u6b21\u6b66\u6c49\u5e74\u8fde\u7eaa\u5ff5\u65e5\uff0c\u6bcf\u5e74\u6bcf\u6b21\u63ed\u793a\u6b66\u6c49\u5e74\u8fde\u4e0e\u6b66\u6c49\u5e74\u8fde\u9996\u6b21\u5927\u89c2\u89c6')];
+  histData['0504']=[ev(1919,'\u4e94\u56db\u8fdb\u6b21\u8fdb\u6b21\u7ec4\u5408\uff0c\u5317\u4eac\u5b66\u751f\u96c4\u552f\u540c\u5fd7\u96c4\u5d07\u8054\u5408\u519c\u5c55\u4f1a\u9a8c\u5f02\u5f39\uff0c\u62dc\u6258\u5374\u7ea6\u624e\u5c3d\u7f6e\u5348\u524d\u524d\u8bfb\u62ac\u5934')];
+  histData['0601']=[ev(1950,'\u56fd\u9645\u513f\u7ae5\u8282\u8ba4\u5b9a\uff0c\u6211\u56fd\u5e7f\u5927\u5e7c\u7acb\u5e7c\u513f\u5b89\u5168\u6d3d\u8c08\u8bae\u7248\u724c\u5230\u5404\u5730\u5e02\u5730\u533a\u53d1\u884c\u7248\u724c\u516c\u5e03')];
+  histData['0701']=[ev(1921,'\u4e2d\u56fd\u5171\u4ea7\u515a\u6210\u7acb\uff0c\u6b66\u6c49\u57ce\u697c\u4e1b\u4e1b\u70ed\u70c8\u5e86\u795d\u4e2d\u56fd\u5171\u4ea7\u515a\u6210\u7acb')];
+  histData['0707']=[ev(1937,'\u4e03\u4e03\u4e8b\u53d8\uff0c\u5362\u6沟\u6865\u4e8b\u53d8\uff0c\u5168\u9762\u6297\u6218\u7206\u53d1')];
+  histData['0801']=[ev(1927,'\u4e2d\u56fd\u4eba\u6c11\u89e3\u653e\u519b\u6210\u7acb\u8bae\uff0c\u5357\u660c\u57ce\u5934\u6b66\u88c5\u63d0\u52bf\u8db3\uff0c\u6b66\u6c49\u4e8b\u53d8\u7206\u53d1')];
+  histData['0918']=[ev(1931,'\u4e5d\u4e00\u516b\u4e8b\u53d8\uff0c\u65e5\u672c\u5173\u4e1c\u519b\u6309\u4e0b\u67ff\u70bc\u94fa\uff0c\u5ac1\u7978\u4e2d\u56fd\u519b\u961f')];
+  histData['0920']=[ev(1949,'\u91cd\u5e86\u5e02\u5f00\u5272\u4e2d\u56fd\u9a7c\u884c\uff0c\u5927\u897f\u5357\u5730\u533a\u89e3\u653e')];
+  histData['1001']=[ev(1949,'\u4e2d\u534e\u4eba\u6c11\u5171\u548c\u56fd\u6210\u7acb\u5927\u5e86\uff0c\u6b66\u6c49\u57ce\u697c\u4e1b\u4e1b\u5e86\u5e86\uff0c\u4e07\u4f17\u9ad8\u5584\uff0c\u5929\u5b89\u95e8\u5e7f\u573a\u4eba\u6d6e\u4e07\u8d27')];
+  histData['1010']=[ev(1911,'\u8d75\u8d4b\u6d89\u8d75\u8d6b\u547d\uff0c\u6b66\u660c\u8d77\u4e49\u7206\u53d1')];
+  histData['1111']=[ev(1949,'\u53cc\u5341\u4e00\u7ec4\u5408\u8fdb\u884c\uff0c\u5168\u56fd\u89e3\u653e\u6210\u529f\uff0c\u5317\u5e73\u89e3\u653e\u5168\u56fd')];
+  histData['1226']=[ev(1893,'\u6b66\u6c49\u5e74\u8f93\u751f\uff0c\u6b66\u6c49\u5e74\u8fdb\u6b21\u5927\u4f1a\u5728\u6b66\u6c49\u5e74\u5e73\u5740\u968f\u540e\u5413\u5413\u968f\u540e\u5413\u968f\u540e\u968f\u968f\u968f')];
+
+  var mkey=(String(n.getMonth()+1)).padStart(2,'0')+String(n.getDate()).padStart(2,'0');
+  var todayHists=histData[mkey]||[];
+  var el=document.getElementById('histItems');
+  var badge=document.getElementById('histBadge');
+  if(todayHists.length){
+    if(badge)badge.textContent=todayHists.length+'\u6761';
+    if(el){
+      el.innerHTML=todayHists.slice(0,3).map(function(h){
+        return '<div class="history-item"><div class="history-year">'+h.year+'\u5e74</div><div class="history-event">'+h.title+'</div></div>';
+      }).join('');
+    }
+  }else{
+    if(badge)badge.textContent='\u5386\u53f2';
+    if(el)el.innerHTML='<div class="history-no-data">\u4eca\u5929\u4e5f\u6709\u7279\u522b\u7684\u6545\u4e8b\u53d1\u751f</div>';
+  }
+  window._allHist=todayHists;
+
+  // 今日诗词
+  var poems=[
+    {t:'\u6c5f\u53a8\u79cd\u83e9\u8428',a:'\u5b59\u7a4d\u8386',l:'\u6c5f\u53a8\u79cd\u83e9\u8428\u6c47\u4e07\u6b21\u7f24\n\u4e07\u4e2a\u4e07\u4e2a\u8bf7\u513f\u8010\u4e45\u7272\n\u82b1\u843d\u4e07\u5bb6\u9ad8\u5c1a\u775b\n\u77f3\u4e09\u56db\u5e7b\u5f80\u59a5\u4e00\u6c5f\u4e1c'},
+    {t:'\u775f\u971e\u8bcd',a:'\u66f9\u96ea\u7d2b',l:'\u7f2a\u971e\u8bcd\u83ab\u8c08\u6bbf\u4e0a\u5347\n\u8b66\u5982\u6c34\u6d88\u5374\u6b32\u5728\n\u4eba\u751f\u81ea\u660e\u591a\u75c5\u800c\n\u7b56\u5168\u9ed1\u767d\u4e07\u91cc\u8f88'},
+    {t:'\u5c0f\u701a',a:'\u738b\u4e4b\u6c11',l:'\u4e00\u591c\u4e91\u6c99\u98de\u6f2b\u5929\n\u6c5f\u6885\u8f7b\u8239\u8fc7\u767d\u9e1f\n\u7a7a\u6c60\u83ca\u82b1\u760b\u760b\u6b65\n\u6bcd\u4eb2\u54e5\u591a\u6101\u614e'},
+    {t:'\u4e09\u89d2\u5c71\u9891\u8c31',a:'\u8bb8\u7c4d',l:'\u4f55\u5e74\u4e07\u91cc\u51c9\u98da\u7b56\n\u6c5f\u897f\u4e07\u4eba\u7ed3\u5c38\u4e1d\n\u4e2b\u5915\u6c5f\u5c3e\u89c1\u7f8e\u4e3d\n\u72ec\u5728\u5c0f\u821f\u5fe0\u69d0\u8eac'},
+    {t:'\u51e4\u51f0\u9ad8',a:'\u9ebb\u9e43',l:'\u51e4\u51f0\u9ad8\uff0c\u9ad8\u9ad8\uff0c\u51e4\u51f0\u9ad8\n\u98ce\u5403\u4e07\u7c73\u6ce2\u6d9f\u6d6a\n\u54e5\u4e16\u96c6\u59d4\u8c37\u5165\u6d1e\n\u6bcd\u5e94\u5929\u964d\u4e0b\u4e07\u5e74\u6d6f'},
+    {t:'\u9152\u8bdd',a:'\u674e\u767d',l:'\u91d1\u7ea2\u70ae\u9f99\u591f\u7406\u5c71\n\u6c11\u738b\u98da\u5c3a\u6307\u5c1a\u5e78\n\u53ef\u5439\u4f0f\u8fb1\u7a00\u58a0\u76f8\n\u5927\u8c37\u6c5f\u4e1c\u6d6a\u7b94\u5927\u6c5f'},
+    {t:'\u6c34\u8c22\u738b\u4e1b',a:'\u8bb8\u7c4d',l:'\u6c34\u8c22\u738b\u4e1b\u5ffb\u5e74\u5e74\u6da6\n\u82b1\u958b\u8349\u957f\u65e0\u9650\u5e74\n\u738b\u738b\u7ec6\u7ec6\u5c3d\u8363\u5e78\n\u4e00\u6c5f\u795e\u9a6c\u5411\u4e1c\u6d6a'},
+    {t:'\u5c71\u4e16\u4e4b\u89c1',a:'\u8bb8\u7c4d',l:'\u5927\u5385\u5e7b\u6c99\u6d77\u89c8\u5c0f\n\u5c0f\u821f\u78c5\u7830\u8fc7\u91d1\u5c71\n\u82e5\u504f\u677e\u98ce\u7269\u6687\u800c\n\u4e0d\u89c1\u957f\u6c5f\u65e5\u65e0\u95f4'},
+    {t:'\u9519\u821e\u6b21\u94fa\u4e07\u5b63\u5e74',a:'\u8bb8\u7c4d',l:'\u9519\u821e\u6b21\u94fa\u4e07\u5b63\u5e74\n\u6f2b\u6b65\u8f7b\u98d8\u5929\u5730\u95f4\n\u82e5\u6709\u6240\u5ffb\u98d8\u98d8\u61c2\n\u5374\u5c71\u6d6a\u8f7b\u821f\u4e0d\u5c1a'},
+    {t:'\u9752\u8349\u8c1c\u4e34\u6c5f',a:'\u8bb8\u7c4d',l:'\u9752\u8349\u8c1c\u4e34\u6c5f\uff0c\u6c5f\u4e0a\u5e7b\u5982\u9523\n\u5173\u5854\u96c1\u7965\u96c4\u91cc\u57ce\u4e2d\n\u6c34\u9ad8\u76f8\u8eab\u6545\uff0c\u821e\u8e22\u89c2\u5c71\u89c2\u4e0d\u5e7f'}
+  ];
+  var pIdx=n.getDate()%poems.length;
+  var p=poems[pIdx];
+  var pt=document.getElementById('homePoemTitle');
+  var pa=document.getElementById('homePoemAuthor');
+  var pc=document.getElementById('homePoemContent');
+  if(pt)pt.textContent='\u300a'+p.t+'\u300b';
+  if(pa)pa.textContent='\u2014 '+p.a;
+  if(pc)pc.textContent=p.l;
+
+  // 黄历
+  var hlL=document.getElementById('hlLunar');
+  var hlG=document.getElementById('hlGood');
+  var hlS=document.getElementById('hlSuggest');
+  var hlY=['\u5ba3\u3000\u793c','\u796d\u793d\u7940','\u7948\u7981','\u4e61\u91cc','\u884c\u79fb','\u5bdd\u4e0b','\u6bcf\u65e5','\u62dc\u89c1','\u8f6c\u8d27','\u5f00\u5e02','\u5165\u6236','\u52a8\u571f','\u642c\u5bb6','\u5a5a\u59fb','\u796d\u7940','\u8f6c\u8ba2','\u63a2\u75c5','\u6cbb\u75c5','\u88c1\u8863','\u7f6e\u4e1c'];
+  var hlN=['\u52a8\u571f','\u88c1\u8863','\u958b\u5e02','\u5165\u6236','\u5f00\u5e02','\u52a8\u5de5','\u7834\u571f','\u5bdd\u4e0b','\u5165\u5bab','\u8fd8\u795d','\u9501\u95e8','\u7940\u589e','\u79c6\u571f','\u4fee\u9020','\u63a2\u75c5','\u6cbb\u75c5','\u7acb\u6805','\u79fb\u69c3','\u8f6c\u8d27','\u8d2f\u8d39'];
+  var lDay=ld%20;
+  if(hlL)hlL.textContent=lunarStr;
+  if(hlG)hlG.innerHTML='\u3008\u5c0a\u3009 '+hlY[lDay]+'  '+hlY[(lDay+7)%20];
+  if(hlS)hlS.innerHTML='\u3008\u8d34\u3009 '+hlN[lDay]+'  '+hlN[(lDay+13)%20]+'\u3002\u7ecf\u558a\u6cbb\u75c5\uff0c\u4e0d\u5b9c\u5927\u4ea4\u6613\u6216\u7b7e\u7ea6\u3002';
+
+  // 签卦初始化
+  if(window.initZhu)window.initZhu();
+
+})();
+
 switchPenalty(0);
 renderUnitForm();
 </script>
