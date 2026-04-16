@@ -31,6 +31,12 @@ select{width:auto;min-width:120px}
 .result-box.show{display:block}
 .result-box .label{color:#d4af37;font-weight:600}
 .result-box .value{color:#fff}
+.result-box .era-section{margin-top:12px;padding-top:12px;border-top:1px solid rgba(212,175,55,.2)}
+.result-box .era-title{color:#d4af37;font-weight:600;font-size:1rem;margin-bottom:8px}
+.result-box .era-content{color:#ccc;line-height:1.7}
+.result-box .figure-item{display:inline-block;background:rgba(212,175,55,.15);color:#d4a855;padding:3px 10px;border-radius:5px;margin:3px 5px 3px 0;font-size:.88rem}
+.result-box .event-item{color:#aaa;margin:4px 0;padding-left:12px;position:relative}
+.result-box .event-item::before{content:'•';position:absolute;left:0;color:#d4af37}
 .tip{color:#888;font-size:.8rem;margin-top:8px}
 footer{text-align:center;padding:30px 0;color:#555;font-size:.8rem}
 </style>
@@ -60,19 +66,18 @@ footer{text-align:center;padding:30px 0;color:#555;font-size:.8rem}
       </div>
     </div>
 
-    <div class="tool-card" id="person-age">
+    <div class="tool-card" id="era-profile">
       <button class="tool-header" onclick="toggle(this)">
-        <h3>👤 历史人物年龄</h3>
+        <h3>📜 年代人物档案</h3>
         <span class="arrow">▼</span>
       </button>
       <div class="tool-body">
-        <p style="color:#888;font-size:.85rem;margin-bottom:10px">输入历史人物的生卒年份，计算其享年与属相</p>
+        <p style="color:#888;font-size:.85rem;margin-bottom:10px">输入年份，查看那个年代的著名人物、历史事件和时代背景</p>
         <div class="form-row">
-          <input type="number" id="birth-year" placeholder="生年（如：1898）">
-          <input type="number" id="death-year" placeholder="卒年（如：1976）">
+          <input type="number" id="era-input" placeholder="输入年份（如：1949、1900、1980）" onkeydown="if(event.key==='Enter')calcEraProfile()">
         </div>
-        <button class="btn" onclick="calcAge()">计算</button>
-        <div class="result-box" id="age-result"></div>
+        <button class="btn" onclick="calcEraProfile()">查询</button>
+        <div class="result-box" id="era-result"></div>
       </div>
     </div>
 
@@ -122,7 +127,7 @@ footer{text-align:center;padding:30px 0;color:#555;font-size:.8rem}
           <input type="number" id="era-min" placeholder="民国年" oninput="calcEra('min')">
           <input type="text" id="era-ganzhi" placeholder="干支（如：甲子）" oninput="calcEra('gz')">
         </div>
-        <div class="result-box" id="era-result"></div>
+        <div class="result-box" id="nian-result"></div>
       </div>
     </div>
 
@@ -161,55 +166,57 @@ footer{text-align:center;padding:30px 0;color:#555;font-size:.8rem}
 function toggle(btn){var body=btn.nextElementSibling,arrow=btn.querySelector('.arrow');body.classList.toggle('open');arrow.textContent=body.classList.contains('open')?'▲':'▼'}
 function show(el,html){el.innerHTML=html;el.classList.add('show')}
 
-// 朝代数据
-var DY=[{n:'夏',s:-2070,e:-1600,c:'斟鄩（洛阳）',hz:'禹',note:'公元前2070年禹建立'},
-{n:'商',s:-1600,e:-1046,c:'殷（安阳）',hz:'汤'},
-{n:'西周',s:-1046,e:-771,c:'镐京（西安）',hz:'武王'},
-{n:'东周',s:-770,e:-256,c:'洛邑（洛阳）',hz:'平王',sub:[{n:'春秋',s:-770,e:-476},{n:'战国',s:-475,e:-221}]},
-{n:'秦',s:-221,e:-207,c:'咸阳',hz:'始皇'},
-{n:'西汉',s:-206,e:8,c:'长安',hz:'高祖'},
-{n:'东汉',s:25,e:220,c:'洛阳',hz:'光武'},
-{n:'三国',s:220,e:280,c:'魏/蜀/吴',hz:'魏文帝/昭烈帝/大帝'},
-{n:'西晋',s:265,e:316,c:'洛阳',hz:'武帝'},
-{n:'东晋',s:317,e:420,c:'建康（南京）',hz:'元帝'},
-{n:'南北朝',s:420,e:589,c:'南北对峙',hz:'宋/齐/梁/陈/北魏等'},
-{n:'隋',s:581,e:618,c:'长安',hz:'文帝'},
-{n:'唐',s:618,e:907,c:'长安',hz:'高祖'},
-{n:'五代十国',s:907,e:960,c:'中原更迭',hz:'后梁/后唐/后晋/后汉/后周'},
-{n:'北宋',s:960,e:1127,c:'开封',hz:'太祖'},
-{n:'南宋',s:1127,e:1279,c:'临安（杭州）',hz:'高宗'},
-{n:'元',s:1271,e:1368,c:'大都（北京）',hz:'世祖'},
-{n:'明',s:1368,e:1644,c:'北京',hz:'太祖'},
-{n:'清',s:1644,e:1912,c:'北京',hz:'世祖'},
-{n:'民国',s:1912,e:1949,c:'南京/北京',hz:'孙中山/蒋介石'}];
+// 年代人物数据库
+var ERAS=[
+  {s:1840,e:1911,n:'晚清时期',bg:'中国近代史开端，西方列强入侵，民族危机加深，屡次改革失败',ev:['鸦片战争(1840)','太平天国运动(1851)','第二次鸦片战争(1856)','洋务运动(1861)','中法战争(1883)','甲午战争(1894)','戊戌变法(1898)','义和团运动(1899)','八国联军侵华(1900)'],fig:{政:['曾国藩','李鸿章','左宗棠','张之洞','慈禧太后','光绪帝','康有为','梁启超','袁世凯'],科:['詹天佑','冯如','徐寿','华蘅芳'],文:['曹雪芹','吴敬梓','刘鹗','李伯元','吴沃尧'],思:['严复','谭嗣同','黄遵宪']}},
+  {s:1912,e:1927,n:'北洋政府时期',bg:'民国初年军阀混战，新文化运动兴起，思想解放',ev:['中华民国成立(1912)','袁世凯称帝(1915)','新文化运动(1915)','五四运动(1919)','中国共产党成立(1921)','北伐战争(1926)'],fig:{政:['孙中山','袁世凯','黎元洪','段祺瑞','蒋介石','汪精卫'],军:['冯玉祥','张作霖','吴佩孚','孙传芳'],思:['陈独秀','李大钊','胡适','鲁迅','蔡元培'],科:['竺可桢','李四光','侯德榜']}},
+  {s:1927,e:1949,n:'南京国民政府时期',bg:'国共对峙、抗日战争、解放战争，社会剧烈动荡',ev:['南京国民政府成立(1927)','井冈山革命根据地(1927)','九一八事变(1931)','长征(1934)','西安事变(1936)','卢沟桥事变(1937)','抗战胜利(1945)','三大战役(1948)'],fig:{政:['蒋介石','毛泽东','周恩来','朱德','刘少奇'],军:['彭德怀','林彪','刘伯承','粟裕','白崇禧'],文:['鲁迅','郭沫若','茅盾','老舍','巴金','沈从文'],艺:['徐悲鸿','齐白石','梅兰芳','聂耳','冼星海']}},
+  {s:1949,e:1966,n:'新中国成立初期',bg:'中国人民站起来，社会主义改造完成，工业化起步',ev:['开国大典(1949)','抗美援朝(1950)','三大改造完成(1956)','三大工程(1953-57)','大跃进(1958)','人民公社化(1958)'],fig:{政:['毛泽东','周恩来','刘少奇','朱德','陈云','邓小平'],科:['钱学森','邓稼先','李四光','竺可桢','华罗庚','钱三强'],文:['郭沫若','茅盾','老舍','曹禺'],艺:['徐悲鸿','齐白石','梅兰芳','傅抱石']}},
+  {s:1966,e:1976,n:'文化大革命时期',bg:'十年动乱，知识分子下乡、文化受到摧残，国民经济倒退',ev:['文革开始(1966)','红卫兵运动(1966)','上山下乡(1968)','林彪事件(1971)','中美接触(1972)'],fig:{政:['毛泽东','周恩来','林彪','江青','华国锋'],科:['袁隆平','陈景润'],文:['浩然','八个样板戏作者'],艺:['样板戏演员群体']}},
+  {s:1977,e:1991,n:'改革开放初期',bg:'拨乱反正、改革开放、经济腾飞、思想解放',ev:['恢复高考(1977)','改革开放(1978)','家庭联产承包(1978)','深圳特区(1980)','万元户时代(1980s)'],fig:{政:['邓小平','胡耀邦','赵紫阳','江泽民'],经:['袁庚','步鑫生','年广久'],文:['路遥','莫言','余华','王朔'],艺:['崔健','张艺谋','陈凯歌','姜文']}},
+  {s:1992,e:2002,n:'市场经济时期',bg:'南巡讲话、市场经济确立、国企改革、加入WTO进程',ev:['南巡讲话(1992)','建立市场经济体制(1993)','香港回归(1997)','澳门回归(1999)','中国入世(2001)'],fig:{政:['江泽民','朱镕基','胡锦涛'],商:['马云','马化腾','李彦宏','刘强东','王健林'],文:['贾平凹','王小波','韩寒','郭敬明'],艺:['周杰伦','王菲','赵薇','章子怡']}},
+  {s:2003,e:2012,n:'黄金十年',bg:'经济高速增长、北京奥运、航天突破、互联网崛起',ev:['非典(2003)','神舟五号(2003)','北京奥运(2008)','上海世博(2010)','GDP超日本(2010)'],fig:{政:['胡锦涛','温家宝','习近平'],科:['杨利伟','神舟飞船团队'],商:['马云','马化腾','雷军','刘强东'],文:['莫言','刘慈欣','韩寒'],艺:['周杰伦','李宇春','姚明','刘翔']}},
+  {s:2013,e:2025,n:'新时代',bg:'脱贫攻坚、中国梦、科技强国、文化自信、百年奋斗目标实现',ev:['一带一路(2013)','屠呦呦获诺奖(2015)','供给侧改革(2016)','新冠疫情(2020)','全面建成小康社会(2021)','建党百年(2021)'],fig:{政:['习近平','李克强','王岐山'],科:['科学院工程院院士群体','嫦娥团队','北斗团队'],商:['张一鸣','黄峥','王兴','程维'],文:['刘慈欣','郝景芳','余华'],艺:['吴京','流浪地球团队','国漫团队']}}
+];
 
 function calcYear(){
   var y=parseInt(document.getElementById('year-input').value);
   var el=document.getElementById('year-result');
   if(!y&&y!==0){show(el,'<span style="color:#f88">请输入有效年份</span>');return}
+  var DY=[{n:'夏',s:-2070,e:-1600,c:'斟鄩',hz:'禹'},{n:'商',s:-1600,e:-1046,c:'殷',hz:'汤'},{n:'西周',s:-1046,e:-771,c:'镐京',hz:'武王'},{n:'东周',s:-770,e:-256,c:'洛邑',hz:'平王'},{n:'秦',s:-221,e:-207,c:'咸阳',hz:'始皇'},{n:'西汉',s:-206,e:8,c:'长安',hz:'高祖'},{n:'东汉',s:25,e:220,c:'洛阳',hz:'光武'},{n:'三国',s:220,e:280,c:'魏蜀吴',hz:'魏文帝等'},{n:'西晋',s:265,e:316,c:'洛阳',hz:'武帝'},{n:'东晋',s:317,e:420,c:'建康',hz:'元帝'},{n:'南北朝',s:420,e:589,c:'南北对峙',hz:'多朝代'},{n:'隋',s:581,e:618,c:'长安',hz:'文帝'},{n:'唐',s:618,e:907,c:'长安',hz:'高祖'},{n:'五代十国',s:907,e:960,c:'中原更迭',hz:'多朝代'},{n:'北宋',s:960,e:1127,c:'开封',hz:'太祖'},{n:'南宋',s:1127,e:1279,c:'临安',hz:'高宗'},{n:'元',s:1271,e:1368,c:'大都',hz:'世祖'},{n:'明',s:1368,e:1644,c:'北京',hz:'太祖'},{n:'清',s:1644,e:1912,c:'北京',hz:'世祖'}];
   var era='';
-  if(y<0){era='公元前'+Math.abs(y)+'年';var d=DY.find(function(d){return y>=d.s&&y<d.e});if(d)era+=' → <span class="value">'+d.n+'</span>时期，都城：'+d.c;else era+='（先秦时期）'}
-  else{
-    var d=DY.find(function(d){return y>=d.s&&y<d.e});
-    if(d){var nh='<span class="value">'+d.n+'</span>时期';if(d.hz)nh+='，皇帝：'+d.hz;nh+='，都城：'+d.c;era=nh}
-    else if(y<25)era='王莽新朝（8-23）时期';
-    else if(y>=1912)era='<span class="value">民国</span>时期，民国'+(y-1911)+'年';
-    else era='未匹配到朝代';
-  }
+  if(y<0){var d=DY.find(function(d){return y>=d.s&&y<d.e});era=d?'公元前'+Math.abs(y)+'年 → '+d.n+'时期，都城：'+d.c:'先秦时期'}
+  else if(y<1840){var d=DY.find(function(d){return y>=d.s&&y<d.e});era=d?d.n+'时期，都城：'+d.c:'未匹配朝代'}
+  else if(y<1949){era='民国时期，民国'+(y-1911)+'年'}
+  else{era='中华人民共和国时期'}
   show(el,era);
 }
 
-function calcAge(){
-  var b=parseInt(document.getElementById('birth-year').value);
-  var d=parseInt(document.getElementById('death-year').value);
-  var el=document.getElementById('age-result');
-  if(!b||!d){show(el,'<span style="color:#f88">请输入生年和卒年</span>');return}
-  if(d<b){show(el,'<span style="color:#f88">卒年应大于生年</span>');return}
-  var age=d-b;
-  var sx=['猴','鸡','狗','猪','鼠','牛','虎','兔','龙','蛇','马','羊'];
-  var sxval=sx[b%12];
-  var yrs=2026-d;
-  show(el,'享年：<span class="value">'+age+'岁</span>　属相：<span class="value">'+sxval+'</span>　距今：<span class="value">'+yrs+'年</span>　生于'+b+'年，卒于'+d+'年');
+function calcEraProfile(){
+  var y=parseInt(document.getElementById('era-input').value);
+  var el=document.getElementById('era-result');
+  if(!y){show(el,'<span style="color:#f88">请输入有效年份</span>');return}
+  var era=ERAS.find(function(e){return y>=e.s&&y<=e.e});
+  if(!era){show(el,'暂无该年份数据，请输入1840年之后的年份');return}
+  var html='<div class="era-title">'+y+'年 · '+era.n+'</div>';
+  html+='<div class="era-content" style="color:#aaa;margin-bottom:10px">'+era.bg+'</div>';
+  
+  html+='<div class="era-section"><div class="era-title" style="font-size:.95rem">📅 重要事件</div>';
+  era.ev.forEach(function(e){html+='<div class="event-item">'+e+'</div>'});
+  html+='</div>';
+  
+  html+='<div class="era-section"><div class="era-title" style="font-size:.95rem">👥 著名人物</div>';
+  var categories={政:'政治家',军:'军事家',思:'思想家',科:'科学家',经:'企业家',商:'企业家',文:'文学家',艺:'艺术家'};
+  for(var cat in era.fig){
+    if(era.fig[cat].length>0){
+      html+='<div style="color:#888;font-size:.8rem;margin:8px 0 4px">'+(categories[cat]||cat)+'：</div>';
+      html+='<div style="line-height:2">';
+      era.fig[cat].forEach(function(f){html+='<span class="figure-item">'+f+'</span>'});
+      html+='</div>';
+    }
+  }
+  html+='</div>';
+  show(el,html);
 }
 
 function calcCoin(){
@@ -230,41 +237,22 @@ function calcZodiac(){
   var sx=['猴','鸡','狗','猪','鼠','牛','虎','兔','龙','蛇','马','羊'];
   var tg=['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
   var dz=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
-  var wx=['金','木','水','火','土'];
-  var nayin=['海中金','炉中火','大林木','路旁土','剑锋金','山头火','涧下水','城头土','杨柳木','井泉水','屋上土','霹雳火','松柏木','白蜡金','金箔金','钗钏金','桑柘木','大驿土','天上火','石榴木','大海水'];
   var sxv=sx[y%12];
-  var gzidx=(y-1984)%60;if(gzidx<0)gzidx+=60;
-  var gzv=tg[gzidx%10]+dz[gzidx%12];
-  var wyv=wx[(gzidx%10+gzidx%12)%5];
-  var nay=nayin[gzidx%60];
-  var colors={金:'白/银',木:'绿',水:'黑/蓝',火:'红/紫',土:'黄/棕'};
-  var lucky={金:[4,9],木:[3,8],水:[1,6],火:[2,7],土:[5,10]};
-  show(el,'<span class="value" style="font-size:1.2em">'+sxv+'</span>年　干支：<span class="value">'+gzv+'</span>　五行：<span class="value">'+wyv+'</span>　纳音：<span class="value">'+nay+'</span><br>幸运色：'+colors[wyv]+'　幸运数字：'+lucky[wyv].join('、'));
+  var idx=(y-1984)%60;if(idx<0)idx+=60;
+  var gzv=tg[idx%10]+dz[idx%12];
+  show(el,'<span class="value" style="font-size:1.2em">'+sxv+'</span>年　干支：<span class="value">'+gzv+'</span>');
 }
 
 var TG=['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
 var DZ=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
-function ganZhi(y){
-  var idx=(y-1984)%60;if(idx<0)idx+=60;
-  return TG[idx%10]+DZ[idx%12];
-}
-
+function ganZhi(y){var idx=(y-1984)%60;if(idx<0)idx+=60;return TG[idx%10]+DZ[idx%12]}
 function calcEra(type){
-  var el=document.getElementById('era-result');
-  var gong=document.getElementById('era-gong');
-  var min=document.getElementById('era-min');
-  var gz=document.getElementById('era-ganzhi');
-  if(type==='gong'&&gong.value){
-    var y=parseInt(gong.value);if(!y)return;
-    min.value=y-1911;gz.value=ganZhi(y);
-  }else if(type==='min'&&min.value){
-    var y=parseInt(min.value)+1911;
-    gong.value=y;gz.value=ganZhi(y);
-  }else if(type==='gz'&&gz.value){
-    var s=gz.value.trim();
-    for(var y=1900;y<=2030;y++){if(ganZhi(y)===s){gong.value=y;min.value=y-1911;break}}
-  }
-  if(gong.value){show(el,'公元<span class="value">'+gong.value+'</span>年 = 民国<span class="value">'+(parseInt(gong.value)-1911)+'</span>年 = <span class="value">'+ganZhi(parseInt(gong.value))+'</span>年')}
+  var el=document.getElementById('nian-result');
+  var gong=document.getElementById('era-gong'),min=document.getElementById('era-min'),gz=document.getElementById('era-ganzhi');
+  if(type==='gong'&&gong.value){var y=parseInt(gong.value);if(!y)return;min.value=y-1911;gz.value=ganZhi(y)}
+  else if(type==='min'&&min.value){var y=parseInt(min.value)+1911;gong.value=y;gz.value=ganZhi(y)}
+  else if(type==='gz'&&gz.value){var s=gz.value.trim();for(var y=1900;y<=2030;y++){if(ganZhi(y)===s){gong.value=y;min.value=y-1911;break}}}
+  if(gong.value)show(el,'公元<span class="value">'+gong.value+'</span>年 = 民国<span class="value">'+(parseInt(gong.value)-1911)+'</span>年 = <span class="value">'+ganZhi(parseInt(gong.value))+'</span>年')
 }
 
 function calcSurname(){
@@ -272,10 +260,8 @@ function calcSurname(){
   var el=document.getElementById('surname-result');
   if(!s){show(el,'<span style="color:#f88">请输入姓氏</span>');return}
   var ranks='李王张刘陈杨赵黄周吴徐孙胡朱高林何郭马罗梁宋郑谢韩唐冯于董萧程曹袁邓许傅沈曾彭吕苏卢蒋蔡贾丁魏薛叶阎余潘杜戴夏钟汪田任姜范方石姚谭廖邹熊金陆郝孔白崔康毛邱秦江史顾侯邵孟龙万段雷钱汤尹黎易常武乔贺赖龚文'.split('');
-  var fu=['欧阳','司马','诸葛','东方','皇甫','上官','宇文','令狐','钟离','闾丘','司空','亓官','司寇','仉督','颛孙','端木','巫马','公西','漆雕','乐正','壤驷','公良','拓跋','夹谷','宰父','谷梁','晋楚','阎汝','鄢涂','钦','段干','百里','东郭','南门','呼延','归海','岳帅','缑亢','况后','有琴','商牟','佘佗','伯赏'];
-  for(var f of fu){if(s===f){show(el,'<span class="value">'+s+'</span>是复姓，历史上多见于'+['魏晋南北朝时期','唐代','明清'][Math.abs(f.length+s.charCodeAt(0))%3]+'，排名不在前100常见单姓之中');return}}
   var idx=ranks.indexOf(s);
-  if(idx>=0)show(el,'<span class="value" style="font-size:1.3em">'+s+'</span>姓在百家姓中排名第 <span class="value" style="color:#d4af37;font-size:1.3em">'+(idx+1)+'</span> 位');
+  if(idx>=0)show(el,'<span class="value" style="font-size:1.3em">'+s+'</span>姓在现代百家姓中排名第 <span class="value" style="color:#d4af37;font-size:1.3em">'+(idx+1)+'</span> 位');
   else show(el,'<span class="value">'+s+'</span>未进入前100名常见姓氏');
 }
 
