@@ -17,15 +17,14 @@ canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
 .hero .poem .au{color:#555;font-size:.85rem;margin-top:6px;letter-spacing:.08em}
 .hero .divider{width:60px;height:1px;background:linear-gradient(90deg,transparent,#d4af37,transparent);margin:20px auto 0}
 
-.today-box{background:rgba(255,255,255,.03);border:1px solid rgba(212,175,55,.15);border-radius:16px;padding:24px;margin:30px 0}
-.today-box h2{color:#d4af37;font-size:1.1rem;letter-spacing:.15em;margin-bottom:16px;text-align:center}
-.today-box h2 span{color:#888;font-weight:400;font-size:.9rem}
-.today-events{display:grid;gap:12px}
-.today-event{display:flex;gap:14px;padding:12px 16px;background:rgba(0,0,0,.3);border-radius:10px;align-items:flex-start;transition:background .3s}
-.today-event:hover{background:rgba(212,175,55,.08)}
-.today-event .year{color:#d4af37;font-weight:700;font-size:1.1rem;min-width:55px}
-.today-event .text{color:#ccc;font-size:.92rem;line-height:1.5}
-.today-event .text .tag{display:inline-block;background:rgba(212,175,55,.15);color:#d4a855;font-size:.75rem;padding:2px 8px;border-radius:4px;margin-left:8px}
+.today-box{margin:24px 0 30px;text-align:center}
+.today-box h2{color:#d4af37;font-size:1.05rem;letter-spacing:.15em;margin-bottom:14px}
+.today-box h2 span{color:#888;font-weight:400;font-size:.88rem}
+.today-events{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 24px}
+.today-event{display:inline-flex;gap:8px;align-items:center}
+.today-event .year{color:#d4af37;font-weight:700;font-size:.95rem}
+.today-event .text{color:#999;font-size:.9rem;line-height:1.4}
+.today-event .text .tag{display:inline-block;background:rgba(212,175,55,.12);color:#d4a855;font-size:.72rem;padding:1px 7px;border-radius:4px;margin-left:6px}
 
 .cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px;padding-bottom:60px}
 .cat-card{background:rgba(255,255,255,.03);border:1px solid rgba(212,175,55,.15);border-radius:16px;padding:32px 24px;text-align:center;cursor:pointer;transition:all .4s cubic-bezier(.25,.8,.25,1);text-decoration:none;color:inherit;display:block;position:relative;overflow:hidden}
