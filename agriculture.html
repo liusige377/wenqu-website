@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>农业百科 - 问渠</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@300;400;500&display=swap');
+
+    :root {
+      --bg: #0a0a0f;
+      --card: rgba(255,255,255,0.04);
+      --border: rgba(212,175,55,0.18);
+      --gold: #d4af37;
+      --gold-light: rgba(212,175,55,0.35);
+      --gold-dim: rgba(212,175,55,0.12);
+      --text: #e8e0d0;
+      --text-muted: rgba(232,224,208,0.5);
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Noto Sans SC', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    canvas#particles {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+
+    /* ── 顶部导航 ── */
+    .top-bar {
+      margin-bottom: 48px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--gold);
+      text-decoration: none;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+      transition: opacity 0.2s;
+      opacity: 0.75;
+    }
+    .back-link:hover { opacity: 1; }
+
+    /* ── 页头 ── */
+    .page-header {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .page-header h1 {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 6px;
+      margin-bottom: 20px;
+    }
+
+    .page-intro {
+      max-width: 680px;
+      margin: 0 auto 56px;
+      font-size: 15px;
+      line-height: 1.9;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* ── 工具卡片 ── */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .tool-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+    .tool-card:hover {
+      border-color: var(--gold-light);
+    }
+
+    .tool-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 22px 28px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .tool-icon {
+      font-size: 28px;
+      flex-shrink: 0;
+    }
+
+    .tool-title-group {
+      flex: 1;
+    }
+
+    .tool-title {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 2px;
+    }
+
+    .tool-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .tool-toggle {
+      font-size: 20px;
+      color: var(--gold);
+      transition: transform 0.3s;
+      flex-shrink: 0;
+    }
+    .tool-card.open .tool-toggle {
+      transform: rotate(180deg);
+    }
+
+    .tool-body {
+      display: none;
+      padding: 0 28px 28px;
+      border-top: 1px solid var(--border);
+    }
+    .tool-card.open .tool-body {
+      display: block;
+    }
+
+    /* ── 表单元素 ── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field label {
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    .field input,
+    .field select {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: var(--text);
+      font-size: 14px;
+      font-family: 'Noto Sans SC', sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+      -moz-appearance: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: var(--gold);
+    }
+
+    .field select {
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23d4af37' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+    }
+
+    .field select option {
+      background: #1a1a24;
+    }
+
+    /* ── 结果区 ── */
+    .result-box {
+      margin-top: 20px;
+      background: rgba(212,175,55,0.06);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 22px;
+      font-size: 14px;
+      line-height: 1.8;
+      display: none;
+    }
+    .result-box.visible {
+      display: block;
+    }
+
+    .result-box .result-row {
+      display: flex;
+      gap: 8px;
+    }
+    .result-box .result-label {
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .result-box .result-val {
+      color: var(--gold);
+      font-weight: 500;
+    }
+
+    .result-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 12px 0;
+    }
+
+    /* ── 警告提示 ── */
+    .alert {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      display: none;
+    }
+    .alert.error {
+      display: block;
+      background: rgba(255,80,80,0.1);
+      border: 1px solid rgba(255,80,80,0.3);
+      color: #ff8888;
+    }
+    .alert.warning {
+      display: block;
+      background: rgba(212,175,55,0.08);
+      border: 1px solid var(--border);
+      color: var(--gold);
+    }
+
+    /* ── 饲料动态成分 ── */
+    .feed-items {
+      margin-top: 16px;
+    }
+
+    .feed-item {
+      display: grid;
+      grid-template-columns: 1fr 120px 36px;
+      gap: 10px;
+      align-items: end;
+      margin-bottom: 12px;
+    }
+
+    .btn-remove {
+      background: rgba(255,80,80,0.15);
+      border: 1px solid rgba(255,80,80,0.3);
+      color: #ff8888;
+      border-radius: 8px;
+      width: 36px;
+      height: 38px;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .btn-remove:hover {
+      background: rgba(255,80,80,0.25);
+    }
+
+    .feed-total {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .feed-total.over { color: #ff8888; }
+    .feed-total.ok { color: #88ff88; }
+
+    .feed-result {
+      margin-top: 16px;
+    }
+
+    .feed-result-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    .feed-result-item .fr-name { color: var(--text); }
+    .feed-result-item .fr-weight { color: var(--gold); font-weight: 500; }
+
+    /* ── 底部 ── */
+    .footer {
+      text-align: center;
+      margin-top: 64px;
+      padding-top: 28px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: rgba(232,224,208,0.25);
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<div class="wrapper">
+
+  <div class="top-bar">
+    <a href="index.html" class="back-link">← 返回首页</a>
+  </div>
+
+  <div class="page-header">
+    <h1>🌾 农业百科</h1>
+    <p class="page-intro">
+      汇集常用农业计算工具，涵盖土地面积换算、农作物产量估算、饲料配比、化肥用量及养殖密度等方面，<br>
+      辅助农业生产决策。数据仅供参考，实际使用请结合当地实际情况与专业人士建议。
+    </p>
+  </div>
+
+  <div class="tools-grid">
+
+    <!-- ══ 1. 亩公顷换算 ══ -->
+    <div class="tool-card open" id="mu">
+      <div class="tool-header" onclick="toggleCard(this)">
+        <span class="tool-icon">📐</span>
+        <div class="tool-title-group">
+          <div class="tool-title">亩·公顷换算</div>
+          <div class="tool-subtitle">面积单位快速互转 · 1亩 = 666.67 m² · 1公顷 = 15亩 = 10000 m²</div>
+        </div>
+        <span class="tool-toggle">▾</span>
+      </div>
+      <div class="tool-body">
+        <div class="form-grid">
+          <div class="field">
+            <label>亩</label>
+            <input type="number" id="mu-mu" placeholder="输入亩数" oninput="calcMu(this)" step="any">
+          </div>
+          <div class="field">
+            <label>公顷</label>
+            <input type="number" id="mu-ha" placeholder="输入公顷数" oninput="calcMu(this)" step="any">
+          </div>
+          <div class="field">
+            <label>平方米 m²</label>
+            <input type="number" id="mu-sqm" placeholder="输入平方米" oninput="calcMu(this)" step="any">
+          </div>
+        </div>
+        <div class="result-box" id="mu-result"></div>
+      </div>
+    </div>
+
+    <!-- ══ 2. 农作物产量计算 ══ -->
+    <div class="tool-card" id="yield">
+      <div class="tool-header" onclick="toggleCard(this)">
+        <span class="tool-icon">🌾</span>
+        <div class="tool-title-group">
+          <div class="tool-title">农作物产量计算</div>
+          <div class="tool-subtitle">根据面积与亩产估算总产量</div>
+        </div>
+        <span class="tool-toggle">▾</span>
+      </div>
+      <div class="tool-body">
+        <div class="form-grid">
+          <div class="field">
+            <label>种植面积（亩）</label>
+            <input type="number" id="y-area" placeholder="例：100" step="any" min="0">
+          </div>
+          <div class="field">
+            <label>作物类型</label>
+            <select id="y-crop" onchange="yLoadDefault()">
+              <option value="800">水稻（默认 800斤/亩）</option>
+              <option value="700">小麦（默认 700斤/亩）</option>
+              <option value="900">玉米（默认 900斤/亩）</option>
+              <option value="400">大豆（默认 400斤/亩）</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>亩产（斤/亩）</label>
+            <input type="number" id="y-rate" placeholder="可手动修改" step="any" min="0">
+          </div>
+        </div>
+        <div style="margin-top:16px; display:flex; gap:10px;">
+          <button class="calc-btn" onclick="calcYield()">计算产量</button>
+          <button class="calc-btn secondary" onclick="resetYield()">重置</button>
+        </div>
+        <div class="result-box" id="y-result"></div>
+      </div>
+    </div>
+
+    <!-- ══ 3. 饲料配比计算 ══ -->
+    <div class="tool-card" id="feed">
+      <div class="tool-header" onclick="toggleCard(this)">
+        <span class="tool-icon">🐔</span>
+        <div class="tool-title-group">
+          <div class="tool-title">饲料配比计算</div>
+          <div class="tool-subtitle">按比例分配各成分重量 · 比例总和须为 100%</div>
+        </div>
+        <span class="tool-toggle">▾</span>
+      </div>
+      <div class="tool-body">
+        <div class="form-grid">
+          <div class="field">
+            <label>总重量（公斤）</label>
+            <input type="number" id="f-total" placeholder="输入总重量" step="any" min="0" oninput="calcFeed()">
+          </div>
+        </div>
+        <div class="feed-items" id="f-items"></div>
+        <div style="margin-top:12px; display:flex; gap:10px; align-items:center;">
+          <button class="calc-btn secondary" onclick="addFeedItem()">+ 添加成分</button>
+          <span class="feed-total" id="f-total-pct">比例合计：0%</span>
+        </div>
+        <div class="alert" id="f-alert"></div>
+        <div class="feed-result" id="f-result"></div>
+      </div>
+    </div>
+
+    <!-- ══ 4. 化肥用量计算 ══ -->
+    <div class="tool-card" id="fert">
+      <div class="tool-header" onclick="toggleCard(this)">
+        <span class="tool-icon">🧪</span>
+        <div class="tool-title-group">
+          <div class="tool-title">化肥用量计算</div>
+          <div class="tool-subtitle">根据面积与每亩用量估算总需肥量</div>
+        </div>
+        <span class="tool-toggle">▾</span>
+      </div>
+      <div class="tool-body">
+        <div class="form-grid">
+          <div class="field">
+            <label>种植面积（亩）</label>
+            <input type="number" id="ft-area" placeholder="输入面积" step="any" min="0">
+          </div>
+          <div class="field">
+            <label>化肥类型</label>
+            <select id="ft-type" onchange="ftLoadDefault()">
+              <option value="20">尿素（默认 20 公斤/亩）</option>
+              <option value="50">复合肥（默认 50 公斤/亩）</option>
+              <option value="30">磷酸二铵（默认 30 公斤/亩）</option>
+              <option value="15">氯化钾（默认 15 公斤/亩）</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>每亩用量（公斤/亩）</label>
+            <input type="number" id="ft-rate" placeholder="可手动修改" step="any" min="0">
+          </div>
+        </div>
+        <div style="margin-top:16px; display:flex; gap:10px;">
+          <button class="calc-btn" onclick="calcFert()">计算用量</button>
+          <button class="calc-btn secondary" onclick="resetFert()">重置</button>
+        </div>
+        <div class="result-box" id="ft-result"></div>
+        <div class="alert warning" style="margin-top:14px;" id="ft-note">
+          ⚠️ 仅作参考，实际用量请结合土壤情况、作物需求及当地农业专家建议。
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ 5. 养殖密度计算 ══ -->
+    <div class="tool-card" id="breed">
+      <div class="tool-header" onclick="toggleCard(this)">
+        <span class="tool-icon">🐟</span>
+        <div class="tool-title-group">
+          <div class="tool-title">养殖密度计算</div>
+          <div class="tool-subtitle">根据面积与放养密度估算总放养量</div>
+        </div>
+        <span class="tool-toggle">▾</span>
+      </div>
+      <div class="tool-body">
+        <div class="form-grid">
+          <div class="field">
+            <label>养殖面积（亩）</label>
+            <input type="number" id="b-area" placeholder="输入面积" step="any" min="0">
+          </div>
+          <div class="field">
+            <label>养殖品种</label>
+            <select id="b-type" onchange="bLoadDefault()">
+              <option value="300">草鱼（建议 300 尾/亩）</option>
+              <option value="400">鲢鱼（建议 400 尾/亩）</option>
+              <option value="500">鲤鱼（建议 500 尾/亩）</option>
+              <option value="20000">虾（建议 20000 尾/亩）</option>
+              <option value="1000">螃蟹（建议 1000 尾/亩）</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>建议密度（尾/亩）</label>
+            <input type="number" id="b-rate" placeholder="可手动修改" step="any" min="0">
+          </div>
+        </div>
+        <div style="margin-top:16px; display:flex; gap:10px;">
+          <button class="calc-btn" onclick="calcBreed()">计算放养量</button>
+          <button class="calc-btn secondary" onclick="resetBreed()">重置</button>
+        </div>
+        <div class="result-box" id="b-result"></div>
+      </div>
+    </div>
+
+  </div><!-- /.tools-grid -->
+
+  <div class="footer">
+    问渠 · 农业百科 &nbsp;|&nbsp; 数据仅供参考，请结合实际情况使用
+  </div>
+
+</div><!-- /.wrapper -->
+
+<script>
+/* ─────────────────────────────────────────────
+   粒子背景（与主页一致）
+───────────────────────────────────────────── */
+(function(){
+  const canvas = document.getElementById('particles');
+  const ctx = canvas.getContext('2d');
+  let W, H, pts = [];
+
+  function resize(){
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function mkPt(){
+    return { x: Math.random()*W, y: Math.random()*H,
+             r: Math.random()*1.5+0.5,
+             vx:(Math.random()-0.5)*0.4,
+             vy:(Math.random()-0.5)*0.4,
+             a: Math.random()*0.5+0.1 };
+  }
+
+  resize();
+  for(let i=0;i<80;i++) pts.push(mkPt());
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    for(let i=0;i<pts.length;i++){
+      const p = pts[i];
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle = `rgba(212,175,55,${p.a})`;
+      ctx.fill();
+      p.x += p.vx; p.y += p.vy;
+      if(p.x<0||p.x>W) p.vx*=-1;
+      if(p.y<0||p.y>H) p.vy*=-1;
+    }
+    // 连线
+    for(let i=0;i<pts.length;i++){
+      for(let j=i+1;j<pts.length;j++){
+        const dx = pts[i].x-pts[j].x, dy = pts[i].y-pts[j].y;
+        const d = Math.sqrt(dx*dx+dy*dy);
+        if(d<120){
+          ctx.beginPath();
+          ctx.moveTo(pts[i].x,pts[i].y);
+          ctx.lineTo(pts[j].x,pts[j].y);
+          ctx.strokeStyle = `rgba(212,175,55,${0.06*(1-d/120)})`;
+          ctx.lineWidth = 0.6;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+  window.addEventListener('resize',()=>{resize();});
+})();
+
+/* ─────────────────────────────────────────────
+   卡片折叠
+───────────────────────────────────────────── */
+function toggleCard(el){
+  const card = el.closest('.tool-card');
+  card.classList.toggle('open');
+}
+
+/* ══════════════════════════════════════════════
+   1. 亩公顷换算
+══════════════════════════════════════════════ */
+function round2(v){ return Math.round(v*100)/100; }
+
+function calcMu(src){
+  const MU  = 666.67;
+  const HA  = 10000;
+  const mVal = document.getElementById('mu-mu');
+  const hVal = document.getElementById('mu-ha');
+  const sVal = document.getElementById('mu-sqm');
+
+  if(src===mVal && src.value!==''){
+    const mu = parseFloat(src.value)||0;
+    hVal.value = round2(mu/15).toString();
+    sVal.value = round2(mu*MU).toString();
+  } else if(src===hVal && src.value!==''){
+    const ha = parseFloat(src.value)||0;
+    mVal.value = round2(ha*15).toString();
+    sVal.value = round2(ha*HA).toString();
+  } else if(src===sVal && src.value!==''){
+    const sqm = parseFloat(src.value)||0;
+    mVal.value = round2(sqm/MU).toString();
+    hVal.value = round2(sqm/HA).toString();
+  }
+}
+
+/* ══════════════════════════════════════════════
+   2. 农作物产量计算
+══════════════════════════════════════════════ */
+function yLoadDefault(){
+  const sel = document.getElementById('y-crop');
+  document.getElementById('y-rate').value = sel.value;
+}
+
+function calcYield(){
+  const area = parseFloat(document.getElementById('y-area').value);
+  const rate = parseFloat(document.getElementById('y-rate').value);
+  const box  = document.getElementById('y-result');
+
+  if(isNaN(area)||isNaN(rate)||area<=0||rate<=0){
+    box.classList.remove('visible');
+    return;
+  }
+  const totalJin = area * rate;
+  const totalTon = totalJin / 2000;
+  box.innerHTML = `
+    <div class="result-row"><span class="result-label">种植面积：</span><span class="result-val">${round2(area)} 亩</span></div>
+    <hr class="result-divider">
+    <div class="result-row"><span class="result-label">总产量：</span><span class="result-val">${round2(totalJin)} 斤</span></div>
+    <div class="result-row"><span class="result-label">总产量：</span><span class="result-val">${round2(totalTon)} 吨</span></div>
+  `;
+  box.classList.add('visible');
+}
+
+function resetYield(){
+  document.getElementById('y-area').value = '';
+  document.getElementById('y-crop').selectedIndex = 0;
+  document.getElementById('y-rate').value = '';
+  document.getElementById('y-result').classList.remove('visible');
+}
+
+/* ══════════════════════════════════════════════
+   3. 饲料配比计算
+══════════════════════════════════════════════ */
+let feedItems = [
+  {name:'', pct:0},{name:'', pct:0}
+];
+
+function renderFeed(){
+  const cont = document.getElementById('f-items');
+  cont.innerHTML = '';
+  feedItems.forEach((it,i)=>{
+    const div = document.createElement('div');
+    div.className = 'feed-item';
+    div.innerHTML = `
+      <div class="field">
+        <label>成分名称</label>
+        <input type="text" placeholder="如：玉米粉" value="${it.name}" oninput="feedItems[${i}].name=this.value; calcFeed();">
+      </div>
+      <div class="field">
+        <label>比例 (%)</label>
+        <input type="number" placeholder="0" min="0" max="100" value="${it.pct||''}" oninput="feedItems[${i}].pct=parseFloat(this.value)||0; calcFeed();">
+      </div>
+      ${feedItems.length>2?`<button class="btn-remove" onclick="rmFeed(${i})">×</button>`:'<div></div>'}
+    `;
+    cont.appendChild(div);
+  });
+  updateFeedTotal();
+}
+
+function addFeedItem(){
+  if(feedItems.length>=5) return;
+  feedItems.push({name:'',pct:0});
+  renderFeed();
+}
+
+function rmFeed(i){
+  feedItems.splice(i,1);
+  renderFeed();
+}
+
+function updateFeedTotal(){
+  const total = feedItems.reduce((s,i)=>s+(parseFloat(i.pct)||0),0);
+  const el = document.getElementById('f-total-pct');
+  el.textContent = `比例合计：${round2(total)}%`;
+  el.className = 'feed-total ' + (Math.abs(total-100)<0.01?'ok':'over');
+}
+
+function calcFeed(){
+  updateFeedTotal();
+  const totalKg = parseFloat(document.getElementById('f-total').value)||0;
+  const alertEl = document.getElementById('f-alert');
+  const resultEl = document.getElementById('f-result');
+
+  const pct = feedItems.reduce((s,i)=>s+(parseFloat(i.pct)||0),0);
+
+  if(pct!==100 && pct>0){
+    alertEl.className = 'alert error';
+    alertEl.textContent = `⚠ 比例合计为 ${round2(pct)}%，需等于 100% 才能计算。`;
+    resultEl.innerHTML = '';
+    return;
+  }
+  alertEl.className = 'alert';
+
+  if(totalKg<=0 || pct!==100){
+    resultEl.innerHTML = '';
+    return;
+  }
+
+  let html = '';
+  feedItems.forEach(it=>{
+    const name = it.name||'（未命名）';
+    const w = round2(totalKg * (parseFloat(it.pct)||0) / 100);
+    html += `
+      <div class="feed-result-item">
+        <span class="fr-name">${name}</span>
+        <span class="fr-weight">${w} 公斤</span>
+      </div>`;
+  });
+  resultEl.innerHTML = html;
+}
+
+renderFeed();
+
+/* ══════════════════════════════════════════════
+   4. 化肥用量计算
+══════════════════════════════════════════════ */
+function ftLoadDefault(){
+  const sel = document.getElementById('ft-type');
+  document.getElementById('ft-rate').value = sel.value;
+}
+
+function calcFert(){
+  const area = parseFloat(document.getElementById('ft-area').value);
+  const rate = parseFloat(document.getElementById('ft-rate').value);
+  const box  = document.getElementById('ft-result');
+
+  if(isNaN(area)||isNaN(rate)||area<=0||rate<=0){
+    box.classList.remove('visible');
+    return;
+  }
+  const totalKg = area * rate;
+  const totalTon = totalKg / 1000;
+  box.innerHTML = `
+    <div class="result-row"><span class="result-label">种植面积：</span><span class="result-val">${round2(area)} 亩</span></div>
+    <hr class="result-divider">
+    <div class="result-row"><span class="result-label">总用量：</span><span class="result-val">${round2(totalKg)} 公斤</span></div>
+    <div class="result-row"><span class="result-label">总用量：</span><span class="result-val">${round2(totalTon)} 吨</span></div>
+  `;
+  box.classList.add('visible');
+}
+
+function resetFert(){
+  document.getElementById('ft-area').value = '';
+  document.getElementById('ft-type').selectedIndex = 0;
+  document.getElementById('ft-rate').value = '';
+  document.getElementById('ft-result').classList.remove('visible');
+}
+
+/* ══════════════════════════════════════════════
+   5. 养殖密度计算
+══════════════════════════════════════════════ */
+function bLoadDefault(){
+  const sel = document.getElementById('b-type');
+  document.getElementById('b-rate').value = sel.value;
+}
+
+function calcBreed(){
+  const area = parseFloat(document.getElementById('b-area').value);
+  const rate = parseFloat(document.getElementById('b-rate').value);
+  const box  = document.getElementById('b-result');
+
+  if(isNaN(area)||isNaN(rate)||area<=0||rate<=0){
+    box.classList.remove('visible');
+    return;
+  }
+  const total = area * rate;
+  const totalW = total / 10000;
+  box.innerHTML = `
+    <div class="result-row"><span class="result-label">养殖面积：</span><span class="result-val">${round2(area)} 亩</span></div>
+    <hr class="result-divider">
+    <div class="result-row"><span class="result-label">总放养量：</span><span class="result-val">${Math.round(total)} 尾</span></div>
+    <div class="result-row"><span class="result-label">总放养量：</span><span class="result-val">${round2(totalW)} 万尾</span></div>
+  `;
+  box.classList.add('visible');
+}
+
+function resetBreed(){
+  document.getElementById('b-area').value = '';
+  document.getElementById('b-type').selectedIndex = 0;
+  document.getElementById('b-rate').value = '';
+  document.getElementById('b-result').classList.remove('visible');
+}
+</script>
+
+<style>
+.calc-btn {
+  background: var(--gold);
+  color: #0a0a0f;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-family: 'Noto Sans SC', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  letter-spacing: 1px;
+}
+.calc-btn:hover { opacity: 0.85; }
+
+.calc-btn.secondary {
+  background: rgba(255,255,255,0.08);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  padding: 10px 18px;
+}
+.calc-btn.secondary:hover {
+  border-color: var(--gold-light);
+  color: var(--text);
+}
+</style>
+
+</body>
+</html>
