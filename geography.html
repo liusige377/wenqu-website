@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>天文地理 — 问渠</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif;background:#0a0a0f;color:#e8e8e8;min-height:100vh;overflow-x:hidden}
+canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.container{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 20px}
+header{padding:30px 0 20px;text-align:center}
+.nav-back{display:inline-flex;align-items:center;gap:6px;color:#d4af37;text-decoration:none;font-size:.9rem;padding:8px 16px;border:1px solid rgba(212,175,55,.3);border-radius:8px}
+.nav-back:hover{background:rgba(212,175,55,.1)}
+header h1{font-size:2rem;color:#d4af37;margin:15px 0 8px}
+header p{color:#888;font-size:.9rem}
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;padding-bottom:40px}
+.tool-card{background:rgba(255,255,255,.04);border:1px solid rgba(212,175,55,.18);border-radius:12px;overflow:hidden}
+.tool-header{width:100%;background:none;border:none;color:#e8e8e8;padding:18px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:1rem;text-align:left;font-family:inherit}
+.tool-header:hover{background:rgba(212,175,55,.06)}
+.tool-header h3{color:#d4af37;font-size:1rem}
+.tool-header .arrow{color:#d4af37;font-size:1.2rem;transition:transform .3s}
+.tool-body{padding:0 20px 20px;display:none}
+.tool-body.open{display:block}
+.form-row{display:flex;gap:8px;margin:8px 0;flex-wrap:wrap;align-items:center}
+input,select{background:rgba(255,255,255,.06);border:1px solid rgba(212,175,55,.2);color:#e8e8e8;padding:8px 12px;border-radius:6px;font-size:.9rem;width:100%}
+input[type="number"]{flex:1;min-width:80px}
+select{width:auto;min-width:120px}
+.btn{background:linear-gradient(135deg,#d4af37,#b8941f);color:#000;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-size:.9rem;font-weight:600;width:100%;margin-top:8px}
+.result-box{background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.3);border-radius:8px;padding:14px;margin-top:10px;font-size:.85rem;line-height:2;display:none;max-height:300px;overflow-y:auto}
+.result-box.show{display:block}
+.result-box .item{border-bottom:1px solid rgba(212,175,55,.1);padding:4px 0}
+.result-box .item:last-child{border:none}
+.result-box .label{color:#aaa}
+.result-box .value{color:#fff;font-weight:500;margin-left:8px}
+.result-box .highlight{color:#d4af37;font-weight:700}
+.country-flag{font-size:2rem;margin-right:8px}
+footer{text-align:center;padding:30px 0;color:#555;font-size:.8rem}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="container">
+  <header>
+    <a href="index.html" class="nav-back">&larr; 返回首页</a>
+    <h1>&#127757; 天文地理</h1>
+    <p>丈量天地 · 纵览寰球</p>
+  </header>
+  <div class="tools-grid">
+
+    <div class="tool-card" id="astro">
+      <button class="tool-header" onclick="toggle(this)"><h3>&#9808; 天文单位换算</h3><span class="arrow">▼</span></button>
+      <div class="tool-body">
+        <p style="color:#888;font-size:.85rem;margin-bottom:10px">输入数值，回车自动换算所有天文单位</p>
+        <div class="form-row"><input type="number" id="astro-val" placeholder="输入数值" oninput="calcAstro()"></div>
+        <div class="form-row"><select id="astro-unit" onchange="document.getElementById('astro-val').value&&calcAstro()"><option value="km">公里(km)</option><option value="m">米(m)</option><option value="au">天文单位(AU)</option><option value="ly">光年(ly)</option><option value="pc">秒差距(pc)</option></select></div>
+        <button class="btn" onclick="calcAstro()">换算</button>
+        <div class="result-box" id="astro-result"></div>
+      </div>
+    </div>
+
+    <div class="tool-card" id="density">
+      <button class="tool-header" onclick="toggle(this)"><h3>&#9878; 人口密度计算</h3><span class="arrow">▼</span></button>
+      <div class="tool-body">
+        <div class="form-row"><input type="number" id="den-pop" placeholder="人口数量（万）" onkeydown="if(event.key==='Enter')calcDensity()"></div>
+        <div class="form-row"><input type="number" id="den-area" placeholder="面积（km&sup2;）" onkeydown="if(event.key==='Enter')calcDensity()"></div>
+        <button class="btn" onclick="calcDensity()">计算</button>
+        <div class="result-box" id="den-result"></div>
+      </div>
+    </div>
+
+    <div class="tool-card" id="coords">
+      <button class="tool-header" onclick="toggle(this)"><h3>&#128205; 经纬度换算</h3><span class="arrow">▼</span></button>
+      <div class="tool-body">
+        <p style="color:#888;font-size:.85rem;margin-bottom:10px">输入十进制度数，自动换算度分秒</p>
+        <div class="form-row"><input type="number" id="coord-dec" placeholder="十进制度数（如：116.4074）" step="0.0001" onkeydown="if(event.key==='Enter')calcCoords()"></div>
+        <div class="form-row"><select id="coord-type"><option value="lng">经度</option><option value="lat">纬度</option></select></div>
+        <button class="btn" onclick="calcCoords()">换算</button>
+        <div class="result-box" id="coord-result"></div>
+      </div>
+    </div>
+
+    <div class="tool-card" id="altitude">
+      <button class="tool-header" onclick="toggle(this)"><h3>&#9877; 海拔气压换算</h3><span class="arrow">▼</span></button>
+      <div class="tool-body">
+        <div class="form-row"><input type="number" id="alt-val" placeholder="输入海拔（米）" onkeydown="if(event.key==='Enter')calcAlt()"></div>
+        <div class="form-row"><select id="alt-type" onchange="document.getElementById('alt-val').value&&calcAlt()"><option value="toP">海拔&rarr;气压</option><option value="toA">气压&rarr;海拔</option></select></div>
+        <div class="form-row" id="alt-pressure-row" style="display:none"><input type="number" id="alt-pres" placeholder="气压（hPa）"></div>
+        <button class="btn" onclick="calcAlt()">计算</button>
+        <div class="result-box" id="alt-result"></div>
+      </div>
+    </div>
+
+    <div class="tool-card" id="compare">
+      <button class="tool-header" onclick="toggle(this)"><h3>&#127463;&#127480; 国家城市对比</h3><span class="arrow">▼</span></button>
+      <div class="tool-body">
+        <div class="form-row"><select id="cmp-a" onchange="calcCompare()"><option value="">选择第一个国家/城市</option><option value="中国">中国</option><option value="北京">北京</option><option value="上海">上海</option><option value="成都">成都</option><option value="美国">美国</option><option value="纽约">纽约</option><option value="洛杉矶">洛杉矶</option><option value="英国">英国</option><option value="伦敦">伦敦</option><option value="日本">日本</option><option value="东京">东京</option><option value="法国">法国</option><option value="巴黎">巴黎</option><option value="德国">德国</option><option value="柏林">柏林</option><option value="俄罗斯">俄罗斯</option><option value="莫斯科">莫斯科</option><option value="韩国">韩国</option><option value="首尔">首尔</option><option value="新加坡">新加坡</option><option value="澳大利亚">澳大利亚</option><option value="悉尼">悉尼</option></select></div>
+        <div class="form-row"><select id="cmp-b" onchange="calcCompare()"><option value="">选择第二个国家/城市</option><option value="中国">中国</option><option value="北京">北京</option><option value="上海">上海</option><option value="成都">成都</option><option value="美国">美国</option><option value="纽约">纽约</option><option value="洛杉矶">洛杉矶</option><option value="英国">英国</option><option value="伦敦">伦敦</option><option value="日本">日本</option><option value="东京">东京</option><option value="法国">法国</option><option value="巴黎">巴黎</option><option value="德国">德国</option><option value="柏林">柏林</option><option value="俄罗斯">俄罗斯</option><option value="莫斯科">莫斯科</option><option value="韩国">韩国</option><option value="首尔">首尔</option><option value="新加坡">新加坡</option><option value="澳大利亚">澳大利亚</option><option value="悉尼">悉尼</option></select></div>
+        <div class="result-box" id="cmp-result"></div>
+      </div>
+    </div>
+
+  </div>
+  <footer>&copy; 2026 问渠 &middot; 有问必有答</footer>
+</div>
+<script>
+(function(){
+  var canvas=document.getElementById('bg'),ctx=canvas.getContext('2d'),particles=[],w,h;
+  function resize(){w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight}
+  resize();window.addEventListener('resize',resize);
+  for(var i=0;i<80;i++)particles.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.5+0.3,vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,alpha:Math.random()*0.5+0.1});
+  function draw(){ctx.clearRect(0,0,w,h);for(var p of particles){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>w)p.vx*=-1;if(p.y<0||p.y>h)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(212,175,55,'+p.alpha+')';ctx.fill()}for(var i=0;i<particles.length;i++)for(var j=i+1;j<particles.length;j++){var dx=particles[i].x-particles[j].x,dy=particles[i].y-particles[j].y,dist=Math.sqrt(dx*dx+dy*dy);if(dist<150){ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.strokeStyle='rgba(212,175,55,'+(0.06*(1-dist/150))+')';ctx.lineWidth=0.5;ctx.stroke()}}requestAnimationFrame(draw);}draw();
+})();
+function toggle(btn){var body=btn.nextElementSibling,arrow=btn.querySelector('.arrow');body.classList.toggle('open');arrow.textContent=body.classList.contains('open')?'&#9650;':'&#9660;'}
+function show(el,html){el.innerHTML=html;el.classList.add('show')}
+
+function fmt(v){return v>=1e6?(v/1e6).toFixed(2)+'M':(v>=1000?v.toLocaleString():(v<0.01&&v!==0?v.toExponential(3):v.toFixed(4)))}
+
+function calcAstro(){
+  var v=parseFloat(document.getElementById('astro-val').value);
+  var u=document.getElementById('astro-unit').value;
+  var el=document.getElementById('astro-result');
+  if(!v&&v!==0){el.classList.remove('show');return}
+  var factors={km:{m:1000,km:1,au:1/1.496e8,ly:1/9.461e12,pc:1/3.086e13},au:{km:1.496e8,m:1.496e11,au:1,ly:1/63241,pc:1/206265},ly:{km:9.461e12,m:9.461e15,au:63241,ly:1,pc:3.26156},pc:{km:3.086e13,m:3.086e16,au:206265,ly:3.26156,pc:1}};
+  var f=factors[u];
+  var km=v*f.km;
+  var items={km:'公里: '+fmt(km),m:'米: '+fmt(km*1000),au:'天文单位: '+fmt(km/1.496e8),ly:'光年: '+fmt(km/9.461e12),pc:'秒差距: '+fmt(km/3.086e13)};
+  var html='<div class="item"><span class="label">换算结果</span></div>';
+  for(var k in items)html+='<div class="item"><span class="label">'+k.toUpperCase()+'</span><span class="highlight">'+items[k].split(': ')[1]+'</span></div>';
+  show(el,html);
+}
+
+function calcDensity(){
+  var pop=parseFloat(document.getElementById('den-pop').value)*10000;
+  var area=parseFloat(document.getElementById('den-area').value);
+  var el=document.getElementById('den-result');
+  if(!pop||!area){show(el,'请输入人口和面积');return}
+  var d=pop/area;
+  var cats=[{max:1,name:'极低密度区（荒漠、冻原）'},{max:100,name:'低密度区（草原、森林）'},{max:300,name:'中等密度区（农业区）'},{max:500,name:'较高密度（城镇）'},{max:1000,name:'高密度区（城市）'},{max:Infinity,name:'极高密度（大都市核心）'}];
+  var cat=cats.find(function(c){return d<=c.max})||cats[cats.length-1];
+  show(el,'<div class="item"><span class="label">人口</span><span class="value">'+(pop/10000).toFixed(0)+'万</span></div><div class="item"><span class="label">面积</span><span class="value">'+area.toLocaleString()+' km&sup2;</span></div><div class="item"><span class="label">人口密度</span><span class="highlight" style="font-size:1.3em">'+d.toFixed(2)+' 人/km&sup2;</span></div><div class="item"><span class="label">区域类型</span><span class="value">'+cat.name+'</span></div>');
+}
+
+function calcCoords(){
+  var dec=parseFloat(document.getElementById('coord-dec').value);
+  var type=document.getElementById('coord-type').value;
+  var el=document.getElementById('coord-result');
+  if(!dec&&dec!==0){el.classList.remove('show');return}
+  var abs=Math.abs(dec);
+  var d=Math.floor(abs);
+  var m=Math.floor((abs-d)*60);
+  var s=((abs-d)*60-m)*60;
+  var dir=type==='lng'?(dec>=0?'东经 E':'西经 W'):(dec>=0?'北纬 N':'南纬 S');
+  show(el,'<div class="item"><span class="label">十进制</span><span class="highlight">'+dec.toFixed(6)+'&deg;</span></div><div class="item"><span class="label">度分秒</span><span class="highlight">'+d+'&deg; '+m+'\' '+s.toFixed(2)+'" '+dir+'</span></div><div class="item"><span class="label">弧度</span><span class="value">'+(dec*Math.PI/180).toFixed(8)+' rad</span></div>');
+}
+
+function calcAlt(){
+  var type=document.getElementById('alt-type').value;
+  var el=document.getElementById('alt-result');
+  if(type==='toP'){
+    var alt=parseFloat(document.getElementById('alt-val').value);
+    if(!alt&&alt!==0){el.classList.remove('show');return}
+    var p=1013.25*Math.pow(1-0.0065*alt/288.15,5.255);
+    show(el,'<div class="item"><span class="label">海拔</span><span class="highlight">'+alt.toLocaleString()+' m</span></div><div class="item"><span class="label">标准大气压</span><span class="highlight">'+(p/100).toFixed(2)+' hPa</span></div><div class="item"><span class="label">约</span><span class="value">'+(p/1013.25).toFixed(4)+' atm</span></div>');
+  }else{
+    var pres=parseFloat(document.getElementById('alt-pres').value);
+    if(!pres){el.classList.remove('show');return}
+    var alt=288.15/0.0065*(1-Math.pow(pres/1013.25,1/5.255));
+    show(el,'<div class="item"><span class="label">气压</span><span class="highlight">'+(pres/100).toFixed(2)+' hPa</span></div><div class="item"><span class="label">对应海拔</span><span class="highlight">'+(isNaN(alt)?'无效':alt.toFixed(0)+' m')+'</span></div>');
+  }
+}
+
+var CDATA={'中国':{area:9600000,pop:1412000000,cap:'北京',cur:'人民币 CNY',lang:'汉语',tz:'UTC+8',flag:'&#127465;&#127466;'},'北京':{area:16410,pop:21890000,cap:'北京',cur:'人民币 CNY',lang:'汉语',tz:'UTC+8',flag:'&#127465;&#127466;'},'上海':{area:6340,pop:24870000,cap:'上海',cur:'人民币 CNY',lang:'汉语',tz:'UTC+8',flag:'&#127465;&#127466;'},'成都':{area:14605,pop:21190000,cap:'成都',cur:'人民币 CNY',lang:'汉语',tz:'UTC+8',flag:'&#127465;&#127466;'},'美国':{area:9833520,pop:331900000,cap:'华盛顿',cur:'美元 USD',lang:'英语',tz:'UTC-5至-8',flag:'&#127482;&#127480;'},'纽约':{area:783,pop:8336817,cap:'纽约',cur:'美元 USD',lang:'英语',tz:'UTC-5',flag:'&#127482;&#127480;'},'洛杉矶':{area:1299,pop:3979576,cap:'洛杉矶',cur:'美元 USD',lang:'英语',tz:'UTC-8',flag:'&#127482;&#127480;'},'英国':{area:242495,pop:67886011,cap:'伦敦',cur:'英镑 GBP',lang:'英语',tz:'UTC+0',flag:'&#127468;&#127463;'},'伦敦':{area:1572,pop:8982000,cap:'伦敦',cur:'英镑 GBP',lang:'英语',tz:'UTC+0',flag:'&#127468;&#127463;'},'日本':{area:377975,pop:125802000,cap:'东京',cur:'日元 JPY',lang:'日语',tz:'UTC+9',flag:'&#127471;&#127477;'},'东京':{area:2194,pop:13960000,cap:'东京',cur:'日元 JPY',lang:'日语',tz:'UTC+9',flag:'&#127471;&#127477;'},'法国':{area:643801,pop:67750000,cap:'巴黎',cur:'欧元 EUR',lang:'法语',tz:'UTC+1',flag:'&#127467;&#127479;'},'巴黎':{area:105,pop:2161000,cap:'巴黎',cur:'欧元 EUR',lang:'法语',tz:'UTC+1',flag:'&#127467;&#127479;'},'德国':{area:357022,pop:83240000,cap:'柏林',cur:'欧元 EUR',lang:'德语',tz:'UTC+1',flag:'&#127468;&#127463;'},'柏林':{area:892,pop:3644826,cap:'柏林',cur:'欧元 EUR',lang:'德语',tz:'UTC+1',flag:'&#127468;&#127463;'},'俄罗斯':{area:17098242,pop:144100000,cap:'莫斯科',cur:'卢布 RUB',lang:'俄语',tz:'UTC+3至+12',flag:'&#127479;&#127482;'},'莫斯科':{area:2561,pop:12537954,cap:'莫斯科',cur:'卢布 RUB',lang:'俄语',tz:'UTC+3',flag:'&#127479;&#127482;'},'韩国':{area:100210,pop:51740000,cap:'首尔',cur:'韩元 KRW',lang:'韩语',tz:'UTC+9',flag:'&#127472;&#127469;'},'首尔':{area:605,pop:9776000,cap:'首尔',cur:'韩元 KRW',lang:'韩语',tz:'UTC+9',flag:'&#127472;&#127469;'},'新加坡':{area:733,pop:5454000,cap:'新加坡',cur:'新加坡元 SGD',lang:'英/汉/马来/泰米尔语',tz:'UTC+8',flag:'&#127468;&#127480;'},'澳大利亚':{area:7692024,pop:25690000,cap:'堪培拉',cur:'澳元 AUD',lang:'英语',tz:'UTC+8至+10',flag:'&#127462;&#127482;'},'悉尼':{area:12368,pop:5312000,cap:'悉尼',cur:'澳元 AUD',lang:'英语',tz:'UTC+10',flag:'&#127462;&#127482;'}};
+
+function calcCompare(){
+  var a=document.getElementById('cmp-a').value;
+  var b=document.getElementById('cmp-b').value;
+  var el=document.getElementById('cmp-result');
+  if(!a||!b){el.classList.remove('show');return}
+  var da=CDATA[a],db=CDATA[b];
+  if(!da||!db){show(el,'数据未收录');return}
+  var html='<div class="item"><span class="label">对比项</span><span class="label">'+a+'</span><span class="label">'+b+'</span></div>';
+  var rows=[['首都',da.cap,db.cap],['货币',da.cur,db.cur],['语言',da.lang,db.lang],['时区',da.tz,db.tz],['面积(km&sup2;)',da.area.toLocaleString(),db.area.toLocaleString()],['人口',da.pop.toLocaleString(),db.pop.toLocaleString()],['人口密度',(da.pop/da.area).toFixed(1),'人/km&sup2;',(db.pop/db.area).toFixed(1),'人/km&sup2;']];
+  for(var r of rows){
+    if(r.length===3)html+='<div class="item"><span class="label">'+r[0]+'</span><span class="value">'+r[1]+'</span><span class="value">'+r[2]+'</span></div>';
+    else html+='<div class="item"><span class="label">'+r[0]+'</span><span class="highlight">'+r[1]+' '+r[2]+'</span><span class="highlight">'+r[3]+' '+r[4]+'</span></div>';
+  }
+  show(el,html);
+}
+
+document.querySelector('.tool-body').classList.add('open');
+document.querySelector('.tool-header .arrow').innerHTML='&#9650;';
+</script>
+</body>
+</html>

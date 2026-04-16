@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数理医学 — 问渠</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif;background:#0a0a0f;color:#e8e8e8;min-height:100vh;overflow-x:hidden}
+canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.container{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 20px}
+header{padding:30px 0 20px;text-align:center}
+.nav-back{display:inline-flex;align-items:center;gap:6px;color:#d4af37;text-decoration:none;font-size:.9rem;padding:8px 16px;border:1px solid rgba(212,175,55,.3);border-radius:8px}
+.nav-back:hover{background:rgba(212,175,55,.1)}
+header h1{font-size:2rem;color:#d4af37;margin:15px 0 8px}
+header p{color:#888;font-size:.9rem}
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;padding-bottom:40px}
+.tool-card{background:rgba(255,255,255,.04);border:1px solid rgba(212,175,55,.18);border-radius:12px;overflow:hidden}
+.tool-header{width:100%;background:none;border:none;color:#e8e8e8;padding:18px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:1rem;text-align:left;font-family:inherit}
+.tool-header:hover{background:rgba(212,175,55,.06)}
+.tool-header h3{color:#d4af37;font-size:1rem}
+.tool-header .arrow{color:#d4af37;font-size:1.2rem;transition:transform .3s}
+.tool-body{padding:0 20px 20px;display:none}
+.tool-body.open{display:block}
+.form-row{display:flex;gap:8px;margin:8px 0;flex-wrap:wrap;align-items:center}
+input,select{background:rgba(255,255,255,.06);border:1px solid rgba(212,175,55,.2);color:#e8e8e8;padding:8px 12px;border-radius:6px;font-size:.9rem;width:100%}
+input[type="number"]{flex:1;min-width:80px}
+select{width:auto;min-width:100px}
+.btn{background:linear-gradient(135deg,#d4af37,#b8941f);color:#000;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-size:.9rem;font-weight:600;width:100%;margin-top:8px}
+.result-box{background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.3);border-radius:8px;padding:14px;margin-top:10px;font-size:.85rem;line-height:2;display:none}
+.result-box.show{display:block}
+.result-box .item{border-bottom:1px solid rgba(212,175,55,.1);padding:5px 0}
+.result-box .item:last-child{border:none}
+.result-box .label{color:#aaa}
+.result-box .value{color:#fff;font-weight:600;margin-left:8px}
+.result-box .highlight{color:#d4af37;font-weight:700;font-size:1.1em}
+.warning{background:rgba(255,80,80,.1);border:1px solid rgba(255,80,80,.3);border-radius:8px;padding:12px;margin-top:10px;color:#f88;font-size:.85rem;text-align:center}
+.tab-bar{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px}
+.tab-bar button{background:rgba(255,255,255,.06);border:1px solid rgba(212,175,55,.15);color:#aaa;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:.8rem;transition:all .2s}
+.tab-bar button.active,.tab-bar button:hover{background:rgba(212,175,55,.2);color:#d4af37;border-color:#d4af37}
+.q-list{margin-top:10px}
+.q-item{margin-bottom:14px;padding:10px;background:rgba(255,255,255,.03);border-radius:8px}
+.q-item .q-text{color:#e8e8e8;font-size:.9rem;margin-bottom:8px;line-height:1.5}
+.q-opts{display:flex;flex-direction:column;gap:4px}
+.q-opts button{background:rgba(255,255,255,.04);border:1px solid rgba(212,175,55,.15);color:#aaa;padding:7px 12px;border-radius:6px;cursor:pointer;font-size:.85rem;text-align:left;transition:all .2s}
+.q-opts button:hover{background:rgba(212,175,55,.1);color:#d4af37}
+.q-opts button.selected{background:rgba(212,175,55,.2);color:#d4af37;border-color:#d4af37}
+footer{text-align:center;padding:30px 0;color:#555;font-size:.8rem}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="container">
+  <header>
+    <a href="index.html" class="nav-back">← 返回首页</a>
+    <h1>📐 数理医学</h1>
+    <p>公式几何 · 健康计算</p>
+  </header>
+  <div class="tools-grid">
+
+    <div class="tool-card" id="formula">
+      <button class="tool-header" onclick="toggle(this)">
+        <h3>🧮 数学公式计算</h3>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="tool-body">
+        <div class="tab-bar" id="f-tabs">
+          <button class="active" onclick="switchF(0)">勾股定理</button>
+          <button onclick="switchF(1)">利率计算</button>
+          <button onclick="switchF(2)">排列组合</button>
+          <button onclick="switchF(3)">等差数列</button>
+          <button onclick="switchF(4)">等比数列</button>
+        </div>
+        <div id="f-panels">
+          <div class="f-panel" id="fp0">
+            <div class="form-row"><input type="number" id="fp0-a" placeholder="边a" onkeydown="if(event.key==='Enter')calcPyth()"> <input type="number" id="fp0-b" placeholder="边b" onkeydown="if(event.key==='Enter')calcPyth()"></div>
+            <div class="form-row"><input type="number" id="fp0-c" placeholder="已知c则留空" onkeydown="if(event.key==='Enter')calcPyth()"></div>
+            <button class="btn" onclick="calcPyth()">计算</button>
+            <div class="result-box" id="fp0-r"></div>
+          </div>
+          <div class="f-panel" id="fp1" style="display:none">
+            <div class="form-row"><input type="number" id="fp1-p" placeholder="本金(元)"> <input type="number" id="fp1-r" placeholder="年利率(%)" value="3"></div>
+            <div class="form-row"><input type="number" id="fp1-y" placeholder="期限(年)"></div>
+            <button class="btn" onclick="calcRate()">计算</button>
+            <div class="result-box" id="fp1-r"></div>
+          </div>
+          <div class="f-panel" id="fp2" style="display:none">
+            <div class="form-row"><input type="number" id="fp2-n" placeholder="总数量n"> <input type="number" id="fp2-r" placeholder="选取r个 (r≤n)" onkeydown="if(event.key==='Enter')calcPerm()"></div>
+            <button class="btn" onclick="calcPerm()">计算</button>
+            <div class="result-box" id="fp2-r"></div>
+          </div>
+          <div class="f-panel" id="fp3" style="display:none">
+            <div class="form-row"><input type="number" id="fp3-a1" placeholder="首项a₁"> <input type="number" id="fp3-d" placeholder="公差d" value="1"></div>
+            <div class="form-row"><input type="number" id="fp3-n" placeholder="项数n" onkeydown="if(event.key==='Enter')calcAP()"></div>
+            <button class="btn" onclick="calcAP()">计算</button>
+            <div class="result-box" id="fp3-r"></div>
+          </div>
+          <div class="f-panel" id="fp4" style="display:none">
+            <div class="form-row"><input type="number" id="fp4-a1" placeholder="首项a₁"> <input type="number" id="fp4-q" placeholder="公比q (≠1)"></div>
+            <div class="form-row"><input type="number" id="fp4-n" placeholder="项数n" onkeydown="if(event.key==='Enter')calcGP()"></div>
+            <button class="btn" onclick="calcGP()">计算</button>
+            <div class="result-box" id="fp4-r"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tool-card" id="geo">
+      <button class="tool-header" onclick="toggle(this)">
+        <h3>📐 几何面积体积</h3>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="tool-body">
+        <div class="tab-bar" id="g-tabs">
+          <button class="active" onclick="switchG(0)">矩形</button>
+          <button onclick="switchG(1)">三角形</button>
+          <button onclick="switchG(2)">圆/球</button>
+          <button onclick="switchG(3)">圆柱圆锥</button>
+          <button onclick="switchG(4)">梯形</button>
+        </div>
+        <div id="g-panels">
+          <div class="f-panel" id="gp0">
+            <div class="form-row"><input type="number" id="gp0-l" placeholder="长"> <input type="number" id="gp0-w" placeholder="宽" onkeydown="if(event.key==='Enter')calcRect()"></div>
+            <button class="btn" onclick="calcRect()">计算</button>
+            <div class="result-box" id="gp0-r"></div>
+          </div>
+          <div class="f-panel" id="gp1" style="display:none">
+            <div class="form-row"><input type="number" id="gp1-a" placeholder="底边a"> <input type="number" id="gp1-h" placeholder="高h" onkeydown="if(event.key==='Enter')calcTri()"></div>
+            <p style="color:#888;font-size:.8rem;margin:6px 0">或输入三边：</p>
+            <div class="form-row"><input type="number" id="gp1-a2" placeholder="边a"> <input type="number" id="gp1-b2" placeholder="边b"> <input type="number" id="gp1-c2" placeholder="边c" onkeydown="if(event.key==='Enter')calcTri()"></div>
+            <button class="btn" onclick="calcTri()">计算</button>
+            <div class="result-box" id="gp1-r"></div>
+          </div>
+          <div class="f-panel" id="gp2" style="display:none">
+            <div class="form-row"><input type="number" id="gp2-r" placeholder="半径" onkeydown="if(event.key==='Enter')calcCircle()"></div>
+            <button class="btn" onclick="calcCircle()">计算圆/球</button>
+            <div class="result-box" id="gp2-r"></div>
+          </div>
+          <div class="f-panel" id="gp3" style="display:none">
+            <div class="tab-bar" style="margin-bottom:8px">
+              <button class="active" onclick="switchG3(0)">圆柱</button>
+              <button onclick="switchG3(1)">圆锥</button>
+            </div>
+            <div class="form-row"><input type="number" id="gp3-r" placeholder="半径"> <input type="number" id="gp3-h" placeholder="高h" onkeydown="if(event.key==='Enter')calcCyl()"></div>
+            <button class="btn" onclick="calcCyl()">计算</button>
+            <div class="result-box" id="gp3-r"></div>
+          </div>
+          <div class="f-panel" id="gp4" style="display:none">
+            <div class="form-row"><input type="number" id="gp4-a" placeholder="上底"> <input type="number" id="gp4-b" placeholder="下底"> <input type="number" id="gp4-h" placeholder="高" onkeydown="if(event.key==='Enter')calcTrapezoid()"></div>
+            <button class="btn" onclick="calcTrapezoid()">计算</button>
+            <div class="result-box" id="gp4-r"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tool-card" id="dose">
+      <button class="tool-header" onclick="toggle(this)">
+        <h3>💊 药量剂量计算</h3>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="tool-body">
+        <div class="form-row"><input type="number" id="dose-w" placeholder="体重(kg)" min="1" max="200"></div>
+        <div class="form-row"><input type="number" id="dose-p" placeholder="每kg剂量(mg/kg)" value="10"></div>
+        <div class="form-row"><input type="number" id="dose-n" placeholder="每日次数(1-4)" value="3" min="1" max="4"></div>
+        <button class="btn" onclick="calcDose()">计算</button>
+        <div class="result-box" id="dose-result"></div>
+        <div class="warning">⚠️ 本工具仅供学习参考，用药请遵医嘱！</div>
+      </div>
+    </div>
+
+    <div class="tool-card" id="bmi">
+      <button class="tool-header" onclick="toggle(this)">
+        <h3>⚖️ BMI计算</h3>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="tool-body">
+        <div class="form-row"><input type="number" id="bmi-h" placeholder="身高(cm)" min="100" max="250"> <input type="number" id="bmi-w" placeholder="体重(kg)" min="20" max="200" onkeydown="if(event.key==='Enter')calcBMI()"></div>
+        <button class="btn" onclick="calcBMI()">计算</button>
+        <div class="result-box" id="bmi-result"></div>
+      </div>
+    </div>
+
+    <div class="tool-card" id="tizhi">
+      <button class="tool-header" onclick="toggle(this)">
+        <h3>🩺 中医体质测试</h3>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="tool-body">
+        <div class="q-list" id="tizhi-questions"></div>
+        <button class="btn" onclick="calcTizhi()" style="margin-top:16px">查看结果</button>
+        <div class="result-box" id="tizhi-result"></div>
+        <button class="btn" onclick="resetTizhi()" style="background:rgba(255,255,255,.1);color:#aaa;margin-top:8px">重新测试</button>
+      </div>
+    </div>
+
+  </div>
+  <footer>© 2026 问渠 · 有问必有答</footer>
+</div>
+<script>
+(function(){
+  var canvas=document.getElementById('bg'),ctx=canvas.getContext('2d'),particles=[],w,h;
+  function resize(){w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight}
+  resize();window.addEventListener('resize',resize);
+  for(var i=0;i<80;i++)particles.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.5+0.3,vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,alpha:Math.random()*0.5+0.1});
+  function draw(){ctx.clearRect(0,0,w,h);for(var p of particles){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>w)p.vx*=-1;if(p.y<0||p.y>h)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(212,175,55,${p.alpha})`;ctx.fill()}for(var i=0;i<particles.length;i++)for(var j=i+1;j<particles.length;j++){var dx=particles[i].x-particles[j].x,dy=particles[i].y-particles[j].y,dist=Math.sqrt(dx*dx+dy*dy);if(dist<150){ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.strokeStyle=`rgba(212,175,55,${0.06*(1-dist/150)})`;ctx.lineWidth=0.5;ctx.stroke()}}requestAnimationFrame(draw);}draw();
+})();
+function toggle(btn){var body=btn.nextElementSibling,arrow=btn.querySelector('.arrow');body.classList.toggle('open');arrow.textContent=body.classList.contains('open')?'▲':'▼'}
+function show(el,html){el.innerHTML=html;el.classList.add('show')}
+
+// 数学公式
+function switchF(i){document.querySelectorAll('#f-panels>div').forEach(function(p){p.style.display='none'});document.querySelectorAll('#f-tabs button').forEach(function(b){b.classList.remove('active')});document.getElementById('fp'+i).style.display='block';document.getElementById('f-tabs').children[i].classList.add('active')}
+function switchG(i){document.querySelectorAll('#g-panels>div').forEach(function(p){p.style.display='none'});document.querySelectorAll('#g-tabs button').forEach(function(b){b.classList.remove('active')});document.getElementById('gp'+i).style.display='block';document.getElementById('g-tabs').children[i].classList.add('active')}
+function switchG3(i){document.querySelectorAll('#g-panels #gp3>div.f-panel').forEach(function(p){p.style.display='none'});document.querySelectorAll('#gp3 .tab-bar button').forEach(function(b){b.classList.remove('active')});document.getElementById('gp3-'+i).style.display='block';document.getElementById('gp3').querySelector('.tab-bar').children[i].classList.add('active')}
+function fmt(v){return v>=1e6||(v<0.01&&v!==0)?v.toExponential(4):(v<1?v.toFixed(4):(v<1000?v.toFixed(2):v.toFixed(2)))}
+
+function calcPyth(){var a=parseFloat(document.getElementById('fp0-a').value),b=parseFloat(document.getElementById('fp0-b').value),c=parseFloat(document.getElementById('fp0-c').value),el=document.getElementById('fp0-r');if(isNaN(a)&&isNaN(b)&&isNaN(c)){show(el,'请输入至少两边');return}if(!isNaN(a)&&!isNaN(b)){var r=Math.sqrt(a*a+b*b);show(el,'<div class="item"><span class=label>已知a='+a+', b='+b+'</span></div><div class="item"><span class=label>斜边c = √(a²+b²)</span><span class=highlight>'+fmt(r)+'</span></div>');return}if(!isNaN(c)&&!isNaN(a)&&a<c){var r2=Math.sqrt(c*c-a*a);show(el,'<div class="item"><span class=label>已知a='+a+', c='+c+'</span></div><div class="item"><span class=label>另一边b = √(c²-a²)</span><span class=highlight>'+fmt(r2)+'</span></div>');return}if(!isNaN(c)&&!isNaN(b)&&b<c){var r3=Math.sqrt(c*c-b*b);show(el,'<div class="item"><span class=label>已知b='+b+', c='+c+'</span></div><div class="item"><span class=label>另一边a = √(c²-b²)</span><span class=highlight>'+fmt(r3)+'</span></div>');return}show(el,'请输入至少两边（勾股定理：a²+b²=c²）')}
+function calcRate(){var p=parseFloat(document.getElementById('fp1-p').value),r=parseFloat(document.getElementById('fp1-r').value)/100,y=parseInt(document.getElementById('fp1-y').value),el=document.getElementById('fp1-r');if(!p||!r||!y){show(el,'请填写全部字段');return}var interest=p*r*y,total=p+interest;show(el,'<div class="item"><span class=label>本金</span><span class=value>'+p.toLocaleString()+' 元</span></div><div class="item"><span class=label>利息</span><span class=highlight>'+interest.toLocaleString()+' 元</span></div><div class="item"><span class=label>本息合计</span><span class=highlight>'+total.toLocaleString()+' 元</span></div><div class="item"><span class=label>年利率</span><span class=value>'+(r*100).toFixed(2)+'% × '+y+'年</span></div>')}
+function calcPerm(){var n=parseInt(document.getElementById('fp2-n').value),r=parseInt(document.getElementById('fp2-r').value),el=document.getElementById('fp2-r');if(!n||!r||r>n){show(el,'请输入 n≥r 的整数');return}var fact=function(x){for(var s=1,i=2;i<=x;i++)s*=i;return s};var A=fact(n)/fact(n-r),C=fact(n)/(fact(r)*fact(n-r));show(el,'<div class="item"><span class=label>排列 A(n,r)=n!/(n-r)!</span><span class=highlight>'+A+'</span></div><div class="item"><span class=label>组合 C(n,r)=n!/[r!(n-r)!]</span><span class=highlight>'+C+'</span></div><div class="item"><span class=label>n='+n+', r='+r+'</span></div>')}
+function calcAP(){var a1=parseFloat(document.getElementById('fp3-a1').value),d=parseFloat(document.getElementById('fp3-d').value),n=parseInt(document.getElementById('fp3-n').value),el=document.getElementById('fp3-r');if(!a1||!d||!n){show(el,'请填写全部字段');return}var an=a1+(n-1)*d,sum=n*a1+(n-1)*n*d/2;show(el,'<div class="item"><span class=label>首项 a₁</span><span class=value>'+a1+'</span></div><div class="item"><span class=label>公差 d</span><span class=value>'+d+'</span></div><div class="item"><span class=label>项数 n</span><span class=value>'+n+'</span></div><div class="item"><span class=label>末项 aₙ = a₁+(n-1)d</span><span class=highlight>'+fmt(an)+'</span></div><div class="item"><span class=label>总和 Sₙ = n·a₁+n(n-1)d/2</span><span class=highlight>'+fmt(sum)+'</span></div>')}
+function calcGP(){var a1=parseFloat(document.getElementById('fp4-a1').value),q=parseFloat(document.getElementById('fp4-q').value),n=parseInt(document.getElementById('fp4-n').value),el=document.getElementById('fp4-r');if(!a1||!q||!n||q===1){show(el,'请填写全部字段（公比q不能为1）');return}var an=a1*Math.pow(q,n-1),sum=a1*(Math.pow(q,n)-1)/(q-1);show(el,'<div class="item"><span class=label>首项 a₁</span><span class=value>'+a1+'</span></div><div class="item"><span class=label>公比 q</span><span class=value>'+q+'</span></div><div class="item"><span class=label>项数 n</span><span class=value>'+n+'</span></div><div class="item"><span class=label>末项 aₙ = a₁·q^(n-1)</span><span class=highlight>'+fmt(an)+'</span></div><div class="item"><span class=label>总和 Sₙ = a₁(q^n-1)/(q-1)</span><span class=highlight>'+fmt(sum)+'</span></div>')}
+
+// 几何
+function calcRect(){var l=parseFloat(document.getElementById('gp0-l').value),w=parseFloat(document.getElementById('gp0-w').value),el=document.getElementById('gp0-r');if(!l||!w){show(el,'请输入长和宽');return}var area=l*w,peri=2*(l+w);show(el,'<div class="item"><span class=label>长×宽</span><span class=highlight>'+area.toFixed(2)+'</span></div><div class="item"><span class=label>周长 2(长+宽)</span><span class=value>'+peri.toFixed(2)+'</span></div>')}
+function calcTri(){var a=parseFloat(document.getElementById('gp1-a').value),h=parseFloat(document.getElementById('gp1-h').value),a2=parseFloat(document.getElementById('gp1-a2').value),b2=parseFloat(document.getElementById('gp1-b2').value),c2=parseFloat(document.getElementById('gp1-c2').value),el=document.getElementById('gp1-r');if(!isNaN(a)&&!isNaN(h)){show(el,'<div class="item"><span class=label>底×高÷2</span><span class=highlight>'+(a*h/2).toFixed(4)+'</span></div>');return}if(!isNaN(a2)&&!isNaN(b2)&&!isNaN(c2)){var s=(a2+b2+c2)/2,area=Math.sqrt(s*(s-a2)*(s-b2)*(s-c2));if(isNaN(area)){show(el,'<span style="color:#f88">三边无法构成三角形</span>');return}show(el,'<div class="item"><span class=label>海伦公式 √[s(s-a)(s-b)(s-c)]</span><span class=highlight>'+area.toFixed(4)+'</span></div>');return}show(el,'请输入底和高，或输入三边')}
+function calcCircle(){var r=parseFloat(document.getElementById('gp2-r').value),el=document.getElementById('gp2-r');if(!r){show(el,'请输入半径');return}show(el,'<div class="item"><span class=label>圆面积 πr²</span><span class=highlight>'+(Math.PI*r*r).toFixed(4)+'</span></div><div class="item"><span class=label>圆周长 2πr</span><span class=value>'+(2*Math.PI*r).toFixed(4)+'</span></div><div class="item"><span class=label>球表面积 4πr²</span><span class=highlight>'+(4*Math.PI*r*r).toFixed(4)+'</span></div><div class="item"><span class=label>球体积 ⁴⁄₃πr³</span><span class=highlight>'+(4/3*Math.PI*r*r*r).toFixed(4)+'</span></div>')}
+function calcCyl(){var r=parseFloat(document.getElementById('gp3-r').value),h=parseFloat(document.getElementById('gp3-h').value),el=document.getElementById('gp3-r');if(!r||!h){show(el,'请输入半径和高');return}var side=2*Math.PI*r*h,area=2*Math.PI*r*r+side,vol=Math.PI*r*r*h;show(el,'<div class="item"><span class=label>圆柱侧面积 2πrh</span><span class=value>'+side.toFixed(4)+'</span></div><div class="item"><span class=label>圆柱表面积</span><span class=value>'+area.toFixed(4)+'</span></div><div class="item"><span class=label>圆柱体积 πr²h</span><span class=highlight>'+vol.toFixed(4)+'</span></div><div class="item"><span class=label>圆锥体积 ⅓πr²h</span><span class=highlight>'+(vol/3).toFixed(4)+'</span></div>')}
+function calcTrapezoid(){var a=parseFloat(document.getElementById('gp4-a').value),b=parseFloat(document.getElementById('gp4-b').value),h=parseFloat(document.getElementById('gp4-h').value),el=document.getElementById('gp4-r');if(!a||!b||!h){show(el,'请输入上底、下底和高');return}var area=(a+b)*h/2;show(el,'<div class="item"><span class=label>梯形面积 (上底+下底)×高÷2</span><span class=highlight>'+area.toFixed(4)+'</span></div>')}
+
+// 药量
+function calcDose(){var w=parseFloat(document.getElementById('dose-w').value),p=parseFloat(document.getElementById('dose-p').value),n=parseInt(document.getElementById('dose-n').value),el=document.getElementById('dose-result');if(!w||!p||!n){show(el,'请填写全部字段');return}var single=w*p,daily=single*n,weekly=daily*7;show(el,'<div class="item"><span class=label>单次剂量</span><span class=highlight>'+single.toFixed(1)+' mg</span></div><div class="item"><span class=label>每日总剂量</span><span class=highlight>'+daily.toFixed(1)+' mg</span></div><div class="item"><span class=label>每周总剂量</span><span class=highlight>'+weekly.toFixed(1)+' mg</span></div><div class="item"><span class=label>体重 '+w+'kg × '+p+'mg/kg × '+n+'次/天</span></div>')}
+
+// BMI
+function calcBMI(){var h=parseFloat(document.getElementById('bmi-h').value)/100,w=parseFloat(document.getElementById('bmi-w').value),el=document.getElementById('bmi-result');if(!h||!w){show(el,'请输入身高和体重');return}var bmi=w/(h*h),cat=bmi<18.5?'体重过低':(bmi<24?'正常':(bmi<28?'超重':'肥胖')),ideal=(h*100-105),min=ideal*0.9,max=ideal*1.1;show(el,'<div class="item"><span class=label>BMI值</span><span class=highlight style="font-size:1.5em">'+bmi.toFixed(1)+'</span></div><div class="item"><span class=label>体质判定</span><span class=highlight>'+cat+'</span></div><div class="item"><span class=label>理想体重</span><span class=value>'+ideal.toFixed(0)+'kg (±10%: '+min.toFixed(0)+'~'+max.toFixed(0)+'kg)</span></div>')}
+
+// 中医体质
+var TQS=[{q:"1. 您的面色如何？",opts:["红润有光泽","偏暗少血色","偏苍白","偏黄无华"]},{q:"2. 您的体型属于？",opts:["匀称结实","偏瘦弱","偏胖松软","肥胖壮实"]},{q:"3. 怕冷还是怕热？",opts:["既不怕冷也不怕热","畏寒喜暖","怕热喜凉","冷热都不适应"]},{q:"4. 出汗情况？",opts:["正常微微汗","很少出汗","动不动就出汗","夜间盗汗"]},{q:"5. 性格特点？",opts:["温和开朗","内向沉静","急躁易怒","优柔寡断"]},{q:"6. 睡眠情况？",opts:["倒头就睡质量好","难以入睡","嗜睡总困","多梦易醒"]},{q:"7. 消化系统？",opts:["食欲正常消化好","腹胀不消化","食欲旺盛易饿","大便溏稀"]},{q:"8. 舌苔情况？",opts:["淡红薄白苔","舌淡胖有齿痕","舌红少苔","舌红苔黄厚腻"]},{q:"9. 适应能力？",opts:["适应能力强","适应能力差","容易疲劳","适应能力一般"]},{q:"10. 体力状态？",opts:["精力充沛","容易疲劳","无力懒言","时好时坏"]}];
+var tizhiScores=[];
+function initTizhi(){var div=document.getElementById('tizhi-questions');div.innerHTML='';tizhiScores=[];TQS.forEach(function(t,i){div.innerHTML+='<div class="q-item"><div class="q-text">'+t.q+'</div><div class="q-opts">'+t.opts.map(function(o,j){return'<button onclick="selTizhi('+i+','+(j+1)+',this)">'+o+'</button>'}).join('')+'</div></div>'})}
+function selTizhi(q,o,btn){tizhiScores[q]=o+1;btn.parentElement.querySelectorAll('button').forEach(function(b){b.classList.remove('selected')});btn.classList.add('selected')}
+function calcTizhi(){var el=document.getElementById('tizhi-result');var total=0,answered=0;tizhiScores.forEach(function(s){if(s){total+=s;answered++}});if(answered<10){show(el,'<span style="color:#f88">请回答全部10道题目（还差'+(10-answered)+'题）</span>');return}var cat=total<=20?'平和质（健康体质，继续保持）':(total<=25?'气虚质（气力不足，容易疲劳）':(total<=30?'阳虚质（畏寒怕冷，手足不温）':(total<=35?'阴虚质（手足心热，口燥咽干）':'湿热质（面垢油光，易生痤疮）')));show(el,'<div class="item"><span class=label>总分（'+answered+'题）</span><span class=highlight>'+total+'分</span></div><div class="item"><span class=label>体质判定</span><span class=highlight style="font-size:1.2em">'+cat+'</span></div>')}
+function resetTizhi(){tizhiScores=[];document.getElementById('tizhi-result').classList.remove('show');initTizhi()}
+initTizhi();
+document.querySelector('.tool-body').classList.add('open');
+document.querySelector('.tool-header .arrow').textContent='▲';
+</script>
+</body>
+</html>
