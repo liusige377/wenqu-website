@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>计量单位 — 问渠</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif;background:#0a0a0f;color:#e8e8e8;min-height:100vh;overflow-x:hidden}
+canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.container{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 20px}
+header{padding:30px 0 20px;text-align:center}
+.nav-back{display:inline-flex;align-items:center;gap:6px;color:#d4af37;text-decoration:none;font-size:.9rem;padding:8px 16px;border:1px solid rgba(212,175,55,.3);border-radius:8px}
+.nav-back:hover{background:rgba(212,175,55,.1)}
+header h1{font-size:2rem;color:#d4af37;margin:15px 0 8px}
+header p{color:#888;font-size:.9rem}
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;padding-bottom:40px}
+.tool-card{background:rgba(255,255,255,.04);border:1px solid rgba(212,175,55,.18);border-radius:12px;overflow:hidden}
+.tool-header{width:100%;background:none;border:none;color:#e8e8e8;padding:18px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:1rem;text-align:left;font-family:inherit}
+.tool-header:hover{background:rgba(212,175,55,.06)}
+.tool-header h3{color:#d4af37;font-size:1rem}
+.tool-header .arrow{color:#d4af37;font-size:1.2rem;transition:transform .3s}
+.tool-body{padding:0 20px 20px;display:none}
+.tool-body.open{display:block}
+.form-row{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap;align-items:center}
+input,select{background:rgba(255,255,255,.06);border:1px solid rgba(212,175,55,.2);color:#e8e8e8;padding:8px 12px;border-radius:6px;font-size:.9rem;width:100%}
+select{width:auto;min-width:100px}
+input[type="number"]{flex:1;min-width:80px}
+.btn{background:linear-gradient(135deg,#d4af37,#b8941f);color:#000;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-size:.9rem;font-weight:600;width:100%;margin-top:8px}
+.result-box{background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.3);border-radius:8px;padding:14px;margin-top:10px;font-size:.85rem;line-height:2;display:none;max-height:400px;overflow-y:auto}
+.result-box.show{display:block}
+.result-box .item{display:flex;justify-content:space-between;border-bottom:1px solid rgba(212,175,55,.1);padding:4px 0}
+.result-box .item:last-child{border:none}
+.result-box .label{color:#aaa}
+.result-box .value{color:#fff;font-weight:500}
+.result-box .highlight{color:#d4af37;font-weight:600}
+.tip{color:#888;font-size:.8rem;margin-top:8px;line-height:1.5}
+.cat-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.cat-tabs button{background:rgba(255,255,255,.06);border:1px solid rgba(212,175,55,.2);color:#aaa;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:.8rem;transition:all .2s}
+.cat-tabs button.active,.cat-tabs button:hover{background:rgba(212,175,55,.2);color:#d4af37;border-color:#d4af37}
+footer{text-align:center;padding:30px 0;color:#555;font-size:.8rem}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="container">
+  <header>
+    <a href="index.html" class="nav-back">← 返回首页</a>
+    <h1>⚖️ 计量单位</h1>
+    <p>古今中外 · 万物皆可换算</p>
+  </header>
+  <div class="tools-grid">
+
+    <div class="tool-card" id="universal">
+      <button class="tool-header" onclick="toggle(this)">
+        <h3>🔄 万能单位换算</h3>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="tool-body">
+        <div class="cat-tabs" id="cat-tabs"></div>
+        <div id="unit-inputs"></div>
+        <button class="btn" onclick="calcUnits()">换算</button>
+        <div class="result-box" id="unit-result"></div>
+      </div>
+    </div>
+
+    <div class="tool-card" id="heat">
+      <button class="tool-header" onclick="toggle(this)">
+        <h3>🔥 热量能量换算</h3>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="tool-body">
+        <p style="color:#888;font-size:.85rem;margin-bottom:10px">输入任意一项，其他自动计算</p>
+        <div class="form-row">
+          <input type="number" id="h-j" placeholder="焦耳(J)" oninput="calcHeat('j')">
+          <input type="number" id="h-kj" placeholder="千焦(kJ)" oninput="calcHeat('kj')">
+        </div>
+        <div class="form-row">
+          <input type="number" id="h-cal" placeholder="卡(cal)" oninput="calcHeat('cal')">
+          <input type="number" id="h-kcal" placeholder="千卡(kcal)" oninput="calcHeat('kcal')">
+        </div>
+        <div class="form-row">
+          <input type="number" id="h-kwh" placeholder="千瓦时(kWh)" oninput="calcHeat('kwh')">
+        </div>
+        <div class="result-box" id="heat-result"></div>
+        <p class="tip">💡 天然气热值约 8500 kcal/m³ | 汽油约 7800 kcal/L | 煤炭约 5000-7000 kcal/kg</p>
+      </div>
+    </div>
+
+    <div class="tool-card" id="ancient">
+      <button class="tool-header" onclick="toggle(this)">
+        <h3>📜 古代度量衡</h3>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="tool-body">
+        <div class="form-row">
+          <select id="dynasty" onchange="calcAncient()">
+            <option value="qh">秦汉（前221-220）</option>
+            <option value="ts" selected>唐宋（618-1279）</option>
+            <option value="mq">明清（1368-1911）</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <input type="number" id="anc-val" placeholder="输入数值" oninput="calcAncient()">
+          <select id="anc-unit" onchange="calcAncient()">
+            <option value="chi">尺</option>
+            <option value="cun">寸</option>
+            <option value="sheng">升</option>
+            <option value="dou">斗</option>
+            <option value="hu">斛</option>
+            <option value="liang">两</option>
+            <option value="jin">斤</option>
+          </select>
+        </div>
+        <div class="result-box" id="anc-result"></div>
+        <p class="tip" id="anc-tip">秦汉：1尺≈23.1cm，1升≈200mL，1两≈15.6g，1斤≈250g</p>
+      </div>
+    </div>
+
+  </div>
+  <footer>© 2026 问渠 · 有问必有答</footer>
+</div>
+<script>
+(function(){
+  var canvas=document.getElementById('bg'),ctx=canvas.getContext('2d'),particles=[],w,h;
+  function resize(){w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight}
+  resize();window.addEventListener('resize',resize);
+  for(var i=0;i<80;i++)particles.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.5+0.3,vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,alpha:Math.random()*0.5+0.1});
+  function draw(){ctx.clearRect(0,0,w,h);for(var p of particles){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>w)p.vx*=-1;if(p.y<0||p.y>h)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(212,175,55,${p.alpha})`;ctx.fill()}for(var i=0;i<particles.length;i++)for(var j=i+1;j<particles.length;j++){var dx=particles[i].x-particles[j].x,dy=particles[i].y-particles[j].y,dist=Math.sqrt(dx*dx+dy*dy);if(dist<150){ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.strokeStyle=`rgba(212,175,55,${0.06*(1-dist/150)})`;ctx.lineWidth=0.5;ctx.stroke()}}requestAnimationFrame(draw);}draw();
+})();
+
+function toggle(btn){var body=btn.nextElementSibling,arrow=btn.querySelector('.arrow');body.classList.toggle('open');arrow.textContent=body.classList.contains('open')?'▲':'▼'}
+function show(el,html){el.innerHTML=html;el.classList.add('show')}
+
+// ====== 万能单位换算 ======
+var CATS={
+  长度:{units:["米","分米","厘米","毫米","微米","纳米","公里","里","丈","尺","寸","英里(mi)","海里(nmi)","英寸(in)","英尺(ft)","码(yd)"],base:[1,0.1,0.01,0.001,1e-6,1e-9,1000,500,3.333,0.333,0.0333,1609.344,1852,0.0254,0.3048,0.9144]},
+  重量:{units:["千克(kg)","克(g)","毫克(mg)","吨(t)","斤","两","磅(lb)","盎司(oz)","克拉","公担"],base:[1,0.001,1e-6,1000,0.5,0.05,0.453592,0.0283495,0.0002,100]},
+  体积:{units:["升(L)","毫升(mL)","立方米(m³)","立方厘米(cm³)","加仑-美(gal)","加仑-英(gal)","品脱(pt)","夸脱(qt)","桶(石油)"],base:[1,0.001,1000,0.001,3.78541,4.54609,0.473176,0.946353,158.987]},
+  面积:{units:["平方米(m²)","平方公里(km²)","亩","公顷(ha)","顷","平方里","平方尺","英亩(acre)"],base:[1,1e6,666.67,10000,66666.7,250000,0.1111,4046.86]},
+  速度:{units:["米/秒(m/s)","公里/时(km/h)","英里/时(mph)","节(knot)","英尺/秒(ft/s)","马赫"],base:[1,0.277778,0.44704,0.514444,0.3048,340.29]},
+  时间:{units:["秒(s)","分钟(min)","小时(h)","天(d)","周","月(30天)","年(365天)"],base:[1,60,3600,86400,604800,2592000,31536000]},
+  功率:{units:["瓦(W)","千瓦(kW)","兆瓦(MW)","马力(公制)","马力(英制)","BTU/h"],base:[1,1000,1e6,735.5,745.7,0.293071]},
+  能量:{units:["焦耳(J)","千焦(kJ)","卡(cal)","千卡(kcal)","千瓦时(kWh)","BTU"],base:[1,1000,4.184,4184,3.6e6,1055.06]}
+};
+var curCat='长度';
+function initCatTabs(){
+  var tabs=document.getElementById('cat-tabs');
+  tabs.innerHTML='';
+  for(var c in CATS){
+    var b=document.createElement('button');
+    b.textContent=c;b.onclick=function(x){return function(){curCat=x;initUnitInputs();document.querySelectorAll('.cat-tabs button').forEach(function(btn){btn.classList.toggle('active',btn.textContent===x)})}}(c);
+    tabs.appendChild(b);
+  }
+  tabs.children[0].classList.add('active');
+}
+function initUnitInputs(){
+  var div=document.getElementById('unit-inputs');
+  var units=CATS[curCat].units;
+  div.innerHTML='<div class="form-row">'+units.map(function(u,i){return'<input type="number" id="u'+i+'" placeholder="'+u+'" oninput="calcUnits()"'+(i>0?' disabled style="opacity:0.5"':'')+'>'}).join('')+'</div>';
+}
+function calcUnits(){
+  var cat=CATS[curCat],vals=[],baseVal=null,baseIdx=-1;
+  for(var i=0;i<cat.units.length;i++){
+    var v=parseFloat(document.getElementById('u'+i).value);
+    vals.push(v);
+    if(!isNaN(v)&&v!==0){baseVal=v*cat.base[i];baseIdx=i}
+  }
+  if(baseVal===null){document.getElementById('unit-result').classList.remove('show');return}
+  var html='<div class="item"><span class="label">单位</span><span class="label">数值</span></div>';
+  for(var i=0;i<cat.units.length;i++){
+    var r=baseVal/cat.base[i];
+    var display=r>=1e6||r<0.0001?r.toExponential(4):(r<0.01?r.toFixed(6):(r<1?r.toFixed(4):(r<1000?r.toFixed(4):r.toFixed(2)));
+    html+='<div class="item"><span class="label">'+cat.units[i]+'</span><span class="value">'+(isNaN(vals[i])||vals[i]===0?display:(vals[i]>=1e6||vals[i]<0.0001?vals[i].toExponential(4):vals[i].toFixed(4))+'</span></div>';
+  }
+  show(document.getElementById('unit-result'),html);
+}
+initCatTabs();initUnitInputs();
+
+// ====== 热量换算 ======
+function calcHeat(src){
+  var j=document.getElementById('h-j'),kj=document.getElementById('h-kj'),cal=document.getElementById('h-cal'),kcal=document.getElementById('h-kcal'),kwh=document.getElementById('h-kwh');
+  var el=document.getElementById('heat-result');
+  var factors={j:1,kj:1000,cal:4.184,kcal:4184,kwh:3.6e6};
+  var v=parseFloat(document.getElementById('h-'+src).value);
+  if(isNaN(v)){el.classList.remove('show');return}
+  var jv=v*factors[src];
+  var res={j:jv,kj:jv/1000,cal:jv/4.184,kcal:jv/4184,kwh:jv/3.6e6};
+  var fmt=function(v){return v>=1e6||v<0.0001?v.toExponential(3):(v<0.01?v.toFixed(6):(v<1?v.toFixed(4):(v<1000?v.toFixed(4):v.toFixed(2))))};
+  show(el,'<div class="item"><span class="label">焦耳(J)</span><span class="highlight">'+fmt(res.j)+' J</span></div><div class="item"><span class="label">千焦(kJ)</span><span class="value">'+fmt(res.kj)+' kJ</span></div><div class="item"><span class="label">卡(cal)</span><span class="value">'+fmt(res.cal)+' cal</span></div><div class="item"><span class="label">千卡(kcal)</span><span class="value">'+fmt(res.kcal)+' kcal</span></div><div class="item"><span class="label">千瓦时(kWh)</span><span class="value">'+fmt(res.kwh)+' kWh</span></div>');
+}
+
+// ====== 古代度量衡 ======
+var ANC={
+  qh:{chi:23.1,cun:2.31,sheng:200,dou:2000,hu:20000,liang:15.6,jin:250,note:'秦汉：1尺≈23.1cm，1升≈200mL，1两≈15.6g，1斤≈250g'},
+  ts:{chi:30.7,cun:3.07,sheng:600,dou:6000,hu:60000,liang:37.3,jin:596,note:'唐宋：1尺≈30.7cm，1升≈600mL，1两≈37.3g，1斤≈596g'},
+  mq:{chi:32,cun:3.2,sheng:1000,dou:10000,hu:100000,liang:37.3,jin:596,note:'明清：1尺≈32cm，1升≈1000mL，1两≈37.3g，1斤≈596g'}
+};
+function calcAncient(){
+  var d=document.getElementById('dynasty').value;
+  var v=parseFloat(document.getElementById('anc-val').value);
+  var u=document.getElementById('anc-unit').value;
+  var el=document.getElementById('anc-result');
+  document.getElementById('anc-tip').textContent=ANC[d].note;
+  if(isNaN(v)){el.classList.remove('show');return}
+  var modern=v*ANC[d][u];
+  var labels={chi:'厘米(cm)',cun:'厘米(cm)',sheng:'毫升(mL)',dou:'毫升(mL)',hu:'毫升(mL)',liang:'克(g)',jin:'克(g)'};
+  show(el,'<div class="item"><span class="label">古代</span><span class="highlight">'+v+{'chi':'尺','cun':'寸','sheng':'升','dou':'斗','hu':'斛','liang':'两','jin':'斤'}[u]+'</span></div><div class="item"><span class="label">现代≈</span><span class="highlight">'+modern.toFixed(2)+' '+labels[u]+'</span></div>');
+}
+
+document.querySelector('.tool-body').classList.add('open');
+document.querySelector('.tool-header .arrow').textContent='▲';
+</script>
+</body>
+</html>
