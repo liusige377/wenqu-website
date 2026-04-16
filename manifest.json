@@ -1,0 +1,17 @@
+{
+  "name": "问渠 - 生活中的智慧锦囊",
+  "short_name": "问渠",
+  "description": "运势抽签、成语接龙、房贷计算——生活中的智慧助手",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f0f1a",
+  "theme_color": "#1a1a2e",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='80' fill='%231a1a2e'/><text x='256' y='340' font-size='280' text-anchor='middle' fill='%23e8c96a'>渠</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}
