@@ -170,8 +170,9 @@ function calcUnits(){
   var html='<div class="item"><span class="label">单位</span><span class="label">数值</span></div>';
   for(var i=0;i<cat.units.length;i++){
     var r=baseVal/cat.base[i];
-    var display=r>=1e6||r<0.0001?r.toExponential(4):(r<0.01?r.toFixed(6):(r<1?r.toFixed(4):(r<1000?r.toFixed(4):r.toFixed(2)));
-    html+='<div class="item"><span class="label">'+cat.units[i]+'</span><span class="value">'+(isNaN(vals[i])||vals[i]===0?display:(vals[i]>=1e6||vals[i]<0.0001?vals[i].toExponential(4):vals[i].toFixed(4))+'</span></div>';
+    var display=r>=1e6||r<0.0001?r.toExponential(4):(r<0.01?r.toFixed(6):(r<1?r.toFixed(4):(r<1000?r.toFixed(4):r.toFixed(2))));
+    var valDisplay=isNaN(vals[i])||vals[i]===0?display:(vals[i]>=1e6||vals[i]<0.0001?vals[i].toExponential(4):vals[i].toFixed(4));
+    html+='<div class="item"><span class="label">'+cat.units[i]+'</span><span class="value">'+valDisplay+'</span></div>';
   }
   show(document.getElementById('unit-result'),html);
 }
