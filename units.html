@@ -118,6 +118,95 @@ footer{text-align:center;padding:30px 0;color:#555;font-size:.8rem}
     </div>
 
   </div>
+    <div class="tool-card" id="timezone">
+      <button class="tool-header" onclick="toggle(this)">
+        <h3>🕐 时区换算</h3>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="tool-body">
+        <div class="form-row">
+          <select id="tz-from" onchange="calcTZ()">
+            <option value="8" selected>北京时间 (UTC+8)</option>
+            <option value="0">伦敦 (UTC+0)</option>
+            <option value="1">巴黎/柏林 (UTC+1)</option>
+            <option value="-5">纽约 (UTC-5)</option>
+            <option value="-8">洛杉矶 (UTC-8)</option>
+            <option value="9">东京 (UTC+9)</option>
+            <option value="10">悉尼 (UTC+10)</option>
+            <option value="5.5">新德里 (UTC+5:30)</option>
+            <option value="3">迪拜 (UTC+3)</option>
+            <option value="-3">圣保罗 (UTC-3)</option>
+          </select>
+          <span style="color:#888">→</span>
+          <select id="tz-to" onchange="calcTZ()">
+            <option value="8">北京时间 (UTC+8)</option>
+            <option value="0" selected>伦敦 (UTC+0)</option>
+            <option value="1">巴黎/柏林 (UTC+1)</option>
+            <option value="-5">纽约 (UTC-5)</option>
+            <option value="-8">洛杉矶 (UTC-8)</option>
+            <option value="9">东京 (UTC+9)</option>
+            <option value="10">悉尼 (UTC+10)</option>
+            <option value="5.5">新德里 (UTC+5:30)</option>
+            <option value="3">迪拜 (UTC+3)</option>
+            <option value="-3">圣保罗 (UTC-3)</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <input type="datetime-local" id="tz-time" onchange="calcTZ()">
+        </div>
+        <button class="btn" onclick="calcTZ()">换算</button>
+        <div class="result-box" id="tz-result"></div>
+        <p class="tip">夏令时期间部分时区会+1小时</p>
+      </div>
+    </div>
+
+    <div class="tool-card" id="temp">
+      <button class="tool-header" onclick="toggle(this)">
+        <h3>🌡️ 温度换算</h3>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="tool-body">
+        <p style="color:#888;font-size:.85rem;margin-bottom:10px">输入任意一项，其他自动计算</p>
+        <div class="form-row">
+          <input type="number" id="t-c" placeholder="摄氏度 °C" oninput="calcTemp('c')">
+          <input type="number" id="t-f" placeholder="华氏度 °F" oninput="calcTemp('f')">
+        </div>
+        <div class="form-row">
+          <input type="number" id="t-k" placeholder="开尔文 K" oninput="calcTemp('k')">
+          <input type="number" id="t-r" placeholder="兰氏度 °R" oninput="calcTemp('r')">
+        </div>
+        <div class="result-box" id="temp-result"></div>
+        <p class="tip">绝对零度 = -273.15°C = -459.67°F = 0K</p>
+      </div>
+    </div>
+
+    <div class="tool-card" id="pressure">
+      <button class="tool-header" onclick="toggle(this)">
+        <h3>⚓ 压力单位换算</h3>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="tool-body">
+        <p style="color:#888;font-size:.85rem;margin-bottom:10px">输入任意一项，其他单位自动换算</p>
+        <div class="form-row">
+          <input type="number" id="p-pa" placeholder="帕斯卡 Pa" oninput="calcPressure('pa')">
+          <input type="number" id="p-kpa" placeholder="千帕 kPa" oninput="calcPressure('kpa')">
+        </div>
+        <div class="form-row">
+          <input type="number" id="p-mpa" placeholder="兆帕 MPa" oninput="calcPressure('mpa')">
+          <input type="number" id="p-bar" placeholder="巴 bar" oninput="calcPressure('bar')">
+        </div>
+        <div class="form-row">
+          <input type="number" id="p-atm" placeholder="标准大气压 atm" oninput="calcPressure('atm')">
+          <input type="number" id="p-psi" placeholder="磅力/平方英寸 psi" oninput="calcPressure('psi')">
+        </div>
+        <div class="form-row">
+          <input type="number" id="p-mmhg" placeholder="毫米汞柱 mmHg" oninput="calcPressure('mmhg')">
+        </div>
+        <div class="result-box" id="pressure-result"></div>
+        <p class="tip">标准大气压 = 101325 Pa = 1 atm = 760 mmHg = 14.696 psi</p>
+      </div>
+    </div>
+
   <footer>© 2026 问渠 · 有问必有答</footer>
 </div>
 <script>
@@ -211,6 +300,48 @@ function calcAncient(){
 
 document.querySelector('.tool-body').classList.add('open');
 document.querySelector('.tool-header .arrow').textContent='▲';
+
+// ====== 时区换算 ======
+function calcTZ(){
+  var from=parseFloat(document.getElementById('tz-from').value);
+  var to=parseFloat(document.getElementById('tz-to').value);
+  var timeStr=document.getElementById('tz-time').value;
+  var el=document.getElementById('tz-result');
+  if(!timeStr){el.classList.remove('show');return}
+  var d=new Date(timeStr);
+  var utc=d.getTime()-from*3600000;
+  var target=new Date(utc+to*3600000);
+  var fmt=function(d){return d.getFullYear()+'-'+(d.getMonth()+1).toString().padStart(2,'0')+'-'+d.getDate().toString().padStart(2,'0')+' '+d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0')};
+  var diff=to-from;
+  var diffStr=diff>0?'+'+diff+'小时':(diff<0?diff+'小时':'无时差');
+  show(el,'<div class="item"><span class="label">当地时间</span><span class="highlight">'+fmt(target)+'</span></div><div class="item"><span class="label">时差</span><span class="value">'+diffStr+'</span></div>');
+}
+
+// ====== 温度换算 ======
+function calcTemp(src){
+  var c=document.getElementById('t-c'),f=document.getElementById('t-f'),k=document.getElementById('t-k'),r=document.getElementById('t-r');
+  var el=document.getElementById('temp-result');
+  var cv,fv,kv,rv;
+  if(src==='c'&&c.value!==''){cv=parseFloat(c.value);fv=cv*9/5+32;kv=cv+273.15;rv=(cv+273.15)*9/5}
+  else if(src==='f'&&f.value!==''){fv=parseFloat(f.value);cv=(fv-32)*5/9;kv=cv+273.15;rv=kv*9/5}
+  else if(src==='k'&&k.value!==''){kv=parseFloat(k.value);cv=kv-273.15;fv=cv*9/5+32;rv=kv*9/5}
+  else if(src==='r'&&r.value!==''){rv=parseFloat(r.value);kv=rv*5/9;cv=kv-273.15;fv=cv*9/5+32}
+  else{el.classList.remove('show');return}
+  c.value=cv.toFixed(2);f.value=fv.toFixed(2);k.value=kv.toFixed(2);r.value=rv.toFixed(2);
+  show(el,'<div class="item"><span class="label">摄氏度</span><span class="value">'+cv.toFixed(2)+' °C</span></div><div class="item"><span class="label">华氏度</span><span class="value">'+fv.toFixed(2)+' °F</span></div><div class="item"><span class="label">开尔文</span><span class="value">'+kv.toFixed(2)+' K</span></div>');
+}
+
+// ====== 压力换算 ======
+function calcPressure(src){
+  var pa=document.getElementById('p-pa'),kpa=document.getElementById('p-kpa'),mpa=document.getElementById('p-mpa'),bar=document.getElementById('p-bar'),atm=document.getElementById('p-atm'),psi=document.getElementById('p-psi'),mmhg=document.getElementById('p-mmhg');
+  var el=document.getElementById('pressure-result');
+  var v=parseFloat(document.getElementById('p-'+src).value);
+  if(isNaN(v)){el.classList.remove('show');return}
+  var factors={pa:1,kpa:1000,mpa:1000000,bar:100000,atm:101325,psi:6894.76,mmhg:133.322};
+  var base=v*factors[src];
+  pa.value=(base/1).toExponential(4);kpa.value=(base/1000).toFixed(4);mpa.value=(base/1000000).toFixed(6);bar.value=(base/100000).toFixed(4);atm.value=(base/101325).toFixed(6);psi.value=(base/6894.76).toFixed(4);mmhg.value=(base/133.322).toFixed(2);
+  show(el,'<div class="item"><span class="label">帕斯卡</span><span class="value">'+base.toExponential(3)+' Pa</span></div><div class="item"><span class="label">标准大气压</span><span class="highlight">'+(base/101325).toFixed(4)+' atm</span></div>');
+}
 </script>
 </body>
 </html>
