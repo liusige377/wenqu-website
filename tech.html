@@ -298,6 +298,34 @@ footer{text-align:center;padding:40px 0;color:#555;font-size:.8rem;margin-top:40
 
   <footer>© 2026 问渠 · 有问必有答</footer>
 </div>
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="this.parentElement.classList.toggle('active')">
+        <h3>🎨 颜色格式转换</h3>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="accordion-content">
+        <p style="color:#999;margin-bottom:15px">HEX、RGB、HSL 互转，输入任意格式自动转换</p>
+        <div class="tool-grid">
+          <div class="input-group">
+            <label>HEX</label>
+            <input type="text" id="col-hex" placeholder="#d4af37" oninput="convColor('hex')">
+          </div>
+          <div class="input-group">
+            <label>RGB (R,G,B)</label>
+            <input type="text" id="col-rgb" placeholder="212,175,55" oninput="convColor('rgb')">
+          </div>
+          <div class="input-group">
+            <label>HSL (H,S%,L%)</label>
+            <input type="text" id="col-hsl" placeholder="43,64%,52%" oninput="convColor('hsl')">
+          </div>
+        </div>
+        <div class="result-box" style="margin-top:15px;display:flex;align-items:center;gap:15px">
+          <div id="col-preview" style="width:60px;height:60px;border-radius:8px;background:#333;border:2px solid rgba(212,175,55,.3)"></div>
+          <div id="col-output" style="flex:1;font-family:monospace;font-size:.9rem"></div>
+        </div>
+      </div>
+    </div>
+
 
 <script>
 // 粒子背景
@@ -537,6 +565,44 @@ function calcFlops(from){
   }else{
     compareDiv.style.display='none';
   }
+}
+
+// 颜色格式转换
+function convColor(src){
+  var hexIn=document.getElementById('col-hex'),rgbIn=document.getElementById('col-rgb'),hslIn=document.getElementById('col-hsl');
+  var preview=document.getElementById('col-preview'),output=document.getElementById('col-output');
+  var r,g,b,h,s,l;
+  
+  if(src==='hex'){
+    var hex=hexIn.value.trim().replace('#','');
+    if(!/^[0-9A-Fa-f]{6}$/.test(hex))return;
+    r=parseInt(hex.substr(0,2),16);g=parseInt(hex.substr(2,2),16);b=parseInt(hex.substr(4,2),16);
+  }else if(src==='rgb'){
+    var parts=rgbIn.value.split(',').map(function(x){return parseInt(x.trim())});
+    if(parts.length!==3||parts.some(function(x){return isNaN(x)||x<0||x>255}))return;
+    r=parts[0];g=parts[1];b=parts[2];
+  }else if(src==='hsl'){
+    var parts=hslIn.value.split(',').map(function(x){return parseFloat(x.replace('%','').trim())});
+    if(parts.length!==3||parts.some(function(x){return isNaN(x)}))return;
+    h=parts[0];s=parts[1]/100;l=parts[2]/100;
+    var c=(1-Math.abs(2*l-1))*s,x=c*(1-Math.abs((h/60)%2-1)),m=l-c/2;
+    var rp,gp,bp;
+    if(h<60){rp=c;gp=x;bp=0}else if(h<120){rp=x;gp=c;bp=0}else if(h<180){rp=0;gp=c;bp=x}else if(h<240){rp=0;gp=x;bp=c}else if(h<300){rp=x;gp=0;bp=c}else{rp=c;gp=0;bp=x}
+    r=Math.round((rp+m)*255);g=Math.round((gp+m)*255);b=Math.round((bp+m)*255);
+  }
+  
+  // RGB to HEX
+  var hexOut='#'+[r,g,b].map(function(x){return x.toString(16).padStart(2,'0')}).join('');
+  // RGB to HSL
+  var rp=r/255,gp=g/255,bp=b/255;
+  var max=Math.max(rp,gp,bp),min=Math.min(rp,gp,bp),d=max-min;
+  l=(max+min)/2;
+  if(d===0){h=s=0}else{s=d/(1-Math.abs(2*l-1));h=max===rp?((gp-bp)/d+(gp<bp?6:0)):max===gp?((bp-rp)/d+2):((rp-gp)/d+4);h*=60}
+  var hslOut=Math.round(h)+','+Math.round(s*100)+'%,'+Math.round(l*100)+'%';
+  
+  hexIn.value=hexOut;rgbIn.value=r+','+g+','+b;hslIn.value=hslOut;
+  preview.style.background=hexOut;
+  output.innerHTML='HEX: '+hexOut+'<br>RGB: rgb('+r+','+g+','+b+')<br>HSL: hsl('+hslOut+')';
 }
 </script>
 </body>
