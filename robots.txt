@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://liusige377.github.io/wenqu-website/sitemap.xml
