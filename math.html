@@ -195,6 +195,25 @@ footer{text-align:center;padding:30px 0;color:#555;font-size:.8rem}
     </div>
 
   </div>
+    <div class="tool-card" id="scinot">
+      <button class="tool-header" onclick="toggle(this)">
+        <h3>🔢 科学计数法转换</h3>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="tool-body">
+        <p style="color:#888;font-size:.85rem;margin-bottom:10px">普通数字与科学计数法互转，支持工程记数法</p>
+        <div class="form-row">
+          <input type="text" id="sci-input" placeholder="输入数字（如：299792458 或 3.0e8）" onkeydown="if(event.key==='Enter')calcSci()">
+        </div>
+        <button class="btn" onclick="calcSci()">转换</button>
+        <div class="result-box" id="sci-result"></div>
+        <div class="tab-bar" style="margin-top:12px">
+          <button onclick="showSciRef()">常用科学常数</button>
+        </div>
+        <div class="result-box" id="sci-ref" style="display:none"></div>
+      </div>
+    </div>
+
   <footer>© 2026 问渠 · 有问必有答</footer>
 </div>
 <script>
@@ -243,6 +262,33 @@ function resetTizhi(){tizhiScores=[];document.getElementById('tizhi-result').cla
 initTizhi();
 document.querySelector('.tool-body').classList.add('open');
 document.querySelector('.tool-header .arrow').textContent='▲';
+
+function calcSci(){
+  var s=document.getElementById('sci-input').value.trim().replace(/,/g,'');
+  var el=document.getElementById('sci-result');
+  if(!s){show(el,'请输入数字');return}
+  var num=parseFloat(s);
+  if(isNaN(num)){show(el,'<span style="color:#f88">无效数字</span>');return}
+  if(num===0){show(el,'0 = 0 × 10⁰');return}
+  var exp=Math.floor(Math.log10(Math.abs(num)));
+  var mantissa=num/Math.pow(10,exp);
+  var engExp=Math.floor(exp/3)*3;
+  var engMantissa=num/Math.pow(10,engExp);
+  var prefixes={-24:'y',-21:'z',-18:'a',-15:'f',-12:'p',-9:'n',-6:'μ',-3:'m',0:'',3:'k',6:'M',9:'G',12:'T',15:'P',18:'E',21:'Z',24:'Y'};
+  var prefix=prefixes[engExp]||'';
+  var html='<div class="item"><span class="label">原数值</span><span class="value">'+num.toLocaleString()+'</span></div>';
+  html+='<div class="item"><span class="label">科学计数法</span><span class="highlight">'+mantissa.toFixed(4)+' × 10<sup>'+exp+'</sup></span></div>';
+  html+='<div class="item"><span class="label">工程记数法</span><span class="value">'+engMantissa.toFixed(4)+' × 10<sup>'+engExp+'</sup></span></div>';
+  if(prefix){html+='<div class="item"><span class="label">词头表示</span><span class="highlight">'+engMantissa.toFixed(2)+' '+prefix+'</span></div>'}
+  show(el,html);
+}
+function showSciRef(){
+  var el=document.getElementById('sci-ref');
+  el.classList.toggle('show');
+  if(el.classList.contains('show')){
+    show(el,'<div class="item"><span class="label">光速</span><span class="value">2.998 × 10⁸ m/s</span></div><div class="item"><span class="label">普朗克常数</span><span class="value">6.626 × 10⁻³⁴ J·s</span></div><div class="item"><span class="label">阿伏伽德罗常数</span><span class="value">6.022 × 10²³ mol⁻¹</span></div><div class="item"><span class="label">地球质量</span><span class="value">5.972 × 10²⁴ kg</span></div><div class="item"><span class="label">太阳质量</span><span class="value">1.989 × 10³⁰ kg</span></div><div class="item"><span class="label">宇宙年龄</span><span class="value">4.35 × 10¹⁷ s (138亿年)</span></div>');
+  }
+}
 </script>
 </body>
 </html>
