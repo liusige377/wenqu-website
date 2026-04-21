@@ -34,110 +34,193 @@ note{color:#888;font-size:.8rem;margin-top:8px}
 </style>
 </head>
 <body>
-<canvas id=bg></canvas>
-<div class=wrap>
+<canvas id="bg"></canvas>
+<div class="wrap">
 <header>
-  <a href=index.html class=back>&larr; 返回首页</a>
-  <h1>&#128302; 玄学民俗</h1>
-  <p>中华传统文化 &middot; 八字公宰</p>
+  <a href="index.html" class="back">← 返回首页</a>
+  <h1>🔮 玄学民俗</h1>
+  <p>中华传统文化 · 八字命理</p>
 </header>
 
-<div class=card>
-  <button class=card-hd onclick=tog(this)><h3>&#127787; 竹筒抽签</h3><span>&#9660;</span></button>
+<div class="card">
+  <button class="card-hd" onclick="tog(this)"><h3>🎋 竹筒抽签</h3><span>▼</span></button>
   <div class="card-bd open">
-    <p style="color:#888;font-size:.85rem;margin-bottom:12px">心诚则灵，摆筒求签</p>
-    <button class=btn onclick=drawSign()>&#6447一摇 — 抽签</button>
-    <div id=zhu-box style="text-align:center;padding:20px 0;min-height:80px"></div>
+    <p style="color:#888;font-size:.85rem;margin-bottom:12px">心诚则灵，摇筒求签</p>
+    <button class="btn" onclick="drawSign()">🎲 一摇 — 抽签</button>
+    <div id="zhu-box" style="text-align:center;padding:20px 0;min-height:80px"></div>
   </div>
 </div>
 
-<div class=card>
-  <button class=card-hd onclick=tog(this)><h3>&#9775; 八字天干地支</h3><span>&#9660;</span></button>
-  <div class=card-bd>
-    <input type=date id=bz-d>
-    <input type=number id=bz-h placeholder="时货(0-23)" min=0 max=23 value=12>
-    <button class=btn onclick=calcBazi()>计算八字</button>
-    <div class=res id=bz-r></div>
-  </div>
-</div>
-
-<div class=card>
-  <button class=card-hd onclick=tog(this)><h3>&#128197; 黄历就忌</h3><span>&#9660;</span></button>
-  <div class=card-bd>
-    <input type=date id=hl-d>
-    <button class=btn onclick=calcHL()>查询就忌</button>
-    <div class=hl-box id=hl-r style=display:none></div>
-  </div>
-</div>
-
-<div class=card>
-  <button class=card-hd onclick=tog(this)><h3>&#127774; 生肖五行查询</h3><span>&#9660;</span></button>
-  <div class=card-bd>
-    <input type=number id=sx-y placeholder="年份（如 1990）" value=1990>
-    <button class=btn onclick=calcSX()>查询</button>
-    <div class=res id=sx-r></div>
-  </div>
-</div>
-
-<div class=card>
-  <button class=card-hd onclick=tog(this)><h3>&#9775; 八卦占卜</h3><span>&#9660;</span></button>
-  <div class=card-bd>
+<div class="card">
+  <button class="card-hd" onclick="tog(this)"><h3>☯️ 八卦占卜</h3><span>▼</span></button>
+  <div class="card-bd">
     <p style="color:#888;font-size:.85rem;margin-bottom:10px">心中默念所问之事，点击得卦</p>
-    <button class=btn onclick=castGua()>投钱得卦</button>
-    <div class=res id=gua-r></div>
+    <button class="btn" onclick="castGua()">投钱得卦</button>
+    <div class="res" id="gua-r"></div>
+  </div>
+</div>
+
+<div class="card">
+  <button class="card-hd" onclick="tog(this)"><h3>📆 八字天干地支</h3><span>▼</span></button>
+  <div class="card-bd">
+    <input type="date" id="bz-d">
+    <input type="number" id="bz-h" placeholder="时辰(0-23)" min="0" max="23" value="12">
+    <button class="btn" onclick="calcBazi()">计算八字</button>
+    <div class="res" id="bz-r"></div>
+  </div>
+</div>
+
+<div class="card">
+  <button class="card-hd" onclick="tog(this)"><h3>📅 黄历宜忌</h3><span>▼</span></button>
+  <div class="card-bd">
+    <input type="date" id="hl-d">
+    <button class="btn" onclick="calcHL()">查询宜忌</button>
+    <div class="hl-box" id="hl-r" style="display:none"></div>
+  </div>
+</div>
+
+<div class="card">
+  <button class="card-hd" onclick="tog(this)"><h3>🎎 生肖五行查询</h3><span>▼</span></button>
+  <div class="card-bd">
+    <input type="number" id="sx-y" placeholder="年份（如 1990）" value="1990">
+    <button class="btn" onclick="calcSX()">查询</button>
+    <div class="res" id="sx-r"></div>
   </div>
 </div>
 
 </div>
 <script>
-(function(){var c=document.getElementById("bg"),x=c.getContext("2d"),P=[],W,H;function rs(){W=c.width=innerWidth;H=c.height=innerHeight}rs();addEventListener("resize",rs);for(var i=0;i<70;i++)P.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.4+.3,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,a:Math.random()*.5+.1});function dr(){x.clearRect(0,0,W,H);P.forEach(function(p){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;x.beginPath();x.arc(p.x,p.y,p.r,0,Math.PI*2);x.fillStyle="rgba(212,175,55,"+p.a+")";x.fill()});for(var i=0;i<P.length;i++)for(var j=i+1;j<P.length;j++){var dx=P[i].x-P[j].x,dy=P[i].y-P[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<140){x.beginPath();x.moveTo(P[i].x,P[i].y);x.lineTo(P[j].x,P[j].y);x.strokeStyle="rgba(212,175,55,"+(0.05*(1-d/140))+")";x.lineWidth=.5;x.stroke()}}requestAnimationFrame(dr)}dr()})();
-function tog(b){var bd=b.nextElementSibling,ar=b.querySelector("span");bd.classList.toggle("open");ar.innerHTML=bd.classList.contains("open")?"&#9650;":"&#9660;"}
-var TG=["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
-var DZ=["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
-var SX=["鼠","牛","虎","兔","龙","蛇","马","羊","猴","鸡","狗","猪"];
+(function(){
+  var c=document.getElementById('bg'),x=c.getContext('2d'),P=[],W,H;
+  function rs(){W=c.width=innerWidth;H=c.height=innerHeight}
+  rs();addEventListener('resize',rs);
+  for(var i=0;i<70;i++)P.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.4+.3,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,a:Math.random()*.5+.1});
+  function dr(){
+    x.clearRect(0,0,W,H);
+    P.forEach(function(p){
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;
+      x.beginPath();x.arc(p.x,p.y,p.r,0,Math.PI*2);x.fillStyle='rgba(212,175,55,'+p.a+')';x.fill()
+    });
+    for(var i=0;i<P.length;i++)for(var j=i+1;j<P.length;j++){
+      var dx=P[i].x-P[j].x,dy=P[i].y-P[j].y,d=Math.sqrt(dx*dx+dy*dy);
+      if(d<140){x.beginPath();x.moveTo(P[i].x,P[i].y);x.lineTo(P[j].x,P[j].y);x.strokeStyle='rgba(212,175,55,'+(0.05*(1-d/140))+')';x.lineWidth=.5;x.stroke()}
+    }
+    requestAnimationFrame(dr)
+  }
+  dr()
+})();
+
+function tog(b){
+  var bd=b.nextElementSibling,ar=b.querySelector('span');
+  bd.classList.toggle('open');
+  ar.innerHTML=bd.classList.contains('open')?'▲':'▼'
+}
+
+var TG=['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+var DZ=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+var SX=['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'];
 var SIGNS=[
-["甲子","海中金","日出东方照四方，金光灿烂照华堂；贵人自有天来助，祸去福来降吉祥。"],
-["乙丑","海中金","风吹云散见青天，路途平安福自全；纵有险阻终无碍，贵人相助笑开颜。"],
-["丙寅","炉中火","虎跃山林气势雄，风云际会任西东；良机莫失当前进，谋事在人天亦通。"],
-["丁卯","炉中火","玉兔东升照碧空，柔和清静自从容；守成持正无他虑，安居乐业福无穷。"],
-["戊辰","大林木","龙腾虎跃在今朝，风云际会冲云霄；一跃冲天从此去，前程万里任逃遥。"],
-["己巳","大林木","蛇行曲折费心思，进退两难徕时机；且宜守分徕时变，自然有路通天涯。"],
-["庚午","路旁土","马走平川万里遥，前途远大莫辞劳；贵人相助多机会，名利双收在此遇。"],
-["辛未","路旁土","未时风雨到门前，草木逢春花欲燃；更有祥云来护佑，前程锦绣福绵绵。"],
-["壬申","剑锋金","申宫逢日最高强，仕路亨通达四方；文笔超群人共仰，少年科第姓名香。"],
-["癸酉","剑锋金","酉月阴云蔽日光，谋望迟疑事可伤；所求未得还招口舌，静徕时机保安康。"],
-["甲戌","山夰火","戌宫逢犬路迢迢，万里云山望故交；若有信行情义重，自然家宅福滔滔。"],
-["乙亥","山夰火","亥宫水气泛汪洋，漂泊无依实可伤；不若归家修正道，前程安稳免灾殃。"],
-["丙子","涧下水","子时一阳初动时，君子进德在修为；潜龙勿用徕时至，功到自然天下知。"],
-["丁丑","涧下水","丑月牛眠地脉灵，田园广置乐归耕；福禄寿三星拱照，荣华富贵自然成。"],
-["戊寅","城夰土","虎出山林震百兽，声名远播遍寻中；若逢伯乐相抬举，功名富贵与天通。"],
-["己卯","城夰土","兔入月宫折桂枝，蟾宫有路任驰驰；一番良机莫轻过，正是男儿得志时。"],
-["庚辰","白蜡金","龙得云雨便飞腾，万里前程路坦平；莫谓风云无处觅，天然际会有逢迎。"],
-["辛巳","白蜡金","蛇归洞穴性潜藏，徕得春来自发强；不必劳心急躁进，静修自可姓名香。"],
-["壬午","杨柳木","马行千里任西东，柴暗花明又一村；顺水推舟自然去，前程远大福无穷。"],
-["癸未","杨柳木","未时云散见天青，万里无云月正明；祸去福来天有眼，水落石出自分明。"],
-["甲申","井泉水","申宫有水涌源泉，智者求财得自然；莫谓井深难汲取，自然泉涌福绵绵。"],
-["乙酉","井泉水","酉时月暗又无光，劳君安分免惊惑；守得云开见月出，自然有路达朝堂。"],
-["丙戌","屋上土","戌宫土厚有根基，君子安居家宅宜；福禄寿三星拱照，荣华富贵自天资。"],
-["丁亥","屋上土","亥宫水气泛汪洋，不遇险危便是祥；前路虽云多险阻，自然有贵来相帮。"],
-["戊子","霏霖火","子为地支第一位，君子小人各分途；君子才能得转运，忽然平地一声雷。"],
-["己丑","霏霖火","丑宫有火未为灾，暗中得贵自然来；不须更问前途事，但守心田自可开。"],
-["庚寅","松柏木","松柏常青耚岁寒，风霖历尽自平安；君子得时能结果，功名成就不为难。"],
-["辛卯","松柏木","兔走乌飞两相催，光阴似箭不重回；劳君及早图名利，莫徕白首空悲伤。"],
-["壬辰","长流水","龙归沧海浪滔天，君子得时种德田；静心修德徕时至，自然利有万千。"],
-["癸巳","长流水","蛇入深潭化龙形，君子修德福自生；静养三年方得地，一声雷震便成名。"]
+['甲子','海中金','日出东方照四方，金光灿烂照华堂；贵人自有天来助，祸去福来降吉祥。'],
+['乙丑','海中金','风吹云散见青天，路途平安福自全；纵有险阻终无碍，贵人相助笑开颜。'],
+['丙寅','炉中火','虎跃山林气势雄，风云际会任西东；良机莫失当前进，谋事在人天亦通。'],
+['丁卯','炉中火','玉兔东升照碧空，柔和清静自从容；守成持正无他虑，安居乐业福无穷。'],
+['戊辰','大林木','龙腾虎跃在今朝，风云际会冲云霄；一跃冲天从此去，前程万里任逍遥。'],
+['己巳','大林木','蛇行曲折费心思，进退两难待时机；且宜守分待时变，自然有路通天涯。'],
+['庚午','路旁土','马走平川万里遥，前途远大莫辞劳；贵人相助多机会，名利双收在此途。'],
+['辛未','路旁土','未时风雨到门前，草木逢春花欲燃；更有祥云来护佑，前程锦绣福绵绵。'],
+['壬申','剑锋金','申宫逢日最高强，仕路亨通达四方；文笔超群人共仰，少年科第姓名香。'],
+['癸酉','剑锋金','酉月阴云蔽日光，谋望迟疑事可伤；所求未得还招口舌，静待时机保安康。'],
+['甲戌','山头火','戌宫逢犬路迢迢，万里云山望故交；若有信行情义重，自然家宅福滔滔。'],
+['乙亥','山头火','亥宫水气泛汪洋，漂泊无依实可伤；不若归家修正道，前程安稳免灾殃。'],
+['丙子','涧下水','子时一阳初动时，君子进德在修为；潜龙勿用待时至，功到自然天下知。'],
+['丁丑','涧下水','丑月牛眠地脉灵，田园广置乐归耕；福禄寿三星拱照，荣华富贵自然成。'],
+['戊寅','城头土','虎出山林震百兽，声名远播遍寰中；若逢伯乐相抬举，功名富贵与天通。'],
+['己卯','城头土','兔入月宫折桂枝，蟾宫有路任驰驰；一番良机莫轻过，正是男儿得志时。'],
+['庚辰','白蜡金','龙得云雨便飞腾，万里前程路坦平；莫谓风云无处觅，天然际会有逢迎。'],
+['辛巳','白蜡金','蛇归洞穴性潜藏，待得春来自发强；不必劳心急躁进，静修自可姓名香。'],
+['壬午','杨柳木','马行千里任西东，柳暗花明又一村；顺水推舟自然去，前程远大福无穷。'],
+['癸未','杨柳木','未时云散见天青，万里无云月正明；祸去福来天有眼，水落石出自分明。'],
+['甲申','井泉水','申宫有水涌源泉，智者求财得自然；莫谓井深难汲取，自然泉涌福绵绵。'],
+['乙酉','井泉水','酉时月暗又无光，劳君安分免惊惶；守得云开见月出，自然有路达朝堂。'],
+['丙戌','屋上土','戌宫土厚有根基，君子安居家宅宜；福禄寿三星拱照，荣华富贵自天资。'],
+['丁亥','屋上土','亥宫水气泛汪洋，不遇险危便是祥；前路虽云多险阻，自然有贵来相帮。'],
+['戊子','霹雳火','子为地支第一位，君子小人各分途；君子才能得转运，忽然平地一声雷。'],
+['己丑','霹雳火','丑宫有火未为灾，暗中得贵自然来；不须更问前途事，但守心田自可开。'],
+['庚寅','松柏木','松柏常青傲岁寒，风霜历尽自平安；君子得时能结果，功名成就不为难。'],
+['辛卯','松柏木','兔走乌飞两相催，光阴似箭不重回；劳君及早图名利，莫待白首空悲伤。'],
+['壬辰','长流水','龙归沧海浪滔天，君子得时种德田；静心修德待时至，自然利禄有万千。'],
+['癸巳','长流水','蛇入深潭化龙形，君子修德福自生；静养三年方得地，一声雷震便成名。']
 ];
-function drawSign(){var el=document.getElementById("zhu-box");el.innerHTML="<div style="font-size:2.5rem;color:#d4af37">&#2630;&#2630;&#2630;</div><div style="color:#888;margin-top:8px">&#6447;&#31797;&#20013;...</div>";setTimeout(function(){var n=Math.floor(Math.random()*SIGNS.length);var s=SIGNS[n];el.innerHTML="<div style="color:#d4af37;font-size:1.1rem;margin-bottom:10px">&#31532;"+(n+1)+"&#21495; &nbsp;&#20184;"+s[0]+"&#8220; &nbsp;"+SX[n%12]+"</div><div style="color:#aaa;font-size:.85rem;margin-bottom:10px">&#32467;&#38899;&#65306;"+s[1]+"</div><div style="color:#fff;line-height:2;font-size:.95rem">&#35504;&#35799;&#65306;"+s[2]+"</div><button class=btn2 onclick=drawSign()>&#20877;&#25320;&#19968;&#31687;</button>"},1000)}
-function calcBazi(){var ds=document.getElementById("bz-d").value,h=parseInt(document.getElementById("bz-h").value)||12,el=document.getElementById("bz-r");if(!ds){el.innerHTML="&#35831;&#36873;&#25321;&#26085;&#26399;";el.classList.add("show");return}var d=new Date(ds),y=d.getFullYear(),m=d.getMonth()+1;var yi=(y-1984+600)%60;var ytg=TG[yi%10],ydz=DZ[yi%12];var mtg=TG[(yi%10*2+m)%10],mdz=DZ[(m+1)%12];var base=new Date(2024,0,1),diff=Math.round((d-base)/86400000);var dtg=TG[(diff%10+100)%10],ddz=DZ[(diff+4)%12];var hzhi=Math.floor((h+1)/2)%12,htg=TG[(TG.indexOf(dtg)*2+hzhi)%10]||TG[0],hdz=DZ[hzhi];var wx=["木","木","火","火","土","土","金","金","水","水"][yi%10];el.innerHTML="<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;text-align:center;margin-bottom:10px">"+"<div><div class=lbl>&#24180;&#26576;</div><div class=hi style="font-size:1.3rem">"+ytg+ydz+"</div></div>"+"<div><div class=lbl>&#26376;&#26576;</div><div class=hi style="font-size:1.3rem">"+mtg+mdz+"</div></div>"+"<div><div class=lbl>&#26085;&#26576;</div><div class=hi style="font-size:1.3rem">"+dtg+ddz+"</div></div>"+"<div><div class=lbl>&#26102;&#26576;</div><div class=hi style="font-size:1.3rem">"+htg+hdz+"</div></div></div>"+"<div style="color:#aaa;font-size:.85rem">&#24180;&#20116;&#34892;: "+wx+" &nbsp; &#23646;&#30456;: "+SX[y%12]+"</div>";el.classList.add("show")}
-var YI_L=["祭祀","开市","乘车","抬居","安装","祈禄","结婚","出行","纳采","动土","入学","开仓","修造","立券","交易"];
-var JI_L=["动土","开仓","上尚","行丧事","安床","栅种","伐木","破土","嵌刀","诉讼","立券","交易"];
-function calcHL(){var ds=document.getElementById("hl-d").value,el=document.getElementById("hl-r");if(!ds){el.style.display="block";el.innerHTML="&#35831;&#36873;&#25321;&#26085;&#26399;";return}var d=new Date(ds),y=d.getFullYear(),m=d.getMonth()+1,day=d.getDate();var h=y*10000+m*100+day;var yi1=YI_L[h%YI_L.length],yi2=YI_L[(h+3)%YI_L.length],yi3=YI_L[(h+7)%YI_L.length];var ji1=JI_L[h%JI_L.length],ji2=JI_L[(h+5)%JI_L.length];var cy=(y-1984+600)%60,tg=TG[cy%10],dz=DZ[cy%12];el.style.display="block";el.innerHTML="<div class=yi>&#23452;: "+yi1+" &nbsp; "+yi2+" &nbsp; "+yi3+"</div><div class=ji>&#23452;: "+ji1+" &nbsp; "+ji2+"</div><div style="color:#d4af37;margin-top:8px">&#20914;: "+tg+dz+" &#23646;"+SX[y%12]+"</div><div class=note>&#26412;&#40644;&#5386;&#20026;&#31639;&#27861;&#27169;&#25321;&#65292;&#20165;&#20379;&#21442;&#32771;</div>"}
-function calcSX(){var y=parseInt(document.getElementById("sx-y").value)||1990,el=document.getElementById("sx-r");var sx=SX[y%12],yi=(y-1984+600)%60,tg=TG[yi%10],dz=DZ[yi%12];var wx=["木","木","火","火","土","土","金","金","水","水"][yi%10];var colors={"木":"绿","火":"红\/紫","土":"黄\/棕","金":"白\/银","水":"黑\/蒸蓝"};var lucky={"木":[3,8],"火":[2,7],"土":[5,10],"金":[4,9],"水":[1,6]};var ny_list=["海中金","炉中火","大林木","路旁土","剑锋金","山夰火","涧下水","城夰土","白蜡金","杨柳木","井泉水","屋上土","霏霖火","松柏木","长流水","沙中金","山下火","大驿土","钟钓金","桑柘木","大海水","天上火","柳樄木","泉中水","屋梁土","大泽土","钟钓金","桑柘木","大海水","天上火"];var ny=ny_list[yi%30]||tg+dz;el.innerHTML="<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:center">"+"<div><div class=lbl>&#23646;&#30456;</div><div class=hi style="font-size:1.8rem">"+sx+"</div></div>"+"<div><div class=lbl>&#24180;&#26576;</div><div class=hi>"+tg+dz+"</div></div>"+"<div><div class=lbl>&#20116;&#34892;</div><div>"+wx+"</div></div>"+"<div><div class=lbl>&#32467;&#38899;</div><div>"+ny+"</div></div>"+"<div><div class=lbl>&#24184;&#36816;&#33394;</div><div>"+(colors[wx]||"")+"</div></div>"+"<div><div class=lbl>&#24184;&#36816;&#25968;</div><div>"+(lucky[wx]||[]).join("&#12290;")+"</div></div>"+"<div><div class=lbl>&#30456;&#20914;</div><div>"+SX[(y%12+6)%12]+"</div></div></div>";el.classList.add("show")}
-var GUA_SYM=["☰","☱","☲","☳","☴","☵","☶","☷"];
-var GUA_NAME=["乾","兑","离","震","巽","坎","艮","坤"];
-var GUA_MEAN=["天行健，君子以自强不息，大吉大利，万事如意","和悦喜乐，人情和顺，利于交流合作，吉","文明光大，事业辉煌，利于展示才能，中吉","雷震百里，动而进取，利于开拓进取，吉","入也，忍耚渗透，利于潜移默化，小吉","险也，心亨乃将有功，利于守正待时，中吉","止也，时止则止，利于守成保守，小吉","地势坤，君子以厚德载物，利于守正居安，吉"];
-function castGua(){var el=document.getElementById("gua-r");var lines=[];for(var i=0;i<6;i++)lines.push(Math.random()>.5?1:0);var upper=Math.min(lines[5]*4+lines[4]*2+lines[3],7),lower=Math.min(lines[2]*4+lines[1]*2+lines[0],7);var html="<div style="display:flex;gap:20px;justify-content:center;margin-bottom:12px">"+"<div style="text-align:center"><div style="font-size:2.5rem">"+GUA_SYM[upper]+"</div><div style="color:#d4af37">"+GUA_NAME[upper]+"(&#19978;)</div></div>"+"<div style="text-align:center;align-self:center;color:#d4af37;font-size:1.5rem">&#8593;</div>"+"<div style="text-align:center"><div style="font-size:2.5rem">"+GUA_SYM[lower]+"</div><div style="color:#d4af37">"+GUA_NAME[lower]+"(&#19979;)</div></div></div>"+"<div style="color:#fff;line-height:2">&#20851;&#21517;: &#x300a;"+GUA_NAME[upper]+GUA_NAME[lower]+"》 &#35814;&#35299;: "+GUA_MEAN[upper]+"</div>"+"<div style="margin-top:12px"><button class=btn2 onclick=castGua()>&#20877;&#31449;&#19968;&#31070;</button></div>";el.innerHTML=html;el.classList.add("show")}
-var today=new Date().toISOString().slice(0,10);document.getElementById("hl-d").value=today;document.getElementById("bz-d").value=today;
-<\/script>
+
+function drawSign(){
+  var el=document.getElementById('zhu-box');
+  el.innerHTML='<div style="font-size:2.5rem;color:#d4af37">☰☰☰</div><div style="color:#888;margin-top:8px">摇签中...</div>';
+  setTimeout(function(){
+    var n=Math.floor(Math.random()*SIGNS.length);
+    var s=SIGNS[n];
+    el.innerHTML='<div style="color:#d4af37;font-size:1.1rem;margin-bottom:10px">第'+(n+1)+'号 &nbsp;【'+s[0]+'】 &nbsp;'+SX[n%12]+'</div><div style="color:#aaa;font-size:.85rem;margin-bottom:10px">纳音：'+s[1]+'</div><div style="color:#fff;line-height:2;font-size:.95rem">签诗：'+s[2]+'</div><button class="btn2" onclick="drawSign()">再抽一签</button>';
+  },1000)
+}
+
+function calcBazi(){
+  var ds=document.getElementById('bz-d').value,h=parseInt(document.getElementById('bz-h').value)||12,el=document.getElementById('bz-r');
+  if(!ds){el.innerHTML='请选择日期';el.classList.add('show');return}
+  var d=new Date(ds),y=d.getFullYear(),m=d.getMonth()+1;
+  var yi=(y-1984+600)%60;
+  var ytg=TG[yi%10],ydz=DZ[yi%12];
+  var mtg=TG[(yi%10*2+m)%10],mdz=DZ[(m+1)%12];
+  var base=new Date(2024,0,1),diff=Math.round((d-base)/86400000);
+  var dtg=TG[(diff%10+100)%10],ddz=DZ[(diff+4)%12];
+  var hzhi=Math.floor((h+1)/2)%12,htg=TG[(TG.indexOf(dtg)*2+hzhi)%10]||TG[0],hdz=DZ[hzhi];
+  var wx=['木','木','火','火','土','土','金','金','水','水'][yi%10];
+  el.innerHTML='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;text-align:center;margin-bottom:10px">'+'<div><div class="lbl">年柱</div><div class="hi" style="font-size:1.3rem">'+ytg+ydz+'</div></div>'+'<div><div class="lbl">月柱</div><div class="hi" style="font-size:1.3rem">'+mtg+mdz+'</div></div>'+'<div><div class="lbl">日柱</div><div class="hi" style="font-size:1.3rem">'+dtg+ddz+'</div></div>'+'<div><div class="lbl">时柱</div><div class="hi" style="font-size:1.3rem">'+htg+hdz+'</div></div></div>'+'<div style="color:#aaa;font-size:.85rem">年五行: '+wx+' &nbsp; 属相: '+SX[y%12]+'</div>';
+  el.classList.add('show')
+}
+
+var YI_L=['祭祀','开市','乘车','移居','安床','祈福','结婚','出行','纳采','动土','入学','开仓','修造','立券','交易'];
+var JI_L=['动土','开仓','上梁','行丧事','安床','栽种','伐木','破土','动刀','诉讼','立券','交易'];
+
+function calcHL(){
+  var ds=document.getElementById('hl-d').value,el=document.getElementById('hl-r');
+  if(!ds){el.style.display='block';el.innerHTML='请选择日期';return}
+  var d=new Date(ds),y=d.getFullYear(),m=d.getMonth()+1,day=d.getDate();
+  var h=y*10000+m*100+day;
+  var yi1=YI_L[h%YI_L.length],yi2=YI_L[(h+3)%YI_L.length],yi3=YI_L[(h+7)%YI_L.length];
+  var ji1=JI_L[h%JI_L.length],ji2=JI_L[(h+5)%JI_L.length];
+  var cy=(y-1984+600)%60,tg=TG[cy%10],dz=DZ[cy%12];
+  el.style.display='block';
+  el.innerHTML='<div class="yi">宜: '+yi1+' &nbsp; '+yi2+' &nbsp; '+yi3+'</div><div class="ji">忌: '+ji1+' &nbsp; '+ji2+'</div><div style="color:#d4af37;margin-top:8px">冲: '+tg+dz+' 属'+SX[y%12]+'</div><div class="note">本黄历为算法模拟，仅供参考</div>'
+}
+
+function calcSX(){
+  var y=parseInt(document.getElementById('sx-y').value)||1990,el=document.getElementById('sx-r');
+  var sx=SX[y%12],yi=(y-1984+600)%60,tg=TG[yi%10],dz=DZ[yi%12];
+  var wx=['木','木','火','火','土','土','金','金','水','水'][yi%10];
+  var colors={'木':'绿','火':'红/紫','土':'黄/棕','金':'白/银','水':'黑/深蓝'};
+  var lucky={'木':[3,8],'火':[2,7],'土':[5,10],'金':[4,9],'水':[1,6]};
+  var ny_list=['海中金','炉中火','大林木','路旁土','剑锋金','山头火','涧下水','城头土','白蜡金','杨柳木','井泉水','屋上土','霹雳火','松柏木','长流水','沙中金','山下火','大驿土','钗钏金','桑柘木','大海水','天上火','石榴木','泉中水','屋梁土','大泽土'];
+  var ny=ny_list[yi%30]||tg+dz;
+  el.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:center">'+'<div><div class="lbl">属相</div><div class="hi" style="font-size:1.8rem">'+sx+'</div></div>'+'<div><div class="lbl">年柱</div><div class="hi">'+tg+dz+'</div></div>'+'<div><div class="lbl">五行</div><div>'+wx+'</div></div>'+'<div><div class="lbl">纳音</div><div>'+ny+'</div></div>'+'<div><div class="lbl">幸运色</div><div>'+(colors[wx]||'')+'</div></div>'+'<div><div class="lbl">幸运数</div><div>'+(lucky[wx]||[]).join('、')+'</div></div>'+'<div><div class="lbl">相冲</div><div>'+SX[(y%12+6)%12]+'</div></div></div>';
+  el.classList.add('show')
+}
+
+var GUA_SYM=['☰','☱','☲','☳','☴','☵','☶','☷'];
+var GUA_NAME=['乾','兑','离','震','巽','坎','艮','坤'];
+var GUA_MEAN=['天行健，君子以自强不息，大吉大利，万事如意','和悦喜乐，人情和顺，利于交流合作，吉','文明光大，事业辉煌，利于展示才能，中吉','雷震百里，动而进取，利于开拓进取，吉','入也，巽顺渗透，利于潜移默化，小吉','险也，心亨乃将有功，利于守正待时，中吉','止也，时止则止，利于守成保守，小吉','地势坤，君子以厚德载物，利于守正居安，吉'];
+
+function castGua(){
+  var el=document.getElementById('gua-r');
+  var lines=[];
+  for(var i=0;i<6;i++)lines.push(Math.random()>.5?1:0);
+  var upper=Math.min(lines[5]*4+lines[4]*2+lines[3],7),lower=Math.min(lines[2]*4+lines[1]*2+lines[0],7);
+  var html='<div style="display:flex;gap:20px;justify-content:center;margin-bottom:12px">'+'<div style="text-align:center"><div style="font-size:2.5rem">'+GUA_SYM[upper]+'</div><div style="color:#d4af37">'+GUA_NAME[upper]+'(上)</div></div>'+'<div style="text-align:center;align-self:center;color:#d4af37;font-size:1.5rem">↑</div>'+'<div style="text-align:center"><div style="font-size:2.5rem">'+GUA_SYM[lower]+'</div><div style="color:#d4af37">'+GUA_NAME[lower]+'(下)</div></div></div>'+'<div style="color:#fff;line-height:2">卦名: 《'+GUA_NAME[upper]+GUA_NAME[lower]+'》 详解: '+GUA_MEAN[upper]+'</div>'+'<div style="margin-top:12px"><button class="btn2" onclick="castGua()">再占一卦</button></div>';
+  el.innerHTML=html;el.classList.add('show')
+}
+
+var today=new Date().toISOString().slice(0,10);
+document.getElementById('hl-d').value=today;
+document.getElementById('bz-d').value=today;
+</script>
 </body>
 </html>
