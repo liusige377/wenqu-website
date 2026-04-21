@@ -1,159 +1,269 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>AI助手 - 问渠</title>
-<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif;background:#0a0a0f;color:#e8e8e8;min-height:100vh;display:flex;flex-direction:column}
-canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
-.header{position:relative;z-index:1;text-align:center;padding:24px 0 16px;border-bottom:1px solid rgba(212,175,55,.15)}
-.header h1{font-size:1.8rem;color:#d4af37;letter-spacing:.2em;font-family:'Ma Shan Zheng','Noto Serif SC',serif}
-.header .back{position:absolute;left:24px;top:50%;transform:translateY(-50%);color:#888;text-decoration:none;font-size:.9rem;transition:color .3s}
-.header .back:hover{color:#d4af37}
-.header .free-tag{color:#d4af37;font-size:.85rem;margin-top:4px;letter-spacing:.05em}
-.chat-container{position:relative;z-index:1;flex:1;max-width:720px;width:100%;margin:0 auto;padding:0 20px;display:flex;flex-direction:column}
-.messages{flex:1;overflow-y:auto;padding:20px 0}
-.msg{margin-bottom:16px;animation:fadeIn .3s ease}
-.msg.user{align-self:flex-end;background:rgba(212,175,55,.15);border:1px solid rgba(212,175,55,.3);border-radius:16px 16px 4px 16px;padding:12px 16px;max-width:75%;word-break:break-word}
-.msg.ai{align-self:flex-start;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px 16px 16px 4px;padding:12px 16px;max-width:75%;word-break:break-word}
-.msg.system{text-align:center;color:#666;font-size:.85rem;padding:8px 0}
-.msg .sender{font-size:.72rem;color:#888;margin-bottom:4px}
-.msg.user .sender{color:#d4af37}
-.msg .content{line-height:1.7;font-size:.95rem}
-.msg .content code{background:rgba(0,0,0,.3);padding:2px 6px;border-radius:4px;font-size:.88rem}
-.msg .content pre{background:rgba(0,0,0,.3);padding:12px;border-radius:8px;overflow-x:auto;margin:8px 0;font-size:.85rem}
-.msg .content pre code{background:none;padding:0}
-.msg .content p{margin:8px 0}
-.msg .content ul,.msg .content ol{margin:8px 0;padding-left:20px}
-.msg .content li{margin:4px 0}
-.msg .content strong{color:#d4af37}
-.input-area{position:relative;z-index:1;padding:16px 0 24px;border-top:1px solid rgba(212,175,55,.1)}
-.input-row{display:flex;gap:10px;align-items:flex-end}
-.input-row textarea{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(212,175,55,.2);border-radius:12px;padding:12px 16px;color:#e8e8e8;font-size:.95rem;resize:none;min-height:48px;max-height:120px;outline:none;transition:border-color .3s;font-family:inherit}
-.input-row textarea:focus{border-color:rgba(212,175,55,.5)}
-.input-row textarea::placeholder{color:#555}
-.send-btn{background:rgba(212,175,55,.2);border:1px solid rgba(212,175,55,.4);color:#d4af37;border-radius:12px;padding:12px 20px;cursor:pointer;font-size:.95rem;transition:all .3s;white-space:nowrap}
-.send-btn:hover{background:rgba(212,175,55,.3)}
-.send-btn:disabled{opacity:.4;cursor:not-allowed}
-.quick-questions{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px}
-.quick-questions button{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);color:#888;font-size:.8rem;padding:6px 12px;border-radius:20px;cursor:pointer;transition:all .3s}
-.quick-questions button:hover{background:rgba(212,175,55,.1);border-color:rgba(212,175,55,.3);color:#d4af37}
-.typing{color:#888;font-size:.9rem;padding:8px 0;display:none}
-.typing.active{display:block}
-.footer-info{text-align:center;padding:8px 0;color:#444;font-size:.75rem}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-@media(max-width:600px){.msg.user,.msg.ai{max-width:90%}.header h1{font-size:1.4rem}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>问渠AI助手</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 800px;
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        .chat-area {
+            height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+        .message.user {
+            align-items: flex-end;
+        }
+        .message.assistant {
+            align-items: flex-start;
+        }
+        .bubble {
+            max-width: 80%;
+            padding: 15px 20px;
+            border-radius: 18px;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        .message.user .bubble {
+            background: #1e3c72;
+            color: white;
+        }
+        .message.assistant .bubble {
+            background: white;
+            color: #333;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .model-tag {
+            font-size: 11px;
+            color: #888;
+            margin-top: 5px;
+        }
+        .input-area {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+        }
+        .input-area input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .input-area input:focus {
+            border-color: #1e3c72;
+        }
+        .input-area button {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .input-area button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(30, 60, 114, 0.4);
+        }
+        .input-area button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .loading {
+            display: flex;
+            gap: 5px;
+            padding: 15px 20px;
+        }
+        .loading span {
+            width: 8px;
+            height: 8px;
+            background: #1e3c72;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .loading span:nth-child(1) { animation-delay: -0.32s; }
+        .loading span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+        .examples {
+            padding: 15px 20px;
+            background: #f0f4f8;
+            border-top: 1px solid #e0e0e0;
+        }
+        .examples-title {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .example-btn {
+            display: inline-block;
+            padding: 8px 15px;
+            margin: 5px 5px 5px 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 15px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .example-btn:hover {
+            background: #1e3c72;
+            color: white;
+            border-color: #1e3c72;
+        }
+    </style>
 </head>
 <body>
-<canvas id="bg"></canvas>
-
-<div class="header">
-  <a class="back" href="index.html">← 返回首页</a>
-  <h1>AI 助手</h1>
-  <div class="free-tag">⭐ 永久免费 · 无需注册 · 扫码即用</div>
-</div>
-
-<div class="chat-container">
-  <div class="messages" id="messages">
-    <div class="msg system">🤖 问渠AI助手已就绪，有问必答</div>
-  </div>
-  <div class="typing" id="typing">⚡ 思考中，请稍候...</div>
-  <div class="footer-info" id="footer-info"></div>
-  <div class="input-area">
-    <div class="input-row">
-      <textarea id="input" placeholder="输入问题，按 Enter 发送..." rows="1"></textarea>
-      <button class="send-btn" id="send-btn" onclick="sendMessage()">发送</button>
+    <div class="container">
+        <div class="header">
+            <h1>问渠AI助手</h1>
+            <p>永久免费 · 有问必答</p>
+        </div>
+        
+        <div class="chat-area" id="chatArea">
+            <div class="message assistant">
+                <div class="bubble">
+                    您好！欢迎使用问渠网站，专门为您服务。<br>有什么可以帮您的？
+                </div>
+            </div>
+        </div>
+        
+        <div class="examples">
+            <div class="examples-title">试试这些问题：</div>
+            <button class="example-btn" onclick="askExample('LNG天然气怎么储存才安全？')">LNG天然气怎么储存才安全？</button>
+            <button class="example-btn" onclick="askExample('燃气成本怎么计算？')">燃气成本怎么计算？</button>
+            <button class="example-btn" onclick="askExample('储罐需要什么资质？')">储罐需要什么资质？</button>
+        </div>
+        
+        <div class="input-area">
+            <input type="text" id="userInput" placeholder="输入你的问题..." onkeypress="handleKeyPress(event)">
+            <button id="sendBtn" onclick="sendMessage()">发送</button>
+        </div>
     </div>
-    <div class="quick-questions">
-      <button onclick="quickAsk('LNG天然气是什么？')">LNG是什么</button>
-      <button onclick="quickAsk('我是陶瓷厂老板，用LNG划算吗？')">陶瓷厂用LNG</button>
-      <button onclick="quickAsk('给我写一份燃气安全检查表')">燃气安全表</button>
-      <button onclick="quickAsk('LNG和管道天然气哪个便宜？')">LNG vs 管道气</button>
-    </div>
-  </div>
-</div>
 
-<script>
-// 粒子背景
-(function(){
-  var canvas=document.getElementById('bg'),ctx=canvas.getContext('2d'),particles=[],w,h;
-  function resize(){w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight}
-  resize();window.addEventListener('resize',resize);
-  for(var i=0;i<60;i++)particles.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.5+0.3,vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,alpha:Math.random()*0.4+0.1});
-  function draw(){
-    ctx.clearRect(0,0,w,h);
-    for(var p of particles){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>w)p.vx*=-1;if(p.y<0||p.y>h)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(212,175,55,'+p.alpha+')';ctx.fill()}
-    for(var i=0;i<particles.length;i++)for(var j=i+1;j<particles.length;j++){var dx=particles[i].x-particles[j].x,dy=particles[i].y-particles[j].y,dist=Math.sqrt(dx*dx+dy*dy);if(dist<120){ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.strokeStyle='rgba(212,175,55,'+(0.05*(1-dist/120))+')';ctx.lineWidth=0.5;ctx.stroke()}}
-    requestAnimationFrame(draw);
-  }
-  draw();
-})();
-
-// API地址
-var API_URL = 'http://localhost:8080/api/chat';
-
-var input = document.getElementById('input');
-var messages = document.getElementById('messages');
-var typing = document.getElementById('typing');
-var sendBtn = document.getElementById('send-btn');
-var footerInfo = document.getElementById('footer-info');
-
-input.addEventListener('keydown', function(e){
-  if(e.key==='Enter' && !e.shiftKey){e.preventDefault();sendMessage()}
-  autoResize(this);
-});
-
-function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px'}
-
-function quickAsk(q){input.value=q;sendMessage()}
-
-function addMessage(content, type){
-  var div=document.createElement('div');
-  div.className='msg '+type;
-  var label = type==='user'?'你':type==='ai'?'问渠AI':'系统';
-  div.innerHTML='<div class="sender">'+label+'</div><div class="content">'+formatContent(content)+'</div>';
-  messages.appendChild(div);
-  messages.scrollTop=messages.scrollHeight;
-}
-
-function formatContent(text){
-  text=text.replace(/```([\s\S]*?)```/g,'<pre><code>$1</code></pre>');
-  text=text.replace(/`([^`]+)`/g,'<code>$1</code>');
-  text=text.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
-  text=text.replace(/\n\n/g,'</p><p>');
-  text=text.replace(/\n/g,'<br>');
-  return '<p>'+text+'</p>';
-}
-
-async function sendMessage(){
-  var text=input.value.trim();
-  if(!text)return;
-  input.value='';
-  input.style.height='auto';
-  sendBtn.disabled=true;
-  addMessage(text,'user');
-  typing.classList.add('active');
-  try {
-    var resp=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text})});
-    var data=await resp.json();
-    typing.classList.remove('active');
-    if(data.success){
-      addMessage(data.content,'ai');
-      footerInfo.textContent='问渠AI · 永久免费';
-    } else {
-      addMessage('⚠️ 服务暂时不可用，请稍后重试','system');
-    }
-  } catch(e){
-    typing.classList.remove('active');
-    addMessage('⚠️ 无法连接服务。请确认已启动本地服务（运行 server.py）','system');
-  }
-  sendBtn.disabled=false;
-  input.focus();
-}
-</script>
+    <script>
+        const chatArea = document.getElementById('chatArea');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+        
+        function addMessage(role, content, modelInfo = '') {
+            const msg = document.createElement('div');
+            msg.className = `message ${role}`;
+            msg.innerHTML = `
+                <div class="bubble">${content}</div>
+                ${modelInfo ? `<div class="model-tag">${modelInfo}</div>` : ''}
+            `;
+            chatArea.appendChild(msg);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+        
+        function addLoading() {
+            const msg = document.createElement('div');
+            msg.className = 'message assistant';
+            msg.id = 'loadingMsg';
+            msg.innerHTML = `
+                <div class="loading">
+                    <span></span><span></span><span></span>
+                </div>
+            `;
+            chatArea.appendChild(msg);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+        
+        function removeLoading() {
+            const loading = document.getElementById('loadingMsg');
+            if (loading) loading.remove();
+        }
+        
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+        
+        function askExample(q) {
+            userInput.value = q;
+            sendMessage();
+        }
+        
+        async function sendMessage() {
+            const question = userInput.value.trim();
+            if (!question) return;
+            
+            // 显示用户消息
+            addMessage('user', question);
+            userInput.value = '';
+            sendBtn.disabled = true;
+            
+            // 显示加载
+            addLoading();
+            
+            try {
+                // 调用后端API
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: question })
+                });
+                
+                const data = await response.json();
+                removeLoading();
+                
+                if (data.success) {
+                    addMessage('assistant', data.content, `${data.provider} | ${data.model} | ${data.elapsed}秒`);
+                } else {
+                    addMessage('assistant', '抱歉，出错了：' + data.error);
+                }
+            } catch (e) {
+                removeLoading();
+                addMessage('assistant', '网络错误，请稍后重试');
+            }
+            
+            sendBtn.disabled = false;
+            userInput.focus();
+        }
+    </script>
 </body>
 </html>
