@@ -6,240 +6,529 @@
 <title>问渠 · 有问必有答</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif;background:#0a0a0f;color:#e8e8e8;min-height:100vh;overflow-x:hidden}
-canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
-.container{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 24px}
-.hero{text-align:center;padding:50px 0 20px}
-.hero h1{font-size:clamp(3.5rem,10vw,6.5rem);font-weight:900;color:#d4af37;letter-spacing:.3em;text-shadow:0 0 60px rgba(212,175,55,.35),0 4px 20px rgba(0,0,0,.6);font-family:'Ma Shan Zheng','Noto Serif SC',serif}
-.hero .slogan{color:#c4a855;font-size:1.15rem;letter-spacing:.4em;margin-top:14px;font-weight:300}
-.hero .poem{margin-top:20px;color:#999;font-size:1rem;line-height:2.2;letter-spacing:.12em}
-.hero .poem .hl{color:#d4af37;font-weight:600}
-.hero .poem .au{color:#555;font-size:.82rem;margin-top:6px;letter-spacing:.08em}
-.hero .divider{width:60px;height:1px;background:linear-gradient(90deg,transparent,#d4af37,transparent);margin:16px auto 0}
+html,body{height:100%;overflow:hidden}
 
-/* Top section: today-in-history + AI chat side by side */
-.top-row{display:flex;gap:16px;align-items:flex-start;margin:20px 0 24px}
-
-/* Compact today-in-history */
-.today-box{flex:0 0 220px;background:rgba(255,255,255,.03);border:1px solid rgba(212,175,55,.15);border-radius:14px;padding:14px 16px}
-.today-box h2{color:#d4af37;font-size:.88rem;letter-spacing:.12em;margin-bottom:10px;text-align:center}
-.today-event{display:flex;gap:8px;margin-bottom:6px;align-items:flex-start}
-.today-event .year{color:#d4af37;font-weight:700;font-size:.82rem;flex:0 0 40px}
-.today-event .text{color:#999;font-size:.78rem;line-height:1.4}
-.today-event .tag{display:inline-block;background:rgba(212,175,55,.12);color:#d4a855;font-size:.68rem;padding:1px 5px;border-radius:3px;margin-left:4px}
-.today-placeholder{color:#555;font-size:.78rem;text-align:center;padding:8px 0}
-
-/* AI Chat bar */
-.ai-chat-box{flex:1;background:rgba(255,255,255,.03);border:1px solid rgba(212,175,55,.25);border-radius:14px;padding:14px 16px}
-.ai-chat-box h2{color:#d4af37;font-size:.88rem;letter-spacing:.12em;margin-bottom:10px}
-.ai-msgs{min-height:80px;max-height:160px;overflow-y:auto;margin-bottom:10px;padding-right:4px}
-.ai-msgs::-webkit-scrollbar{width:3px}
-.ai-msgs::-webkit-scrollbar-track{background:transparent}
-.ai-msgs::-webkit-scrollbar-thumb{background:rgba(212,175,55,.3);border-radius:2px}
-.ai-msg{display:flex;gap:8px;margin-bottom:8px;animation:fadeIn .3s ease}
-.ai-msg.user{align-self:flex-end;flex-direction:row-reverse}
-.ai-msg .av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;flex:0 0 26px}
-.ai-msg.bot .av{background:rgba(212,175,55,.25);color:#d4af37}
-.ai-msg.user .av{background:rgba(100,130,200,.25);color:#8ab4f8}
-.ai-msg .bubble{padding:7px 11px;border-radius:10px;font-size:.82rem;line-height:1.5;max-width:80%}
-.ai-msg.bot .bubble{background:rgba(255,255,255,.05);color:#ccc}
-.ai-msg.user .bubble{background:rgba(212,175,55,.2);color:#e8e0c0}
-.ai-typing{display:none;align-items:center;gap:6px;color:#666;font-size:.78rem;padding:4px 0}
-.ai-typing span{width:5px;height:5px;border-radius:50%;background:#888;animation:bounce 1.2s infinite}
-.ai-typing span:nth-child(2){animation-delay:.2s}
-.ai-typing span:nth-child(3){animation-delay:.4s}
-@keyframes bounce{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
-@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-
-/* Input row */
-.ai-input-row{display:flex;gap:8px}
-.ai-input-row input{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(212,175,55,.2);border-radius:22px;padding:9px 16px;color:#e8e8e8;font-size:.85rem;outline:none;transition:border-color .3s}
-.ai-input-row input:focus{border-color:rgba(212,175,55,.5)}
-.ai-input-row input::placeholder{color:#555}
-.ai-input-row button{background:linear-gradient(135deg,#d4af37,#b8932a);border:none;border-radius:22px;padding:9px 18px;color:#0a0a0f;font-weight:700;font-size:.82rem;cursor:pointer;transition:all .3s}
-.ai-input-row button:hover{background:linear-gradient(135deg,#e8c44a,#d4af37)}
-.ai-input-row button:disabled{opacity:.5;cursor:not-allowed}
-.ai-input-row button:active{transform:scale(.96)}
-
-/* Tool grid */
-.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px;padding-bottom:60px}
-.cat-card{background:rgba(255,255,255,.03);border:1px solid rgba(212,175,55,.15);border-radius:16px;padding:32px 24px;text-align:center;cursor:pointer;transition:all .4s cubic-bezier(.25,.8,.25,1);text-decoration:none;color:inherit;display:block;position:relative;overflow:hidden}
-.cat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#d4af37,transparent);opacity:0;transition:opacity .4s}
-.cat-card:hover{background:rgba(212,175,55,.08);border-color:rgba(212,175,55,.4);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.5),0 0 30px rgba(212,175,55,.08)}
-.cat-card:hover::before{opacity:1}
-.cat-card .icon{font-size:2.5rem;display:block;margin-bottom:14px}
-.cat-card h3{color:#d4af37;font-size:1.1rem;margin-bottom:6px;letter-spacing:.08em}
-.cat-card p{color:#777;font-size:.82rem;line-height:1.5}
-.cat-card .count{color:#555;font-size:.75rem;margin-top:10px}
-
-/* Remove AI card from grid */
-.cat-card.ai-link{display:none}
-
-footer{text-align:center;padding:40px 0;color:#444;font-size:.8rem}
-@media(max-width:700px){
-.top-row{flex-direction:column}
-.today-box{flex:none;width:100%}
+body{
+  font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif;
+  background:#0a0a0f;color:#e8e8e8;
+  display:flex;flex-direction:column;
+  height:100vh;
 }
 
-/* 历史上的今天原始样式隐藏（已移到top-row） */
-.today-box-orig{display:none}
+/* ===== TOP BAR ===== */
+.topbar{
+  height:56px;background:#111118;
+  border-bottom:1px solid rgba(212,175,55,.2);
+  display:flex;align-items:center;
+  padding:0 20px;gap:12px;
+  flex-shrink:0;z-index:10;
+  position:relative;
+}
+.topbar-title{
+  font-size:1.2rem;font-weight:700;
+  color:#d4af37;letter-spacing:.15em;
+}
+.topbar-sub{
+  color:#666;font-size:.8rem;
+  letter-spacing:.1em;
+}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.topbar-badge{
+  background:rgba(212,175,55,.15);color:#d4af37;
+  font-size:.7rem;padding:3px 10px;border-radius:12px;
+}
+
+/* ===== MAIN LAYOUT ===== */
+.layout{
+  display:flex;flex:1;overflow:hidden;
+}
+
+/* ===== LEFT SIDEBAR ===== */
+.sidebar{
+  width:200px;flex-shrink:0;
+  background:#0e0e16;
+  border-right:1px solid rgba(212,175,55,.12);
+  overflow-y:auto;padding:16px 0;
+  display:flex;flex-direction:column;gap:4px;
+}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(212,175,55,.2)}
+
+.side-section{margin-bottom:8px}
+.side-section-label{
+  font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;
+  color:#555;padding:8px 16px 4px;
+}
+.side-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 16px;cursor:pointer;
+  font-size:.85rem;color:#999;
+  transition:all .2s;border-radius:0;
+  text-decoration:none;border:none;background:none;width:100%;text-align:left;
+}
+.side-item:hover{background:rgba(212,175,55,.08);color:#d4af37}
+.side-item.active{background:rgba(212,175,55,.12);color:#d4af37;border-left:2px solid #d4af37}
+.side-item .emoji{font-size:1.1rem;width:22px;text-align:center;flex-shrink:0}
+.side-item .arrow{margin-left:auto;color:#444;font-size:.7rem}
+
+.side-divider{height:1px;background:rgba(212,175,55,.1);margin:8px 16px}
+
+/* ===== CENTER AREA ===== */
+.center{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+
+/* Chat header */
+.chat-header{
+  padding:14px 24px;border-bottom:1px solid rgba(212,175,55,.1);
+  display:flex;align-items:center;gap:10px;
+  background:#0a0a0f;flex-shrink:0;
+}
+.chat-header-title{font-size:.9rem;color:#d4af37;font-weight:600}
+.chat-header-sub{color:#555;font-size:.75rem}
+
+/* Messages area */
+.messages{
+  flex:1;overflow-y:auto;padding:20px 24px;
+  display:flex;flex-direction:column;gap:16px;
+  background:#0a0a0f;
+}
+.messages::-webkit-scrollbar{width:4px}
+.messages::-webkit-scrollbar-thumb{background:rgba(212,175,55,.2);border-radius:2px}
+
+.msg{display:flex;gap:12px;max-width:80%;animation:fadeIn .3s ease}
+.msg.user{flex-direction:row-reverse;align-self:flex-end;max-width:72%}
+.msg-avatar{width:36px;height:36px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.msg.bot .msg-avatar{background:rgba(212,175,55,.2);color:#d4af37;border:1px solid rgba(212,175,55,.3)}
+.msg.user .msg-avatar{background:rgba(80,120,200,.2);color:#8ab4f8;border:1px solid rgba(100,150,255,.3)}
+.msg-bubble{padding:12px 16px;border-radius:14px;line-height:1.6;font-size:.9rem}
+.msg.bot .msg-bubble{background:rgba(255,255,255,.05);border:1px solid rgba(212,175,55,.12);border-radius:4px 14px 14px 14px}
+.msg.user .msg-bubble{background:rgba(212,175,55,.15);border:1px solid rgba(212,175,55,.2);border-radius:14px 4px 14px 14px}
+.msg.user .msg-bubble{color:#e8e0c0}
+
+.msg-time{font-size:.68rem;color:#444;margin-top:4px;padding:0 4px}
+.msg.user .msg-time{text-align:right}
+
+/* Welcome message */
+.welcome-box{
+  text-align:center;padding:40px 20px;
+  animation:fadeIn .4s ease
+}
+.welcome-title{font-size:2.5rem;color:#d4af37;font-family:'Noto Serif SC',serif;margin-bottom:10px}
+.welcome-poem{color:#666;font-size:.9rem;line-height:2;margin:16px 0}
+.welcome-poem .hl{color:#d4af37}
+.welcome-tip{color:#555;font-size:.82rem;margin-top:20px;line-height:1.8}
+.welcome-tip div{display:flex;align-items:center;justify-content:center;gap:8px}
+
+/* Tool cards in welcome */
+.tool-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:20px}
+.tool-chip{
+  background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.2);
+  border-radius:20px;padding:6px 14px;font-size:.78rem;color:#aaa;
+  cursor:pointer;transition:all .2s;
+}
+.tool-chip:hover{background:rgba(212,175,55,.2);color:#d4af37;border-color:rgba(212,175,55,.4)}
+
+/* Input area */
+.input-area{
+  padding:16px 24px 20px;
+  background:#0a0a0f;
+  border-top:1px solid rgba(212,175,55,.1);
+  flex-shrink:0;
+}
+.input-hint{
+  font-size:.72rem;color:#444;margin-bottom:8px;
+  display:flex;gap:16px;flex-wrap:wrap;
+}
+.input-hint span{display:flex;align-items:center;gap:4px}
+.input-hint .key{background:rgba(255,255,255,.06);padding:1px 6px;border-radius:4px;font-size:.68rem}
+.input-row{display:flex;gap:10px;align-items:flex-end}
+.input-row input{
+  flex:1;background:rgba(255,255,255,.05);
+  border:1px solid rgba(212,175,55,.2);
+  border-radius:24px;padding:12px 18px;
+  color:#e8e8e8;font-size:.9rem;outline:none;
+  transition:border-color .3s;
+}
+.input-row input:focus{border-color:rgba(212,175,55,.5)}
+.input-row input::placeholder{color:#555}
+.send-btn{
+  background:linear-gradient(135deg,#d4af37,#b8932a);
+  border:none;border-radius:24px;padding:12px 22px;
+  color:#0a0a0f;font-weight:700;font-size:.88rem;
+  cursor:pointer;transition:all .3s;flex-shrink:0;
+}
+.send-btn:hover{background:linear-gradient(135deg,#e8c44a,#d4af37);transform:scale(1.03)}
+.send-btn:active{transform:scale(.97)}
+.send-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* Typing indicator */
+.typing-row{
+  display:none;align-items:center;gap:8px;
+  padding:0 24px 10px;
+}
+.typing-label{color:#555;font-size:.75rem}
+.typing-dots{display:flex;gap:3px}
+.typing-dots span{width:5px;height:5px;border-radius:50%;background:#666;animation:bounce 1.2s infinite}
+.typing-dots span:nth-child(2){animation-delay:.2s}
+.typing-dots span:nth-child(3){animation-delay:.4s}
+@keyframes bounce{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ===== TOOL PANEL (shown when tool selected) ===== */
+.tool-panel{
+  display:none;padding:24px;
+  flex:1;overflow-y:auto;
+}
+.tool-panel.visible{display:block}
+.tool-panel-header{
+  font-size:1.1rem;color:#d4af37;margin-bottom:20px;
+  padding-bottom:12px;border-bottom:1px solid rgba(212,175,55,.15);
+}
+.tool-card{
+  background:rgba(255,255,255,.04);border:1px solid rgba(212,175,55,.12);
+  border-radius:14px;padding:20px;margin-bottom:12px;
+  cursor:pointer;transition:all .3s;
+  text-decoration:none;color:inherit;display:block;
+}
+.tool-card:hover{background:rgba(212,175,55,.08);border-color:rgba(212,175,55,.3);transform:translateY(-2px)}
+.tool-card h3{color:#d4af37;font-size:.95rem;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.tool-card p{color:#777;font-size:.82rem;line-height:1.5}
+.back-link{
+  display:inline-flex;align-items:center;gap:6px;
+  color:#666;font-size:.82rem;cursor:pointer;margin-bottom:16px;
+  padding:6px 0;transition:color .2s;
+}
+.back-link:hover{color:#d4af37}
+
+@keyframes bounce{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+  .sidebar{width:60px}
+  .side-item .label,.side-section-label,.arrow{display:none}
+  .side-item{justify-content:center;padding:10px}
+  .msg{max-width:88%}
+}
 </style>
 <meta name="360-site-verification" content="ffc9f73cacab7ac71ffc3686d16894e2" />
 </head>
 <body>
-<canvas id="bg"></canvas>
-<div class="container">
-  <div class="hero">
-    <h1>问 渠</h1>
-    <div class="slogan">有问必答 · 百科工具站</div>
-    <div class="divider"></div>
-    <div class="poem">
-      半亩方塘一鉴开，天光云影共徘徊。<br>
-      <span class="hl">问渠那得清如许？</span>为有源头活水来。<br>
-      <span class="au">—— 朱熹《观书有感》</span>
-    </div>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <span class="topbar-title">问 渠</span>
+  <span class="topbar-sub">有问必有答 · AI百科助手</span>
+  <div class="topbar-right">
+    <span class="topbar-badge">🤖 AI在线</span>
   </div>
-
-  <div class="top-row">
-    <!-- 历史上的今天（紧凑版） -->
-    <div class="today-box">
-      <h2>📅 历史上的今天</h2>
-      <div class="today-events" id="today-events">
-        <div class="today-placeholder">加载中…</div>
-      </div>
-    </div>
-
-    <!-- AI 对话框 -->
-    <div class="ai-chat-box">
-      <h2>🤖 AI 智能助手</h2>
-      <div class="ai-msgs" id="ai-msgs">
-        <div class="ai-msg bot"><div class="av">🤖</div><div class="bubble">你好！我是问渠AI助手，有问题尽管问我~</div></div>
-      </div>
-      <div class="ai-typing" id="ai-typing"><span></span><span></span><span></span>AI思考中…</div>
-      <div class="ai-input-row">
-        <input id="ai-input" placeholder="输入问题，AI即时回答…" autocomplete="off" />
-        <button id="ai-send" onclick="aiSend()">发送</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="cat-grid">
-    <a class="cat-card" href="history.html">
-      <span class="icon">📜</span>
-      <h3>历史文化</h3>
-      <p>朝代纪年、年代人物、古币换算、百家姓</p>
-      <div class="count">8 项工具</div>
-    </a>
-    <a class="cat-card" href="geography.html">
-      <span class="icon">🌍</span>
-      <h3>天文地理</h3>
-      <p>天文单位、人口密度、经纬度、海拔气压</p>
-      <div class="count">5 项工具</div>
-    </a>
-    <a class="cat-card" href="tech.html">
-      <span class="icon">💻</span>
-      <h3>现代科技</h3>
-      <p>字节换算、进制转换、ASCII码、AI算力</p>
-      <div class="count">6 项工具</div>
-    </a>
-    <a class="cat-card" href="agriculture.html">
-      <span class="icon">🌾</span>
-      <h3>农业百科</h3>
-      <p>亩产计算、饲料配比、化肥用量、养殖密度</p>
-      <div class="count">5 项工具</div>
-    </a>
-    <a class="cat-card" href="metaphysics.html">
-      <span class="icon">🔮</span>
-      <h3>玄学命理</h3>
-      <p>八字排盘、五行纳音、周公解梦、数字凶吉</p>
-      <div class="count">6 项工具</div>
-    </a>
-    <a class="cat-card" href="health.html">
-      <span class="icon">🌿</span>
-      <h3>健康养生</h3>
-      <p>BMI计算、血压评估、卡路里计算、饮水记录</p>
-      <div class="count">5 项工具</div>
-    </a>
-    <a class="cat-card" href="education.html">
-      <span class="icon">📚</span>
-      <h3>教育学习</h3>
-      <p>成语接龙、历史年表、拼音大全、汉字笔画</p>
-      <div class="count">5 项工具</div>
-    </a>
-    <a class="cat-card" href="life.html">
-      <span class="icon">🏠</span>
-      <h3>生活综合</h3>
-      <p>个税房贷、身份证、亲戚关系、数字大写</p>
-      <div class="count">9 项工具</div>
-    </a>
-    <a class="cat-card ai-link" href="ai.html">
-      <span class="icon">🤖</span>
-      <h3>AI 智能助手</h3>
-      <p>有问题尽管问，AI为你秒速解答</p>
-      <div class="count">智能对话</div>
-    </a>
-  </div>
-
-  <footer>© 2026 问渠 · 有问必有答</footer>
 </div>
+
+<!-- MAIN LAYOUT -->
+<div class="layout">
+
+  <!-- LEFT SIDEBAR -->
+  <div class="sidebar">
+    <div class="side-section">
+      <div class="side-section-label">常用工具</div>
+      <button class="side-item active" onclick="showChat()">
+        <span class="emoji">💬</span><span class="label">AI对话</span>
+      </button>
+      <button class="side-item" onclick="showTool('history')">
+        <span class="emoji">📜</span><span class="label">历史文化</span>
+      </button>
+      <button class="side-item" onclick="showTool('geography')">
+        <span class="emoji">🌍</span><span class="label">天文地理</span>
+      </button>
+      <button class="side-item" onclick="showTool('tech')">
+        <span class="emoji">💻</span><span class="label">现代科技</span>
+      </button>
+      <button class="side-item" onclick="showTool('life')">
+        <span class="emoji">🏠</span><span class="label">生活综合</span>
+      </button>
+    </div>
+
+    <div class="side-divider"></div>
+
+    <div class="side-section">
+      <div class="side-section-label">更多工具</div>
+      <button class="side-item" onclick="showTool('agriculture')">
+        <span class="emoji">🌾</span><span class="label">农业百科</span>
+      </button>
+      <button class="side-item" onclick="showTool('metaphysics')">
+        <span class="emoji">🔮</span><span class="label">玄学命理</span>
+      </button>
+      <button class="side-item" onclick="showTool('health')">
+        <span class="emoji">🌿</span><span class="label">健康养生</span>
+      </button>
+      <button class="side-item" onclick="showTool('education')">
+        <span class="emoji">📚</span><span class="label">教育学习</span>
+      </button>
+    </div>
+
+    <div class="side-divider"></div>
+
+    <div class="side-section">
+      <div class="side-section-label">系统</div>
+      <button class="side-item" onclick="window.open('ai.html')">
+        <span class="emoji">🤖</span><span class="label">AI专用页</span>
+        <span class="arrow">↗</span>
+      </button>
+      <button class="side-item" onclick="window.open('https://liusige377.github.io/xintengfei-website/')">
+        <span class="emoji">🏭</span><span class="label">鑫腾飞官网</span>
+        <span class="arrow">↗</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- CENTER -->
+  <div class="center">
+
+    <!-- Chat view -->
+    <div id="chat-view" style="display:flex;flex-direction:column;height:100%;">
+      <div class="chat-header">
+        <span style="font-size:1.1rem;">🤖</span>
+        <div>
+          <div class="chat-header-title">AI 智能助手</div>
+          <div class="chat-header-sub">智谱GLM-4 · 随时为你解答</div>
+        </div>
+      </div>
+
+      <div class="messages" id="messages">
+        <div class="welcome-box">
+          <div class="welcome-title">问 渠</div>
+          <div class="welcome-poem">
+            半亩方塘一鉴开，天光云影共徘徊。<br>
+            <span class="hl">问渠那得清如许？</span>为有源头活水来。<br>
+            <span style="color:#555;font-size:.8rem">—— 朱熹《观书有感》</span>
+          </div>
+          <div class="welcome-tip">
+            <div>💡 有问题直接问我，AI秒答</div>
+            <div>🔧 或从左侧菜单选择专业工具</div>
+          </div>
+          <div class="tool-chips">
+            <span class="tool-chip" onclick="sendQuick('LNG是什么？')">LNG是什么</span>
+            <span class="tool-chip" onclick="sendQuick('成都今天天气')">成都天气</span>
+            <span class="tool-chip" onclick="sendQuick('帮我写一首诗')">写首诗</span>
+            <span class="tool-chip" onclick="sendQuick('历史上的今天发生了什么')">历史上的今天</span>
+            <span class="tool-chip" onclick="sendQuick('LNG气价走势')">LNG气价</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="typing-row" id="typing-row">
+        <div class="typing-dots"><span></span><span></span><span></span></div>
+        <span class="typing-label">AI思考中…</span>
+      </div>
+
+      <div class="input-area">
+        <div class="input-hint">
+          <span><span class="key">Enter</span> 发送 · <span class="key">Shift+Enter</span> 换行</span>
+        </div>
+        <div class="input-row">
+          <input id="msg-input" placeholder="输入问题，AI即时回答…" autocomplete="off" autofocus />
+          <button class="send-btn" id="send-btn" onclick="sendMsg()">发送</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tool panel -->
+    <div class="tool-panel" id="tool-panel">
+      <div class="back-link" onclick="showChat()">← 返回AI对话</div>
+      <div class="tool-panel-header" id="tool-panel-title">📜 历史文化</div>
+      <div id="tool-list"></div>
+    </div>
+
+  </div>
+</div>
+
 <script>
-// Particles
-(function(){
-  var canvas=document.getElementById('bg'),ctx=canvas.getContext('2d'),particles=[],w,h;
-  function resize(){w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight}
-  resize();window.addEventListener('resize',resize);
-  for(var i=0;i<60;i++)particles.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.5+0.3,vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3});
-  function draw(){
-    ctx.fillStyle='rgba(10,10,15,0.2)';ctx.fillRect(0,0,w,h);
-    particles.forEach(function(p){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>w)p.vx*=-1;if(p.y<0||p.y>h)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(212,175,55,0.4)';ctx.fill()});
-    requestAnimationFrame(draw);
+// ===== TOOL DATA =====
+var TOOLS = {
+  history: {
+    label: '📜 历史文化',
+    cards: [
+      {title:'朝代纪年换算', desc:'输入公元年份，自动换算成中国朝代纪年（秦朝/汉朝/唐朝等）', url:'history.html'},
+      {title:'历史年代人物', desc:'查询各朝代重大历史事件、著名人物及时代背景', url:'history.html'},
+      {title:'古币换算', desc:'古代钱币与现代货币价值换算（铜钱/银两/黄金）', url:'history.html'},
+      {title:'百家姓查询', desc:'输入姓氏，查询姓氏来源、名人、历史分布', url:'history.html'},
+      {title:'历史年表', desc:'完整的中国历史年表，从夏商周到近现代', url:'history.html'},
+      {title:'成语接龙', desc:'输入成语，AI自动接龙下一个成语', url:'history.html'},
+    ]
+  },
+  geography: {
+    label: '🌍 天文地理',
+    cards: [
+      {title:'天文单位换算', desc:'光年、天文单位(AU)、秒差距等天文距离单位换算', url:'geography.html'},
+      {title:'世界城市人口', desc:'查询全球各大城市人口数量及密度排名', url:'geography.html'},
+      {title:'经纬度查询', desc:'输入城市名查询经纬度坐标、海拔高度', url:'geography.html'},
+      {title:'海拔气压计算', desc:'根据海拔高度计算大气压强、沸点温度', url:'geography.html'},
+      {title:'时区换算', desc:'全球主要城市时区对照和时差计算', url:'geography.html'},
+    ]
+  },
+  tech: {
+    label: '💻 现代科技',
+    cards: [
+      {title:'字节换算器', desc:'字节、KB、MB、GB、TB单位换算，支持二进制和十进制', url:'tech.html'},
+      {title:'进制转换', desc:'二进制、八进制、十进制、十六进制互相转换', url:'tech.html'},
+      {title:'ASCII码表', desc:'完整ASCII字符对照表，含控制字符和可显示字符', url:'tech.html'},
+      {title:'AI算力计算', desc:'GPU算力 FLOPS 换算，AI训练资源估算', url:'tech.html'},
+      {title:'编码检测', desc:'检测文本编码格式，支持UTF-8/GBK/Unicode', url:'tech.html'},
+      {title:'JSON格式化', desc:'JSON数据美化、压缩、校验', url:'tech.html'},
+    ]
+  },
+  life: {
+    label: '🏠 生活综合',
+    cards: [
+      {title:'个税计算器', desc:'2026最新个税税率，支持专项附加扣除计算', url:'life.html'},
+      {title:'房贷计算器', desc:'商业贷款/公积金贷款月供、利息、总还款计算', url:'life.html'},
+      {title:'身份证信息', desc:'输入身份证号查询性别、年龄、籍贯、生肖', url:'life.html'},
+      {title:'亲戚关系计算', desc:'计算亲戚称呼：二舅妈的儿子该怎么称呼？', url:'life.html'},
+      {title:'数字大写转换', desc:'金额数字转中文大写（壹贰叁肆伍等）', url:'life.html'},
+      {title:'日期计算器', desc:'日期间隔、工作日计算、农历阳历互转', url:'life.html'},
+      {title:'密码生成器', desc:'随机强密码生成，支持长度和复杂度设置', url:'life.html'},
+      {title:'单位换算', desc:'长度、重量、体积、温度、面积单位换算', url:'life.html'},
+      {title:'Bmi计算器', desc:'身体质量指数BMI计算及健康建议', url:'life.html'},
+    ]
+  },
+  agriculture: {
+    label: '🌾 农业百科',
+    cards: [
+      {title:'亩产计算器', desc:'根据面积和产量计算亩产量，支持多品种对比', url:'agriculture.html'},
+      {title:'饲料配方', desc:'畜禽饲料配比计算，含能量、蛋白、矿物质', url:'agriculture.html'},
+      {title:'化肥用量计算', desc:'根据作物品种和土地面积计算施肥量', url:'agriculture.html'},
+      {title:'养殖密度', desc:'猪、鸡、牛、鱼等养殖密度推荐和超标预警', url:'agriculture.html'},
+      {title:'灌溉用水量', desc:'根据作物种类、种植面积计算灌溉需水量', url:'agriculture.html'},
+    ]
+  },
+  metaphysics: {
+    label: '🔮 玄学命理',
+    cards: [
+      {title:'八字排盘', desc:'输入出生年月日时，AI排出精确生辰八字', url:'metaphysics.html'},
+      {title:'五行纳音', desc:'根据天干地支查询五行纳音属性', url:'metaphysics.html'},
+      {title:'周公解梦', desc:'输入梦境关键词，AI解读吉凶寓意', url:'metaphysics.html'},
+      {title:'数字凶吉', desc:'输入手机号、车牌号等数字，分析凶吉', url:'metaphysics.html'},
+      {title:'黄道吉日', desc:'查询宜嫁娶、开业、出行等黄道吉日', url:'metaphysics.html'},
+      {title:'八字合婚', desc:'输入双方八字，分析婚姻适配指数', url:'metaphysics.html'},
+    ]
+  },
+  health: {
+    label: '🌿 健康养生',
+    cards: [
+      {title:'BMI计算', desc:'身体质量指数计算，含标准体重范围和健康建议', url:'health.html'},
+      {title:'血压评估', desc:'输入血压值评估正常/偏高/高血压等级', url:'health.html'},
+      {title:'卡路里计算', desc:'计算日常活动消耗热量，支持食物热量查询', url:'health.html'},
+      {title:'饮水记录', desc:'根据体重计算每日建议饮水量', url:'health.html'},
+      {title:'睡眠计算', desc:'根据起床时间反推最佳入睡时间（90分钟周期）', url:'health.html'},
+    ]
+  },
+  education: {
+    label: '📚 教育学习',
+    cards: [
+      {title:'成语接龙', desc:'输入成语，AI自动接龙下一个（可连续接龙）', url:'education.html'},
+      {title:'历史年表', desc:'中国/世界历史大事件年表，从古至今', url:'education.html'},
+      {title:'拼音大全', desc:'汉字拼音查询，支持多音字标注', url:'education.html'},
+      {title:'汉字笔画', desc:'查询汉字笔画数、部首、书写顺序演示', url:'education.html'},
+      {title:'古诗词鉴赏', desc:'输入诗词名或句子，AI分析意境和用典', url:'education.html'},
+    ]
   }
-  draw();
-})();
+};
 
-// Today in history
-(function(){
-  var now=new Date(),m=now.getMonth()+1,d=now.getDate(),url='https://api.youradi.cn/todayinhistory?m='+m+'&d='+d;
-  var sec=['零','一','二','三','四','五','六','七','八','九','十'],toC=function(n){if(n<10)return sec[n];if(n<20)return'十'+sec[n-10];if(n<100)return sec[Math.floor(n/10)]+'十'+sec[n%10];return String(n)};
-  document.getElementById('today-date').textContent=now.getFullYear()+'年'+toC(m)+'月'+toC(d)+'日';
-  var el=document.getElementById('today-events');
-  function render(arr){
-    if(!arr||arr.length===0){el.innerHTML='<div class=today-placeholder>今日无历史记录</div>';return}
-    arr.slice(0,5).forEach(function(ev){
-      var div=document.createElement('div');div.className='today-event';
-      var year=document.createElement('span');year.className='year';year.textContent=ev.year+'年';
-      var text=document.createElement('span');text.className='text';text.textContent=ev.title;
-      if(ev.tag){var tag=document.createElement('span');tag.className='tag';tag.textContent=ev.tag;text.appendChild(tag)}
-      div.appendChild(year);div.appendChild(text);el.appendChild(div);
-    });
-  }
-  fetch(url).then(function(r){return r.json()}).then(function(d){render(d.events||[])}).catch(function(){fetch('https://api.wikipedia.org/w/api.php?action=featuredfeed&feedname=onthisday&format=json&origin=*').then(function(r){return r.json()}).then(function(d){var events=(d.tfa||{}).events||[];render(events.map(function(e){return{year:String(e.year).replace(/-/g,''),title:e.text.slice(0,50)}}))}).catch(function(){el.innerHTML='<div class=today-placeholder>暂无记录</div>'})});
-})();
+// ===== NAVIGATION =====
+function setActive(name){
+  document.querySelectorAll('.side-item').forEach(function(el){
+    el.classList.remove('active');
+    if(el.getAttribute('data-tool')===name)el.classList.add('active');
+  });
+}
 
-// AI Chat
-(function(){
-  var API='https://1423198240-0conai1m1r.ap-guangzhou.tencentscf.com/chat';
-  var msgs=document.getElementById('ai-msgs'),input=document.getElementById('ai-input'),sendBtn=document.getElementById('ai-send'),typing=document.getElementById('ai-typing');
+function showChat(){
+  document.getElementById('chat-view').style.display='flex';
+  document.getElementById('tool-panel').classList.remove('visible');
+  document.querySelectorAll('.side-item').forEach(function(el){el.classList.remove('active')});
+  document.querySelector('.side-item[onclick*="showChat"]').classList.add('active');
+  document.getElementById('msg-input').focus();
+}
 
-  function addMsg(text,type){
-    var div=document.createElement('div');div.className='ai-msg '+type;
-    div.innerHTML='<div class=av>'+(type==='bot'?'🤖':'你')+'</div><div class=bubble>'+text.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/
-/g,'<br>')+'</div>';
-    msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;
-  }
+function showTool(name){
+  var data=TOOLS[name];if(!data)return;
+  document.getElementById('chat-view').style.display='none';
+  document.getElementById('tool-panel').classList.add('visible');
+  document.getElementById('tool-panel-title').textContent=data.label;
+  var list=document.getElementById('tool-list');
+  list.innerHTML='';
+  data.cards.forEach(function(card){
+    var a=document.createElement('a');
+    a.className='tool-card';
+    a.href=card.url;
+    a.innerHTML='<h3>'+(data.cards.indexOf(card)<9?'0'+(data.cards.indexOf(card)+1)+'. ':'')+card.title+'</h3><p>'+card.desc+'</p>';
+    a.onclick=function(){if(card.url.startsWith('http')||card.url.includes('.html')){window.open(card.url)}};
+    list.appendChild(a);
+  });
+  setActive(name);
+}
 
-  function aiSend(){
-    var q=input.value.trim();if(!q)return;
-    input.value='';addMsg(q,'user');sendBtn.disabled=true;typing.style.display='flex';
-    var body=JSON.stringify({message:q});
-    fetch(API,{method:'POST',headers:{'Content-Type':'application/json; charset=utf-8'},body:body})
-      .then(function(r){if(!r.ok)throw new Error(r.status);return r.json()})
-      .then(function(d){typing.style.display='none';sendBtn.disabled=false;addMsg(d.reply||'（无回复）','bot')})
-      .catch(function(e){typing.style.display='none';sendBtn.disabled=false;addMsg('网络错误：'+e.message,'bot')});
-  }
+// Quick send from chip
+function sendQuick(q){
+  showChat();
+  document.getElementById('msg-input').value=q;
+  sendMsg();
+}
 
-  input.addEventListener('keydown',function(e){if(e.key==='Enter')aiSend()});
-})();
+// ===== AI CHAT =====
+var API='https://1423198240-0conai1m1r.ap-guangzhou.tencentscf.com/chat';
+var msgsEl=document.getElementById('messages');
+var inputEl=document.getElementById('msg-input');
+var sendBtn=document.getElementById('send-btn');
+var typingEl=document.getElementById('typing-row');
+
+function now(){
+  var d=new Date();
+  return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+}
+
+function addMsg(text,type){
+  // Remove welcome box
+  var wb=document.querySelector('.welcome-box');
+  if(wb)wb.remove();
+
+  var div=document.createElement('div');
+  div.className='msg '+type;
+  var safe=text.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+  div.innerHTML='<div class=msg-avatar>'+(type==='bot'?'🤖':'你')+'</div><div><div class=msg-bubble>'+safe+'</div><div class=msg-time>'+now()+'</div></div>';
+  msgsEl.appendChild(div);
+  msgsEl.scrollTop=msgsEl.scrollHeight;
+}
+
+function sendMsg(){
+  var q=inputEl.value.trim();
+  if(!q)return;
+  inputEl.value='';
+  addMsg(q,'user');
+  sendBtn.disabled=true;
+  typingEl.style.display='flex';
+  msgsEl.scrollTop=msgsEl.scrollHeight;
+
+  fetch(API,{
+    method:'POST',
+    headers:{'Content-Type':'application/json; charset=utf-8'},
+    body:JSON.stringify({message:q})
+  })
+  .then(function(r){if(!r.ok)throw new Error(r.status);return r.json()})
+  .then(function(d){
+    typingEl.style.display='none';
+    sendBtn.disabled=false;
+    addMsg(d.reply||'（无回复）','bot');
+  })
+  .catch(function(e){
+    typingEl.style.display='none';
+    sendBtn.disabled=false;
+    addMsg('网络错误（'+e.message+'），请稍后重试','bot');
+  });
+}
+
+inputEl.addEventListener('keydown',function(e){
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg()}
+});
 </script>
 </body>
 </html>
