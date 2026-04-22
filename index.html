@@ -17,31 +17,49 @@ body{
 
 /* ===== TOP BAR ===== */
 .topbar{
-  height:56px;background:#111118;
+  height:60px;background:#111118;
   border-bottom:1px solid rgba(212,175,55,.2);
   display:flex;align-items:center;
-  padding:0 20px;gap:12px;
+  padding:0 20px;gap:0;
   flex-shrink:0;z-index:10;
-  position:relative;
 }
 .topbar-title{
-  font-size:1.2rem;font-weight:700;
-  color:#d4af37;letter-spacing:.15em;
+  font-size:1.35rem;font-weight:900;
+  color:#d4af37;letter-spacing:.2em;
+  margin-right:20px;flex-shrink:0;
+  text-shadow:0 0 20px rgba(212,175,55,.3);
 }
-.topbar-sub{
-  color:#666;font-size:.8rem;
-  letter-spacing:.1em;
+.topbar-poem{
+  color:#888;font-size:.82rem;
+  border-left:1px solid rgba(212,175,55,.2);
+  padding-left:20px;
+  line-height:1.5;letter-spacing:.05em;
+  margin-right:20px;flex-shrink:0;
 }
-.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
-.topbar-badge{
-  background:rgba(212,175,55,.15);color:#d4af37;
-  font-size:.7rem;padding:3px 10px;border-radius:12px;
+.topbar-poem .hl{color:#d4af37}
+.topbar-divider{width:1px;height:30px;background:rgba(212,175,55,.15);margin:0 20px;flex-shrink:0}
+.topbar-today{
+  display:flex;flex-direction:column;gap:2px;
+  flex:1;min-width:0;
 }
+.topbar-today-label{
+  font-size:.65rem;color:#555;letter-spacing:.1em;
+}
+.topbar-today-events{
+  display:flex;gap:20px;overflow:hidden;
+  align-items:center;
+}
+.today-item{
+  display:flex;align-items:center;gap:6px;font-size:.78rem;
+  white-space:nowrap;
+}
+.today-item .yr{color:#d4af37;font-weight:600}
+.today-item .tx{color:#888}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.topbar-badge{background:rgba(46,180,100,.12);color:#2eb46e;font-size:.7rem;padding:3px 10px;border-radius:12px}
 
 /* ===== MAIN LAYOUT ===== */
-.layout{
-  display:flex;flex:1;overflow:hidden;
-}
+.layout{display:flex;flex:1;overflow:hidden}
 
 /* ===== LEFT SIDEBAR ===== */
 .sidebar{
@@ -69,27 +87,22 @@ body{
 .side-item:hover{background:rgba(212,175,55,.08);color:#d4af37}
 .side-item.active{background:rgba(212,175,55,.12);color:#d4af37;border-left:2px solid #d4af37}
 .side-item .emoji{font-size:1.1rem;width:22px;text-align:center;flex-shrink:0}
-.side-item .arrow{margin-left:auto;color:#444;font-size:.7rem}
 
 .side-divider{height:1px;background:rgba(212,175,55,.1);margin:8px 16px}
 
 /* ===== CENTER AREA ===== */
-.center{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.center{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;background:#0a0a0f}
 
-/* Chat header */
 .chat-header{
   padding:14px 24px;border-bottom:1px solid rgba(212,175,55,.1);
-  display:flex;align-items:center;gap:10px;
-  background:#0a0a0f;flex-shrink:0;
+  display:flex;align-items:center;gap:10px;flex-shrink:0;
 }
 .chat-header-title{font-size:.9rem;color:#d4af37;font-weight:600}
 .chat-header-sub{color:#555;font-size:.75rem}
 
-/* Messages area */
 .messages{
   flex:1;overflow-y:auto;padding:20px 24px;
   display:flex;flex-direction:column;gap:16px;
-  background:#0a0a0f;
 }
 .messages::-webkit-scrollbar{width:4px}
 .messages::-webkit-scrollbar-thumb{background:rgba(212,175,55,.2);border-radius:2px}
@@ -103,22 +116,13 @@ body{
 .msg.bot .msg-bubble{background:rgba(255,255,255,.05);border:1px solid rgba(212,175,55,.12);border-radius:4px 14px 14px 14px}
 .msg.user .msg-bubble{background:rgba(212,175,55,.15);border:1px solid rgba(212,175,55,.2);border-radius:14px 4px 14px 14px}
 .msg.user .msg-bubble{color:#e8e0c0}
-
 .msg-time{font-size:.68rem;color:#444;margin-top:4px;padding:0 4px}
 .msg.user .msg-time{text-align:right}
 
-/* Welcome message */
-.welcome-box{
-  text-align:center;padding:40px 20px;
-  animation:fadeIn .4s ease
-}
+.welcome-box{text-align:center;padding:40px 20px;animation:fadeIn .4s ease}
 .welcome-title{font-size:2.5rem;color:#d4af37;font-family:'Noto Serif SC',serif;margin-bottom:10px}
-.welcome-poem{color:#666;font-size:.9rem;line-height:2;margin:16px 0}
-.welcome-poem .hl{color:#d4af37}
-.welcome-tip{color:#555;font-size:.82rem;margin-top:20px;line-height:1.8}
+.welcome-tip{color:#555;font-size:.82rem;margin-top:16px;line-height:2}
 .welcome-tip div{display:flex;align-items:center;justify-content:center;gap:8px}
-
-/* Tool cards in welcome */
 .tool-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:20px}
 .tool-chip{
   background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.2);
@@ -127,17 +131,11 @@ body{
 }
 .tool-chip:hover{background:rgba(212,175,55,.2);color:#d4af37;border-color:rgba(212,175,55,.4)}
 
-/* Input area */
 .input-area{
   padding:16px 24px 20px;
-  background:#0a0a0f;
-  border-top:1px solid rgba(212,175,55,.1);
-  flex-shrink:0;
+  border-top:1px solid rgba(212,175,55,.1);flex-shrink:0;
 }
-.input-hint{
-  font-size:.72rem;color:#444;margin-bottom:8px;
-  display:flex;gap:16px;flex-wrap:wrap;
-}
+.input-hint{font-size:.72rem;color:#444;margin-bottom:8px}
 .input-hint span{display:flex;align-items:center;gap:4px}
 .input-hint .key{background:rgba(255,255,255,.06);padding:1px 6px;border-radius:4px;font-size:.68rem}
 .input-row{display:flex;gap:10px;align-items:flex-end}
@@ -160,29 +158,19 @@ body{
 .send-btn:active{transform:scale(.97)}
 .send-btn:disabled{opacity:.4;cursor:not-allowed}
 
-/* Typing indicator */
 .typing-row{
-  display:none;align-items:center;gap:8px;
-  padding:0 24px 10px;
+  display:none;align-items:center;gap:8px;padding:0 24px 10px;
 }
 .typing-label{color:#555;font-size:.75rem}
 .typing-dots{display:flex;gap:3px}
 .typing-dots span{width:5px;height:5px;border-radius:50%;background:#666;animation:bounce 1.2s infinite}
 .typing-dots span:nth-child(2){animation-delay:.2s}
 .typing-dots span:nth-child(3){animation-delay:.4s}
-@keyframes bounce{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
-/* ===== TOOL PANEL (shown when tool selected) ===== */
-.tool-panel{
-  display:none;padding:24px;
-  flex:1;overflow-y:auto;
-}
+/* ===== TOOL PANEL ===== */
+.tool-panel{display:none;padding:24px;flex:1;overflow-y:auto}
 .tool-panel.visible{display:block}
-.tool-panel-header{
-  font-size:1.1rem;color:#d4af37;margin-bottom:20px;
-  padding-bottom:12px;border-bottom:1px solid rgba(212,175,55,.15);
-}
+.tool-panel-header{font-size:1.1rem;color:#d4af37;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid rgba(212,175,55,.15)}
 .tool-card{
   background:rgba(255,255,255,.04);border:1px solid rgba(212,175,55,.12);
   border-radius:14px;padding:20px;margin-bottom:12px;
@@ -190,25 +178,63 @@ body{
   text-decoration:none;color:inherit;display:block;
 }
 .tool-card:hover{background:rgba(212,175,55,.08);border-color:rgba(212,175,55,.3);transform:translateY(-2px)}
-.tool-card h3{color:#d4af37;font-size:.95rem;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.tool-card h3{color:#d4af37;font-size:.95rem;margin-bottom:6px}
 .tool-card p{color:#777;font-size:.82rem;line-height:1.5}
 .back-link{
   display:inline-flex;align-items:center;gap:6px;
-  color:#666;font-size:.82rem;cursor:pointer;margin-bottom:16px;
-  padding:6px 0;transition:color .2s;
+  color:#666;font-size:.82rem;cursor:pointer;margin-bottom:16px;padding:6px 0;transition:color .2s;
 }
 .back-link:hover{color:#d4af37}
 
-@keyframes bounce{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+/* ===== RIGHT PANEL ===== */
+.right-panel{
+  width:20%;flex-shrink:0;
+  background:#0c0c14;
+  border-left:1px solid rgba(212,175,55,.08);
+  overflow-y:auto;padding:20px 16px;
+  display:flex;flex-direction:column;gap:16px;
+}
+.right-panel::-webkit-scrollbar{width:3px}
+.right-panel::-webkit-scrollbar-thumb{background:rgba(212,175,55,.15)}
+.right-section-title{font-size:.72rem;color:#555;letter-spacing:.12em;margin-bottom:8px;text-transform:uppercase}
+.right-placeholder{
+  background:rgba(255,255,255,.02);border:1px dashed rgba(212,175,55,.15);
+  border-radius:12px;padding:24px 16px;text-align:center;
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+}
+.right-placeholder-icon{font-size:2rem;opacity:.3}
+.right-placeholder-text{color:#444;font-size:.78rem;text-align:center;line-height:1.6}
+.right-card{
+  background:rgba(255,255,255,.03);border:1px solid rgba(212,175,55,.1);
+  border-radius:12px;padding:14px;
+}
+.right-card-title{font-size:.8rem;color:#d4af37;margin-bottom:6px}
+.right-card-val{font-size:1.4rem;color:#e8e8e8;font-weight:600}
+.right-card-sub{font-size:.7rem;color:#555;margin-top:2px}
+
+/* ===== LOGIN BUTTON ===== */
+.login-btn{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.25);
+  border-radius:10px;padding:10px 14px;
+  color:#d4af37;font-size:.82rem;cursor:pointer;width:100%;
+  text-align:left;transition:all .2s;margin-top:8px;
+}
+.login-btn:hover{background:rgba(212,175,55,.18);border-color:rgba(212,175,55,.4)}
+.login-btn .emoji{font-size:1rem}
 
 /* ===== RESPONSIVE ===== */
-@media(max-width:768px){
-  .sidebar{width:60px}
-  .side-item .label,.side-section-label,.arrow{display:none}
-  .side-item{justify-content:center;padding:10px}
-  .msg{max-width:88%}
+@media(max-width:900px){
+  .right-panel{display:none}
 }
+@media(max-width:700px){
+  .sidebar{width:60px}
+  .side-item .label,.side-section-label,.topbar-poem,.topbar-today{display:none}
+  .topbar{height:50px}
+}
+
+@keyframes bounce{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 </style>
 <meta name="360-site-verification" content="ffc9f73cacab7ac71ffc3686d16894e2" />
 </head>
@@ -217,9 +243,19 @@ body{
 <!-- TOP BAR -->
 <div class="topbar">
   <span class="topbar-title">问 渠</span>
-  <span class="topbar-sub">有问必有答 · AI百科助手</span>
+  <div class="topbar-poem">
+    半亩方塘一鉴开，天光云影共徘徊。<br>
+    <span class="hl">问渠那得清如许？</span>为有源头活水来。
+  </div>
+  <div class="topbar-divider"></div>
+  <div class="topbar-today">
+    <div class="topbar-today-label">📅 历史上的今天</div>
+    <div class="topbar-today-events" id="topbar-today-events">
+      <div style="color:#555;font-size:.78rem">加载中…</div>
+    </div>
+  </div>
   <div class="topbar-right">
-    <span class="topbar-badge">🤖 AI在线</span>
+    <span class="topbar-badge">● 在线</span>
   </div>
 </div>
 
@@ -229,10 +265,14 @@ body{
   <!-- LEFT SIDEBAR -->
   <div class="sidebar">
     <div class="side-section">
-      <div class="side-section-label">常用工具</div>
+      <div class="side-section-label">AI 助手</div>
       <button class="side-item active" onclick="showChat()">
         <span class="emoji">💬</span><span class="label">AI对话</span>
       </button>
+    </div>
+
+    <div class="side-section">
+      <div class="side-section-label">八大工具</div>
       <button class="side-item" onclick="showTool('history')">
         <span class="emoji">📜</span><span class="label">历史文化</span>
       </button>
@@ -245,12 +285,6 @@ body{
       <button class="side-item" onclick="showTool('life')">
         <span class="emoji">🏠</span><span class="label">生活综合</span>
       </button>
-    </div>
-
-    <div class="side-divider"></div>
-
-    <div class="side-section">
-      <div class="side-section-label">更多工具</div>
       <button class="side-item" onclick="showTool('agriculture')">
         <span class="emoji">🌾</span><span class="label">农业百科</span>
       </button>
@@ -268,14 +302,10 @@ body{
     <div class="side-divider"></div>
 
     <div class="side-section">
-      <div class="side-section-label">系统</div>
-      <button class="side-item" onclick="window.open('ai.html')">
-        <span class="emoji">🤖</span><span class="label">AI专用页</span>
-        <span class="arrow">↗</span>
-      </button>
-      <button class="side-item" onclick="window.open('https://liusige377.github.io/xintengfei-website/')">
-        <span class="emoji">🏭</span><span class="label">鑫腾飞官网</span>
-        <span class="arrow">↗</span>
+      <div class="side-section-label">客户</div>
+      <button class="login-btn" onclick="alert('客户登录系统开发中，敬请期待')">
+        <span class="emoji">👤</span>
+        <span>客户登录</span>
       </button>
     </div>
   </div>
@@ -289,28 +319,24 @@ body{
         <span style="font-size:1.1rem;">🤖</span>
         <div>
           <div class="chat-header-title">AI 智能助手</div>
-          <div class="chat-header-sub">智谱GLM-4 · 随时为你解答</div>
+          <div class="chat-header-sub">有问必答 · 随时为你服务</div>
         </div>
       </div>
 
       <div class="messages" id="messages">
         <div class="welcome-box">
           <div class="welcome-title">问 渠</div>
-          <div class="welcome-poem">
-            半亩方塘一鉴开，天光云影共徘徊。<br>
-            <span class="hl">问渠那得清如许？</span>为有源头活水来。<br>
-            <span style="color:#555;font-size:.8rem">—— 朱熹《观书有感》</span>
-          </div>
           <div class="welcome-tip">
             <div>💡 有问题直接问我，AI秒答</div>
-            <div>🔧 或从左侧菜单选择专业工具</div>
+            <div>🔧 从左侧菜单选择专业工具</div>
+            <div>📋 登录后可查看专属档案</div>
           </div>
           <div class="tool-chips">
             <span class="tool-chip" onclick="sendQuick('LNG是什么？')">LNG是什么</span>
             <span class="tool-chip" onclick="sendQuick('成都今天天气')">成都天气</span>
+            <span class="tool-chip" onclick="sendQuick('历史上的今天')">历史上的今天</span>
+            <span class="tool-chip" onclick="sendQuick('LNG气价走势分析')">LNG气价</span>
             <span class="tool-chip" onclick="sendQuick('帮我写一首诗')">写首诗</span>
-            <span class="tool-chip" onclick="sendQuick('历史上的今天发生了什么')">历史上的今天</span>
-            <span class="tool-chip" onclick="sendQuick('LNG气价走势')">LNG气价</span>
           </div>
         </div>
       </div>
@@ -339,116 +365,123 @@ body{
     </div>
 
   </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+    <div class="right-section-title">预留区域</div>
+    <div class="right-placeholder">
+      <div class="right-placeholder-icon">📦</div>
+      <div class="right-placeholder-text">功能开发中<br>敬请期待</div>
+    </div>
+  </div>
+
 </div>
 
 <script>
-// ===== TOOL DATA =====
-var TOOLS = {
-  history: {
-    label: '📜 历史文化',
-    cards: [
-      {title:'朝代纪年换算', desc:'输入公元年份，自动换算成中国朝代纪年（秦朝/汉朝/唐朝等）', url:'history.html'},
-      {title:'历史年代人物', desc:'查询各朝代重大历史事件、著名人物及时代背景', url:'history.html'},
-      {title:'古币换算', desc:'古代钱币与现代货币价值换算（铜钱/银两/黄金）', url:'history.html'},
-      {title:'百家姓查询', desc:'输入姓氏，查询姓氏来源、名人、历史分布', url:'history.html'},
-      {title:'历史年表', desc:'完整的中国历史年表，从夏商周到近现代', url:'history.html'},
-      {title:'成语接龙', desc:'输入成语，AI自动接龙下一个成语', url:'history.html'},
-    ]
-  },
-  geography: {
-    label: '🌍 天文地理',
-    cards: [
-      {title:'天文单位换算', desc:'光年、天文单位(AU)、秒差距等天文距离单位换算', url:'geography.html'},
-      {title:'世界城市人口', desc:'查询全球各大城市人口数量及密度排名', url:'geography.html'},
-      {title:'经纬度查询', desc:'输入城市名查询经纬度坐标、海拔高度', url:'geography.html'},
-      {title:'海拔气压计算', desc:'根据海拔高度计算大气压强、沸点温度', url:'geography.html'},
-      {title:'时区换算', desc:'全球主要城市时区对照和时差计算', url:'geography.html'},
-    ]
-  },
-  tech: {
-    label: '💻 现代科技',
-    cards: [
-      {title:'字节换算器', desc:'字节、KB、MB、GB、TB单位换算，支持二进制和十进制', url:'tech.html'},
-      {title:'进制转换', desc:'二进制、八进制、十进制、十六进制互相转换', url:'tech.html'},
-      {title:'ASCII码表', desc:'完整ASCII字符对照表，含控制字符和可显示字符', url:'tech.html'},
-      {title:'AI算力计算', desc:'GPU算力 FLOPS 换算，AI训练资源估算', url:'tech.html'},
-      {title:'编码检测', desc:'检测文本编码格式，支持UTF-8/GBK/Unicode', url:'tech.html'},
-      {title:'JSON格式化', desc:'JSON数据美化、压缩、校验', url:'tech.html'},
-    ]
-  },
-  life: {
-    label: '🏠 生活综合',
-    cards: [
-      {title:'个税计算器', desc:'2026最新个税税率，支持专项附加扣除计算', url:'life.html'},
-      {title:'房贷计算器', desc:'商业贷款/公积金贷款月供、利息、总还款计算', url:'life.html'},
-      {title:'身份证信息', desc:'输入身份证号查询性别、年龄、籍贯、生肖', url:'life.html'},
-      {title:'亲戚关系计算', desc:'计算亲戚称呼：二舅妈的儿子该怎么称呼？', url:'life.html'},
-      {title:'数字大写转换', desc:'金额数字转中文大写（壹贰叁肆伍等）', url:'life.html'},
-      {title:'日期计算器', desc:'日期间隔、工作日计算、农历阳历互转', url:'life.html'},
-      {title:'密码生成器', desc:'随机强密码生成，支持长度和复杂度设置', url:'life.html'},
-      {title:'单位换算', desc:'长度、重量、体积、温度、面积单位换算', url:'life.html'},
-      {title:'Bmi计算器', desc:'身体质量指数BMI计算及健康建议', url:'life.html'},
-    ]
-  },
-  agriculture: {
-    label: '🌾 农业百科',
-    cards: [
-      {title:'亩产计算器', desc:'根据面积和产量计算亩产量，支持多品种对比', url:'agriculture.html'},
-      {title:'饲料配方', desc:'畜禽饲料配比计算，含能量、蛋白、矿物质', url:'agriculture.html'},
-      {title:'化肥用量计算', desc:'根据作物品种和土地面积计算施肥量', url:'agriculture.html'},
-      {title:'养殖密度', desc:'猪、鸡、牛、鱼等养殖密度推荐和超标预警', url:'agriculture.html'},
-      {title:'灌溉用水量', desc:'根据作物种类、种植面积计算灌溉需水量', url:'agriculture.html'},
-    ]
-  },
-  metaphysics: {
-    label: '🔮 玄学命理',
-    cards: [
-      {title:'八字排盘', desc:'输入出生年月日时，AI排出精确生辰八字', url:'metaphysics.html'},
-      {title:'五行纳音', desc:'根据天干地支查询五行纳音属性', url:'metaphysics.html'},
-      {title:'周公解梦', desc:'输入梦境关键词，AI解读吉凶寓意', url:'metaphysics.html'},
-      {title:'数字凶吉', desc:'输入手机号、车牌号等数字，分析凶吉', url:'metaphysics.html'},
-      {title:'黄道吉日', desc:'查询宜嫁娶、开业、出行等黄道吉日', url:'metaphysics.html'},
-      {title:'八字合婚', desc:'输入双方八字，分析婚姻适配指数', url:'metaphysics.html'},
-    ]
-  },
-  health: {
-    label: '🌿 健康养生',
-    cards: [
-      {title:'BMI计算', desc:'身体质量指数计算，含标准体重范围和健康建议', url:'health.html'},
-      {title:'血压评估', desc:'输入血压值评估正常/偏高/高血压等级', url:'health.html'},
-      {title:'卡路里计算', desc:'计算日常活动消耗热量，支持食物热量查询', url:'health.html'},
-      {title:'饮水记录', desc:'根据体重计算每日建议饮水量', url:'health.html'},
-      {title:'睡眠计算', desc:'根据起床时间反推最佳入睡时间（90分钟周期）', url:'health.html'},
-    ]
-  },
-  education: {
-    label: '📚 教育学习',
-    cards: [
-      {title:'成语接龙', desc:'输入成语，AI自动接龙下一个（可连续接龙）', url:'education.html'},
-      {title:'历史年表', desc:'中国/世界历史大事件年表，从古至今', url:'education.html'},
-      {title:'拼音大全', desc:'汉字拼音查询，支持多音字标注', url:'education.html'},
-      {title:'汉字笔画', desc:'查询汉字笔画数、部首、书写顺序演示', url:'education.html'},
-      {title:'古诗词鉴赏', desc:'输入诗词名或句子，AI分析意境和用典', url:'education.html'},
-    ]
+// ===== TODAY IN HISTORY (TOP BAR) =====
+(function(){
+  var now=new Date(),m=now.getMonth()+1,d=now.getDate();
+  var sec=['零','一','二','三','四','五','六','七','八','九','十'],toC=function(n){if(n<10)return sec[n];if(n<20)return'十'+sec[n-10];if(n<100)return sec[Math.floor(n/10)]+'十'+sec[n%10];return String(n)};
+  document.querySelector('.topbar-today-label').textContent='📅 历史上的今天 · '+now.getFullYear()+'年'+toC(m)+'月'+toC(d)+'日';
+
+  var el=document.getElementById('topbar-today-events');
+  function render(arr){
+    if(!arr||arr.length===0){el.innerHTML='<div style="color:#555;font-size:.78rem">暂无记录</div>';return}
+    arr.slice(0,3).forEach(function(ev){
+      var div=document.createElement('div');div.className='today-item';
+      div.innerHTML='<span class=yr>'+ev.year+'</span><span class=tx>'+(ev.text||ev.title||'').slice(0,20)+'</span>';
+      el.appendChild(div);
+    });
   }
+  // Try today-api
+  fetch('https://today.api.get996.top/api/today?m='+m+'&d='+d).then(function(r){return r.json()}).then(function(d2){
+    if(d2.data&&d2.data.length>0)render(d2.data);else throw new Error('no data');
+  }).catch(function(){
+    fetch('https://api.youradi.cn/todayinhistory?m='+m+'&d='+d).then(function(r){return r.json()}).then(function(d3){
+      render((d3.events||[]).slice(0,3));
+    }).catch(function(){
+      el.innerHTML='<div style="color:#555;font-size:.78rem">暂无记录</div>';
+    });
+  });
+})();
+
+// ===== TOOL DATA =====
+var TOOLS={
+  history:{label:'📜 历史文化',cards:[
+    {title:'朝代纪年换算',desc:'输入公元年份，自动换算成中国朝代纪年',url:'history.html'},
+    {title:'历史年代人物',desc:'查询各朝代重大历史事件和著名人物',url:'history.html'},
+    {title:'古币换算',desc:'古代钱币与现代货币价值换算',url:'history.html'},
+    {title:'百家姓查询',desc:'姓氏来源、名人、历史分布查询',url:'history.html'},
+    {title:'历史年表',desc:'中国历史年表，从夏商周到近现代',url:'history.html'},
+    {title:'成语接龙',desc:'输入成语，AI自动接龙',url:'history.html'},
+  ]},
+  geography:{label:'🌍 天文地理',cards:[
+    {title:'天文单位换算',desc:'光年、天文单位(AU)、秒差距换算',url:'geography.html'},
+    {title:'世界城市人口',desc:'全球城市人口数量及密度排名',url:'geography.html'},
+    {title:'经纬度查询',desc:'城市名查询经纬度、海拔高度',url:'geography.html'},
+    {title:'海拔气压计算',desc:'根据海拔计算大气压强和沸点',url:'geography.html'},
+    {title:'时区换算',desc:'全球城市时区对照和时差计算',url:'geography.html'},
+  ]},
+  tech:{label:'💻 现代科技',cards:[
+    {title:'字节换算器',desc:'字节、KB、MB、GB换算',url:'tech.html'},
+    {title:'进制转换',desc:'二进制、八进制、十进制、十六进制互转',url:'tech.html'},
+    {title:'ASCII码表',desc:'完整ASCII字符对照表',url:'tech.html'},
+    {title:'AI算力计算',desc:'GPU算力FLOPS换算',url:'tech.html'},
+    {title:'编码检测',desc:'文本编码格式检测',url:'tech.html'},
+    {title:'JSON格式化',desc:'JSON美化、压缩、校验',url:'tech.html'},
+  ]},
+  life:{label:'🏠 生活综合',cards:[
+    {title:'个税计算器',desc:'2026最新个税税率，支持专项附加扣除',url:'life.html'},
+    {title:'房贷计算器',desc:'商业贷款/公积金月供计算',url:'life.html'},
+    {title:'身份证信息',desc:'输入身份证号查询性别、年龄、籍贯',url:'life.html'},
+    {title:'亲戚关系计算',desc:'计算亲戚称呼',url:'life.html'},
+    {title:'数字大写转换',desc:'金额数字转中文大写',url:'life.html'},
+    {title:'日期计算器',desc:'日期间隔、工作日计算',url:'life.html'},
+    {title:'密码生成器',desc:'随机强密码生成',url:'life.html'},
+    {title:'BMI计算器',desc:'身体质量指数计算',url:'life.html'},
+  ]},
+  agriculture:{label:'🌾 农业百科',cards:[
+    {title:'亩产计算器',desc:'根据面积和产量计算亩产量',url:'agriculture.html'},
+    {title:'饲料配方',desc:'畜禽饲料配比计算',url:'agriculture.html'},
+    {title:'化肥用量计算',desc:'根据作物和面积计算施肥量',url:'agriculture.html'},
+    {title:'养殖密度',desc:'养殖密度推荐和超标预警',url:'agriculture.html'},
+    {title:'灌溉用水量',desc:'计算灌溉需水量',url:'agriculture.html'},
+  ]},
+  metaphysics:{label:'🔮 玄学命理',cards:[
+    {title:'八字排盘',desc:'AI排出精确生辰八字',url:'metaphysics.html'},
+    {title:'五行纳音',desc:'天干地支查五行属性',url:'metaphysics.html'},
+    {title:'周公解梦',desc:'AI解读梦境吉凶',url:'metaphysics.html'},
+    {title:'数字凶吉',desc:'手机号/车牌号凶吉分析',url:'metaphysics.html'},
+    {title:'黄道吉日',desc:'宜嫁娶、开业、出行查询',url:'metaphysics.html'},
+  ]},
+  health:{label:'🌿 健康养生',cards:[
+    {title:'BMI计算',desc:'身体质量指数及健康建议',url:'health.html'},
+    {title:'血压评估',desc:'输入血压值评估等级',url:'health.html'},
+    {title:'卡路里计算',desc:'日常活动消耗热量',url:'health.html'},
+    {title:'饮水记录',desc:'每日建议饮水量计算',url:'health.html'},
+    {title:'睡眠计算',desc:'反推最佳入睡时间',url:'health.html'},
+  ]},
+  education:{label:'📚 教育学习',cards:[
+    {title:'成语接龙',desc:'AI自动成语接龙',url:'education.html'},
+    {title:'历史年表',desc:'中国/世界历史大事件',url:'education.html'},
+    {title:'拼音大全',desc:'汉字拼音查询，支持多音字',url:'education.html'},
+    {title:'汉字笔画',desc:'汉字笔画数、部首查询',url:'education.html'},
+    {title:'古诗词鉴赏',desc:'诗词意境和用典分析',url:'education.html'},
+  ]}
 };
 
 // ===== NAVIGATION =====
 function setActive(name){
-  document.querySelectorAll('.side-item').forEach(function(el){
-    el.classList.remove('active');
-    if(el.getAttribute('data-tool')===name)el.classList.add('active');
-  });
+  document.querySelectorAll('.side-item').forEach(function(el){el.classList.remove('active')});
 }
-
 function showChat(){
   document.getElementById('chat-view').style.display='flex';
   document.getElementById('tool-panel').classList.remove('visible');
   document.querySelectorAll('.side-item').forEach(function(el){el.classList.remove('active')});
-  document.querySelector('.side-item[onclick*="showChat"]').classList.add('active');
+  var items=document.querySelectorAll('.side-item');
+  if(items[0])items[0].classList.add('active');
   document.getElementById('msg-input').focus();
 }
-
 function showTool(name){
   var data=TOOLS[name];if(!data)return;
   document.getElementById('chat-view').style.display='none';
@@ -457,22 +490,15 @@ function showTool(name){
   var list=document.getElementById('tool-list');
   list.innerHTML='';
   data.cards.forEach(function(card){
-    var a=document.createElement('a');
-    a.className='tool-card';
-    a.href=card.url;
-    a.innerHTML='<h3>'+(data.cards.indexOf(card)<9?'0'+(data.cards.indexOf(card)+1)+'. ':'')+card.title+'</h3><p>'+card.desc+'</p>';
-    a.onclick=function(){if(card.url.startsWith('http')||card.url.includes('.html')){window.open(card.url)}};
+    var a=document.createElement('a');a.className='tool-card';
+    a.href='javascript:void(0)';
+    a.onclick=function(){window.open(card.url)};
+    a.innerHTML='<h3>'+card.title+'</h3><p>'+card.desc+'</p>';
     list.appendChild(a);
   });
   setActive(name);
 }
-
-// Quick send from chip
-function sendQuick(q){
-  showChat();
-  document.getElementById('msg-input').value=q;
-  sendMsg();
-}
+function sendQuick(q){showChat();document.getElementById('msg-input').value=q;sendMsg()}
 
 // ===== AI CHAT =====
 var API='https://1423198240-0conai1m1r.ap-guangzhou.tencentscf.com/chat';
@@ -487,48 +513,24 @@ function now(){
 }
 
 function addMsg(text,type){
-  // Remove welcome box
   var wb=document.querySelector('.welcome-box');
   if(wb)wb.remove();
-
-  var div=document.createElement('div');
-  div.className='msg '+type;
+  var div=document.createElement('div');div.className='msg '+type;
   var safe=text.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
   div.innerHTML='<div class=msg-avatar>'+(type==='bot'?'🤖':'你')+'</div><div><div class=msg-bubble>'+safe+'</div><div class=msg-time>'+now()+'</div></div>';
-  msgsEl.appendChild(div);
-  msgsEl.scrollTop=msgsEl.scrollHeight;
+  msgsEl.appendChild(div);msgsEl.scrollTop=msgsEl.scrollHeight;
 }
 
 function sendMsg(){
-  var q=inputEl.value.trim();
-  if(!q)return;
-  inputEl.value='';
-  addMsg(q,'user');
-  sendBtn.disabled=true;
-  typingEl.style.display='flex';
-  msgsEl.scrollTop=msgsEl.scrollHeight;
-
-  fetch(API,{
-    method:'POST',
-    headers:{'Content-Type':'application/json; charset=utf-8'},
-    body:JSON.stringify({message:q})
-  })
+  var q=inputEl.value.trim();if(!q)return;
+  inputEl.value='';addMsg(q,'user');sendBtn.disabled=true;typingEl.style.display='flex';msgsEl.scrollTop=msgsEl.scrollHeight;
+  fetch(API,{method:'POST',headers:{'Content-Type':'application/json; charset=utf-8'},body:JSON.stringify({message:q})})
   .then(function(r){if(!r.ok)throw new Error(r.status);return r.json()})
-  .then(function(d){
-    typingEl.style.display='none';
-    sendBtn.disabled=false;
-    addMsg(d.reply||'（无回复）','bot');
-  })
-  .catch(function(e){
-    typingEl.style.display='none';
-    sendBtn.disabled=false;
-    addMsg('网络错误（'+e.message+'），请稍后重试','bot');
-  });
+  .then(function(d){typingEl.style.display='none';sendBtn.disabled=false;addMsg(d.reply||'（无回复）','bot')})
+  .catch(function(e){typingEl.style.display='none';sendBtn.disabled=false;addMsg('网络错误（'+e.message+'），请稍后重试','bot')});
 }
 
-inputEl.addEventListener('keydown',function(e){
-  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg()}
-});
+inputEl.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg()}});
 </script>
 </body>
 </html>
