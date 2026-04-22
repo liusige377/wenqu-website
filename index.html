@@ -4,726 +4,646 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>问渠 · 有问必有答</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+XiaoWei&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
 <style>
+/* ===== 主题变量 ===== */
+:root {
+  --bg: #0a0a0f;
+  --bg2: rgba(10,10,18,.97);
+  --bg3: rgba(18,18,28,.8);
+  --bg4: rgba(20,20,32,.9);
+  --border: rgba(212,175,55,.12);
+  --border2: rgba(212,175,55,.08);
+  --gold: #d4af37;
+  --gold2: rgba(212,175,55,.08);
+  --gold3: rgba(212,175,55,.15);
+  --gold4: rgba(212,175,55,.05);
+  --text: #e8e8e8;
+  --text2: #aaa;
+  --text3: #888;
+  --text4: #666;
+  --text5: #555;
+  --text6: #444;
+  --muted: #555;
+  --green: #4ade80;
+  --red: #fca5a5;
+  --modal-bg: #111118;
+  --shadow: rgba(0,0,0,.5);
+  --card-bg: rgba(18,18,28,.8);
+  --card-border: rgba(212,175,55,.1);
+  --input-bg: rgba(20,20,32,.9);
+  --input-border: rgba(212,175,55,.15);
+  --input-focus: rgba(212,175,55,.5);
+  --glass-bg: rgba(10,10,18,.8);
+}
+[data-theme="light"] {
+  --bg: #f5f0e8;
+  --bg2: rgba(248,244,235,.98);
+  --bg3: rgba(255,252,245,.95);
+  --bg4: rgba(255,252,245,.97);
+  --border: rgba(180,140,40,.2);
+  --border2: rgba(180,140,40,.12);
+  --gold: #b8942a;
+  --gold2: rgba(180,140,40,.08);
+  --gold3: rgba(180,140,40,.15);
+  --gold4: rgba(180,140,40,.04);
+  --text: #2a2016;
+  --text2: #4a3828;
+  --text3: #6a5840;
+  --text4: #8a7858;
+  --text5: #7a6848;
+  --text6: #9a8868;
+  --muted: #8a7858;
+  --green: #22c55e;
+  --red: #dc2626;
+  --modal-bg: #faf7f0;
+  --shadow: rgba(100,80,20,.15);
+  --card-bg: rgba(255,252,245,.95);
+  --card-border: rgba(180,140,40,.18);
+  --input-bg: rgba(255,252,245,.97);
+  --input-border: rgba(180,140,40,.25);
+  --input-focus: rgba(180,140,40,.5);
+  --glass-bg: rgba(248,244,235,.9);
+}
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;overflow:hidden}
-body{font-family:"ZCOOL XiaoWei","Noto Serif SC",system-ui,-apple-system,"Microsoft YaHei",sans-serif;background:#0a0a0f;color:#e8e8e8;display:flex;flex-direction:column;height:100vh}
+body{font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow:hidden;transition:background .3s,color .3s}
 
-/* ===== TOP BAR ===== */
-.topbar{height:64px;background:#0e0e18;border-bottom:1px solid rgba(212,175,55,.2);display:flex;align-items:center;padding:0 20px;gap:0;flex-shrink:0;z-index:10}
-.topbar-title{
-  font-family:'Ma Shan Zheng','ZCOOL XiaoWei','Noto Serif SC',serif;
-  font-size:2.1rem;color:#d4af37;letter-spacing:.08em;
-  text-shadow:0 0 30px rgba(212,175,55,.4);flex-shrink:0;cursor:default;user-select:none;
-}
-.topbar-poem{color:#888;font-size:.82rem;border-left:1px solid rgba(212,175,55,.2);padding-left:20px;line-height:1.6;letter-spacing:.05em;margin-left:20px;flex-shrink:0}
-.topbar-poem .hl{color:#d4af37}
-.topbar-divider{width:1px;height:32px;background:rgba(212,175,55,.12);margin:0 20px;flex-shrink:0}
-.topbar-today{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
-.topbar-today-label{font-size:.65rem;color:#555;letter-spacing:.1em}
-.topbar-today-events{display:flex;gap:18px;overflow:hidden;align-items:center}
-.today-item{display:flex;align-items:center;gap:5px;font-size:.77rem;white-space:nowrap}
-.today-item .yr{color:#d4af37;font-weight:700}
-.today-item .tx{color:#888}
-.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-shrink:0}
-.topbar-badge{background:rgba(46,180,100,.1);color:#2eb46e;font-size:.7rem;padding:3px 10px;border-radius:12px;border:1px solid rgba(46,180,100,.2)}
+/* ===== 侧边栏 ===== */
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:248px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;transition:transform .3s,background .3s}
+.sidebar-header{padding:16px 16px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.logo-font{font-family:"Ma Shan Zheng","Ma Shan Zheng Fallback","Noto Serif SC",serif;font-size:1.5rem;color:var(--gold);letter-spacing:.15em;text-shadow:0 0 20px rgba(212,175,55,.2)}
+.sidebar-tagline{font-size:.68rem;color:var(--text5);letter-spacing:.05em}
 
-/* ===== MAIN LAYOUT ===== */
-.layout{display:flex;flex:1;overflow:hidden}
+.sidebar-nav{flex:1;overflow-y:auto;padding:6px 0}
+.sidebar-nav::-webkit-scrollbar{width:3px}
+.sidebar-nav::-webkit-scrollbar-thumb{background:var(--gold3);border-radius:2px}
 
-/* ===== LEFT SIDEBAR ===== */
-.sidebar{width:196px;flex-shrink:0;background:#0c0c16;border-right:1px solid rgba(212,175,55,.1);overflow-y:auto;padding:14px 0;display:flex;flex-direction:column;gap:3px}
-.sidebar::-webkit-scrollbar{width:3px}
-.sidebar::-webkit-scrollbar-thumb{background:rgba(212,175,55,.18)}
-.side-section{margin-bottom:6px}
-.side-section-label{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:#4a4a5a;padding:8px 16px 3px;font-family:system-ui}
-.side-item{display:flex;align-items:center;gap:10px;padding:8px 14px;cursor:pointer;font-size:.83rem;color:#9090a0;transition:all .2s;border:none;background:none;width:100%;text-align:left;border-left:2px solid transparent}
-.side-item:hover{background:rgba(212,175,55,.06);color:#d4af37;border-left-color:rgba(212,175,55,.3)}
-.side-item.active{background:rgba(212,175,55,.1);color:#d4af37;border-left-color:#d4af37}
-.side-item .emoji{font-size:1.05rem;width:20px;text-align:center;flex-shrink:0}
-.side-divider{height:1px;background:rgba(212,175,55,.08);margin:6px 14px}
+.nav-section{margin-bottom:2px}
+.nav-section-title{padding:7px 16px;font-size:.68rem;color:var(--muted);letter-spacing:.1em;cursor:pointer;display:flex;align-items:center;gap:6px;transition:color .2s}
+.nav-section-title:hover{color:var(--text2)}
+.nav-section-title .arr{margin-left:auto;font-size:.6rem;transition:transform .2s;color:var(--text6)}
+.nav-section-title.open .arr{transform:rotate(90deg)}
+.nav-items{display:none;padding:2px 8px 4px}
+.nav-items.open{display:block}
+.nav-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;color:var(--text2);font-size:.82rem;cursor:pointer;transition:all .2s;text-decoration:none}
+.nav-item:hover{background:var(--gold2);color:var(--gold)}
+.nav-item .emoji{font-size:1rem}
+.nav-item .count{margin-left:auto;font-size:.65rem;color:var(--text6);background:var(--gold4);padding:1px 5px;border-radius:4px}
 
-/* ===== CENTER ===== */
-.center{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;background:#090910}
-.chat-header{padding:13px 22px;border-bottom:1px solid rgba(212,175,55,.1);display:flex;align-items:center;gap:10px;flex-shrink:0}
-.chat-header-title{font-size:.9rem;color:#d4af37;font-weight:600}
-.chat-header-sub{color:#555;font-size:.75rem}
+/* 会员入口 */
+.member-zone{border-top:1px solid var(--border);padding:10px 12px}
+.member-btn{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:var(--gold4);cursor:pointer;transition:all .25s;width:100%}
+.member-btn:hover{border-color:var(--gold);background:var(--gold2)}
+.member-btn .m-icon{font-size:1.3rem}
+.member-btn .m-text{flex:1;text-align:left}
+.member-btn .m-name{font-size:.85rem;color:var(--gold);font-weight:600}
+.member-btn .m-sub{font-size:.68rem;color:var(--text6);margin-top:2px}
+.member-btn .m-arrow{font-size:.7rem;color:var(--text6)}
 
-.messages{flex:1;overflow-y:auto;padding:18px 22px;display:flex;flex-direction:column;gap:14px}
-.messages::-webkit-scrollbar{width:4px}
-.messages::-webkit-scrollbar-thumb{background:rgba(212,175,55,.18);border-radius:2px}
+/* ===== 主区域 ===== */
+.main-area{position:fixed;left:248px;top:0;right:0;bottom:0;display:flex;flex-direction:column}
 
-.msg{display:flex;gap:10px;max-width:80%;animation:fadeIn .3s ease}
-.msg.user{flex-direction:row-reverse;align-self:flex-end;max-width:72%}
-.msg-avatar{width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1rem}
-.msg.bot .msg-avatar{background:rgba(212,175,55,.18);color:#d4af37;border:1px solid rgba(212,175,55,.28)}
-.msg.user .msg-avatar{background:rgba(80,120,200,.15);color:#8ab4f8;border:1px solid rgba(100,150,255,.25)}
-.msg-bubble{padding:11px 15px;border-radius:14px;line-height:1.65;font-size:.88rem}
-.msg.bot .msg-bubble{background:rgba(255,255,255,.04);border:1px solid rgba(212,175,55,.1);border-radius:3px 14px 14px 14px}
-.msg.user .msg-bubble{background:rgba(212,175,55,.13);border:1px solid rgba(212,175,55,.2);border-radius:14px 3px 14px 14px;color:#e8e0c0}
-.msg-time{font-size:.65rem;color:#3a3a4a;margin-top:3px;padding:0 3px}
+/* 顶部 */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-bottom:1px solid var(--border2);background:var(--glass-bg);backdrop-filter:blur(10px);z-index:50;transition:background .3s}
+.topbar-left{display:flex;align-items:center;gap:16px}
+.topbar-title{font-size:1.05rem;color:var(--gold);font-weight:600;font-family:"Ma Shan Zheng","Noto Serif SC",serif;letter-spacing:.1em}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.topbar-status{display:flex;align-items:center;gap:6px;font-size:.72rem;color:var(--text5)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px rgba(74,222,128,.5);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* 主题切换 */
+.theme-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:var(--gold4);transition:all .2s}
+.theme-toggle:hover{background:var(--gold2);border-color:var(--gold3)}
+.theme-toggle .sun,.theme-toggle .moon{font-size:1rem;transition:all .3s}
+[data-theme="dark"] .theme-toggle .sun{display:none}
+[data-theme="light"] .theme-toggle .moon{display:none}
+[data-theme="light"] .theme-toggle{background:rgba(255,200,50,.08);border-color:rgba(255,180,0,.2)}
+
+/* Chat */
+.chat-area{flex:1;overflow-y:auto;padding:20px 30px;display:flex;flex-direction:column;gap:16px;transition:background .3s}
+.chat-area::-webkit-scrollbar{width:4px}
+.chat-area::-webkit-scrollbar-thumb{background:var(--gold3);border-radius:2px}
+
+.msg{max-width:680px;display:flex;gap:12px;animation:fadeIn .3s ease}
+.msg.user{flex-direction:row-reverse;align-self:flex-end}
+.msg-avatar{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.msg.user .msg-avatar{background:linear-gradient(135deg,var(--gold),#c49930);color:#0a0a0f}
+.msg.ai .msg-avatar{background:var(--gold4);border:1px solid var(--border);color:var(--gold);font-size:1.1rem}
+.msg-bubble{flex:1;padding:12px 16px;border-radius:12px;font-size:.9rem;line-height:1.7;word-break:break-word}
+.msg.user .msg-bubble{background:var(--gold2);border:1px solid var(--border);color:var(--text);border-radius:12px 12px 2px 12px}
+.msg.ai .msg-bubble{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px 12px 12px 2px;color:var(--text)}
+.msg-time{font-size:.65rem;color:var(--text6);margin-top:6px;padding:0 4px}
 .msg.user .msg-time{text-align:right}
-.msg-star{cursor:pointer;color:#555;font-size:.7rem;margin-top:3px;padding:0 3px;transition:color .2s}
-.msg-star:hover{color:#d4af37}
-.msg-star.starred{color:#d4af37}
 
-.welcome-box{text-align:center;padding:36px 16px;animation:fadeIn .4s ease}
-.welcome-title{
-  font-family:'Ma Shan Zheng','ZCOOL XiaoWei','Noto Serif SC',serif;
-  font-size:3rem;color:#d4af37;margin-bottom:6px;text-shadow:0 0 40px rgba(212,175,55,.25);
-}
-.welcome-desc{color:#666;font-size:.83rem;margin-top:10px;line-height:2}
-.tool-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin-top:18px}
-.tool-chip{background:rgba(212,175,55,.07);border:1px solid rgba(212,175,55,.18);border-radius:18px;padding:5px 13px;font-size:.76rem;color:#9090a0;cursor:pointer;transition:all .2s}
-.tool-chip:hover{background:rgba(212,175,55,.18);color:#d4af37;border-color:rgba(212,175,55,.4)}
+.welcome-box{max-width:640px;margin:20px auto;text-align:center;padding:30px}
+.welcome-box h2{font-family:"Ma Shan Zheng","Noto Serif SC",serif;font-size:1.8rem;color:var(--gold);margin-bottom:10px;letter-spacing:.2em}
+.welcome-box p{font-size:.88rem;color:var(--text4);line-height:1.8}
+.hint-grid{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px}
+.hint-chip{padding:6px 14px;background:var(--gold4);border:1px solid var(--border);border-radius:20px;font-size:.78rem;color:var(--text3);cursor:pointer;transition:all .2s}
+.hint-chip:hover{border-color:var(--gold3);color:var(--gold);background:var(--gold2)}
 
-.input-area{padding:14px 22px 18px;border-top:1px solid rgba(212,175,55,.08);flex-shrink:0}
-.input-hint{font-size:.7rem;color:#3a3a4a;margin-bottom:7px;font-family:system-ui}
-.input-hint .key{background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px;font-size:.65rem}
-.input-row{display:flex;gap:8px;align-items:flex-end}
-.input-row input{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(212,175,55,.2);border-radius:22px;padding:11px 16px;color:#e8e8e8;font-size:.88rem;outline:none;transition:border-color .3s;font-family:"ZCOOL XiaoWei",system-ui}
-.input-row input:focus{border-color:rgba(212,175,55,.5)}
-.input-row input::placeholder{color:#505060}
-.send-btn{background:linear-gradient(135deg,#d4af37,#b8932a);border:none;border-radius:22px;padding:11px 20px;color:#0a0a0f;font-weight:700;font-size:.85rem;cursor:pointer;transition:all .25s;flex-shrink:0}
-.send-btn:hover{background:linear-gradient(135deg,#e8c44a,#d4af37);transform:scale(1.03)}
-.send-btn:active{transform:scale(.97)}
-.send-btn:disabled{opacity:.35;cursor:not-allowed}
+/* 输入区 */
+.input-area{padding:16px 24px 20px;border-top:1px solid var(--border2);background:var(--glass-bg);transition:background .3s}
+.input-row{display:flex;gap:10px;align-items:flex-end;max-width:760px;margin:0 auto}
+.chat-input{flex:1;background:var(--input-bg);border:1px solid var(--input-border);border-radius:12px;padding:12px 16px;font-size:.9rem;color:var(--text);outline:none;resize:none;line-height:1.5;min-height:48px;max-height:140px;transition:border-color .2s,background .3s,color .3s;font-family:inherit}
+.chat-input:focus{border-color:var(--input-focus);box-shadow:0 0 0 3px var(--gold4)}
+.chat-input::placeholder{color:var(--text5)}
+.send-btn{width:48px;height:48px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--gold),#c49930);color:#0a0a0f;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.send-btn:hover{transform:scale(1.05);box-shadow:0 0 20px rgba(212,175,55,.3)}
+.send-btn:disabled{opacity:.4;transform:none;cursor:not-allowed}
 
-.typing-row{display:none;align-items:center;gap:7px;padding:0 22px 8px}
-.typing-label{color:#505060;font-size:.73rem;font-family:system-ui}
-.typing-dots{display:flex;gap:3px}
-.typing-dots span{width:4px;height:4px;border-radius:50%;background:#555;animation:bounce 1.2s infinite}
-.typing-dots span:nth-child(2){animation-delay:.2s}
-.typing-dots span:nth-child(3){animation-delay:.4s}
+.typing-indicator{display:inline-flex;gap:4px;padding:4px 0}
+.typing-indicator span{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:typing 1.2s infinite}
+.typing-indicator span:nth-child(2){animation-delay:.2s}
+.typing-indicator span:nth-child(3){animation-delay:.4s}
+@keyframes typing{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}}
 
-/* ===== TOOL PANEL ===== */
-.tool-panel{display:none;padding:22px;flex:1;overflow-y:auto}
-.tool-panel.visible{display:block}
-.tool-panel-header{font-size:1.05rem;color:#d4af37;margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid rgba(212,175,55,.12)}
-.tool-card{background:rgba(255,255,255,.03);border:1px solid rgba(212,175,55,.1);border-radius:12px;padding:18px;margin-bottom:10px;cursor:pointer;transition:all .25s;display:block;color:inherit;text-decoration:none}
-.tool-card:hover{background:rgba(212,175,55,.07);border-color:rgba(212,175,55,.28);transform:translateY(-2px)}
-.tool-card h3{color:#d4af37;font-size:.9rem;margin-bottom:5px}
-.tool-card p{color:#6a6a7a;font-size:.8rem;line-height:1.5}
-.back-link{display:inline-flex;align-items:center;gap:5px;color:#555;font-size:.8rem;cursor:pointer;margin-bottom:14px;padding:5px 0;transition:color .2s}
-.back-link:hover{color:#d4af37}
+/* ===== 注册Modal ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(4px)}
+.modal-overlay.show{display:flex}
+.reg-modal{background:var(--modal-bg);border:1px solid var(--border);border-radius:20px;width:min(460px,95vw);max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px var(--shadow);animation:modalIn .3s ease;transition:background .3s}
+@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(10px)}}
+.modal-header{text-align:center;padding:28px 30px 18px;border-bottom:1px solid var(--border2)}
+.modal-close{position:absolute;right:16px;top:16px;width:32px;height:32px;border-radius:8px;border:none;background:var(--gold4);color:var(--text5);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.modal-close:hover{background:var(--gold2);color:var(--text)}
+.reg-modal h2{font-family:"Ma Shan Zheng","Noto Serif SC",serif;font-size:1.6rem;color:var(--gold);letter-spacing:.15em;margin-bottom:6px}
+.reg-modal p{font-size:.82rem;color:var(--text4)}
+.modal-body{padding:26px 30px}
 
-/* ===== RIGHT PANEL ===== */
-.right-panel{
-  width:20%;flex-shrink:0;
-  background:#0b0b14;
-  border-left:1px solid rgba(212,175,55,.08);
-  overflow:hidden;display:flex;flex-direction:column;
-}
+.progress-bar{display:flex;align-items:center;gap:4px;margin-bottom:26px}
+.progress-step{flex:1;height:3px;border-radius:2px;background:var(--gold4);transition:background .4s}
+.progress-step.done,.progress-step.current{background:var(--gold)}
 
-.right-header{padding:14px 16px 10px;border-bottom:1px solid rgba(212,175,55,.08);flex-shrink:0}
-.right-header-title{font-size:.85rem;color:#d4af37;font-weight:600;margin-bottom:2px}
-.right-header-sub{font-size:.68rem;color:#444;font-family:system-ui}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:.78rem;color:var(--text3);margin-bottom:7px;letter-spacing:.05em}
+.form-input{width:100%;background:var(--input-bg);border:1px solid var(--input-border);border-radius:10px;padding:12px 14px;font-size:.9rem;color:var(--text);outline:none;transition:border-color .2s,background .3s,color .3s;font-family:inherit}
+.form-input:focus{border-color:var(--input-focus);box-shadow:0 0 0 3px var(--gold4)}
+.form-input::placeholder{color:var(--text5)}
+.form-hint{font-size:.72rem;color:var(--text5);margin-top:5px}
 
-/* ===== RIGHT: TOP 2/3 — MEMORY ===== */
-.right-memory{flex:2;display:flex;flex-direction:column;overflow:hidden;border-bottom:1px solid rgba(212,175,55,.06)}
+.otp-row{display:flex;gap:10px}
+.otp-row .form-input{flex:1}
+.otp-btn{width:110px;height:46px;border-radius:10px;border:1px solid var(--border);background:var(--gold4);color:var(--gold);font-size:.8rem;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .2s;font-family:inherit}
+.otp-btn:hover:not(:disabled){background:var(--gold2)}
+.otp-btn:disabled{opacity:.4;cursor:not-allowed}
 
-.login-prompt{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 14px;gap:10px}
-.login-prompt-icon{font-size:2.2rem;opacity:.2}
-.login-prompt-title{font-size:.85rem;color:#d4af37;font-weight:600;text-align:center}
-.login-prompt-text{color:#505060;font-size:.75rem;text-align:center;line-height:1.7}
-.login-form{display:flex;flex-direction:column;gap:7px;width:100%}
-.login-form input{
-  width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(212,175,55,.2);
-  border-radius:8px;padding:8px 11px;color:#e8e8e8;font-size:.8rem;outline:none;
-  font-family:"ZCOOL XiaoWei",system-ui;text-align:center;
-}
-.login-form input::placeholder{color:#444}
-.login-form input:focus{border-color:rgba(212,175,55,.5)}
-.login-form input[type="tel"]{font-size:.78rem}
-.login-btn2{width:100%;background:linear-gradient(135deg,#d4af37,#b8932a);border:none;border-radius:8px;padding:9px;color:#0a0a0f;font-weight:700;font-size:.82rem;cursor:pointer;transition:all .25s;font-family:"ZCOOL XiaoWei"}
-.login-btn2:hover{transform:scale(1.02)}
-.login-btn2:active{transform:scale(.98)}
-.login-tip{font-size:.68rem;color:#444;text-align:center;line-height:1.5;font-family:system-ui}
+.btn-primary{width:100%;height:48px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--gold),#c49930);color:#0a0a0f;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;font-family:inherit;letter-spacing:.05em}
+.btn-primary:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 4px 20px rgba(212,175,55,.3)}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-ghost{width:100%;height:46px;border-radius:12px;border:1px solid var(--border);background:transparent;color:var(--text4);font-size:.9rem;cursor:pointer;transition:all .2s;font-family:inherit}
+.btn-ghost:hover{background:var(--gold2);color:var(--gold);border-color:var(--gold3)}
+.btn-row{display:flex;flex-direction:column;gap:10px;margin-top:22px}
 
-.reg-section{width:100%;margin-top:6px;padding-top:10px;border-top:1px solid rgba(212,175,55,.08)}
-.reg-title{font-size:.7rem;color:#555;text-align:center;margin-bottom:8px;font-family:system-ui;letter-spacing:.05em}
-.reg-btn{width:100%;background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.2);border-radius:8px;padding:8px;color:#d4af37;font-size:.78rem;cursor:pointer;transition:all .2s;font-family:"ZCOOL XiaoWei"}
-.reg-btn:hover{background:rgba(212,175,55,.18);border-color:rgba(212,175,55,.35)}
+.key-box{background:var(--gold4);border:1px solid var(--border);border-radius:12px;padding:16px;margin-top:18px;position:relative}
+.key-label{font-size:.7rem;color:var(--text4);margin-bottom:8px;letter-spacing:.1em}
+.key-value{font-family:monospace;font-size:.85rem;color:var(--gold);word-break:break-all;background:var(--bg4);padding:8px 10px;border-radius:6px;border:1px solid var(--border2)}
+.key-copy{position:absolute;right:12px;top:12px;padding:4px 10px;background:var(--gold2);border:1px solid var(--border);border-radius:6px;color:var(--gold);font-size:.72rem;cursor:pointer;transition:all .2s}
+.key-copy:hover{background:var(--gold3)}
 
-.memory-view{display:none;flex-direction:column;height:100%}
-.memory-view.visible{display:flex}
-.mem-tabs{padding:8px 12px 0;display:flex;gap:2px;border-bottom:1px solid rgba(212,175,55,.07);flex-shrink:0}
-.mem-tab{padding:5px 9px;font-size:.7rem;color:#444;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;font-family:system-ui;background:none;border-top:none;border-left:none;border-right:none}
-.mem-tab:hover{color:#666}
-.mem-tab.active{color:#d4af37;border-bottom-color:#d4af37}
-.mem-content{flex:1;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
-.mem-content::-webkit-scrollbar{width:3px}
-.mem-content::-webkit-scrollbar-thumb{background:rgba(212,175,55,.15)}
-.mem-record{padding:9px 11px;background:rgba(255,255,255,.025);border:1px solid rgba(212,175,55,.07);border-radius:9px;cursor:pointer;transition:all .2s}
-.mem-record:hover{border-color:rgba(212,175,55,.2);background:rgba(212,175,55,.05)}
-.mem-record-q{font-size:.76rem;color:#9090a8;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mem-record-a{font-size:.7rem;color:#4a4a5a;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.mem-record-meta{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
-.mem-record-time{font-size:.63rem;color:#333;font-family:system-ui}
-.mem-record-star{font-size:.68rem;color:#d4af37}
-.mem-empty{color:#3a3a4a;font-size:.75rem;text-align:center;padding:24px 8px;line-height:2;font-family:system-ui}
-.mem-empty-icon{font-size:1.6rem;margin-bottom:6px;opacity:.25}
-.mem-user-bar{padding:8px 12px;border-top:1px solid rgba(212,175,55,.07);display:flex;align-items:center;gap:7px;flex-shrink:0}
-.mem-user-avatar{width:26px;height:26px;border-radius:50%;background:rgba(212,175,55,.12);color:#d4af37;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
-.mem-user-name{font-size:.75rem;color:#8080a0;flex:1}
-.mem-logout{font-size:.65rem;color:#444;cursor:pointer;padding:2px 7px;border-radius:5px;border:1px solid rgba(255,255,255,.05);background:none;transition:all .2s;font-family:system-ui}
-.mem-logout:hover{color:#c05050;border-color:rgba(200,80,80,.25)}
+.switch-mode{text-align:center;margin-top:14px;font-size:.8rem;color:var(--text5)}
+.switch-mode a{color:var(--gold);text-decoration:none;cursor:pointer}
+.switch-mode a:hover{text-decoration:underline}
 
-/* ===== RIGHT: BOTTOM 1/3 — ADS/RECOMMENDATIONS ===== */
-.right-ads{
-  flex:1;min-height:0;
-  display:flex;flex-direction:column;
-  padding:10px 14px 12px;
-  gap:8px;
-}
-.ads-title{font-size:.68rem;color:#444;letter-spacing:.12em;text-transform:uppercase;font-family:system-ui;margin-bottom:2px}
-.ads-placeholder{
-  flex:1;
-  background:rgba(212,175,55,.03);
-  border:1px dashed rgba(212,175,55,.12);
-  border-radius:10px;
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  gap:8px;min-height:0;
-}
-.ads-placeholder-icon{font-size:1.8rem;opacity:.2}
-.ads-placeholder-text{color:#3a3a4a;font-size:.72rem;text-align:center;line-height:1.7;font-family:system-ui}
-.ads-placeholder-hint{color:#555;font-size:.65rem;text-align:center;font-family:system-ui}
+.alert{padding:10px 14px;border-radius:10px;font-size:.82rem;margin-bottom:12px;display:none}
+.alert.show{display:block}
+.alert.error{background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.2);color:var(--red)}
+.alert.success{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);color:var(--green)}
+.alert.info{background:var(--gold4);border:1px solid var(--border);color:var(--gold)}
 
-/* User badge in topbar when logged in */
-.user-badge{
-  display:none;align-items:center;gap:6px;
-  background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.2);
-  border-radius:20px;padding:3px 10px 3px 6px;font-size:.72rem;color:#d4af37;
-  cursor:pointer;
-}
-.user-badge:hover{background:rgba(212,175,55,.18)}
+.reg-success{text-align:center;padding:16px 0}
+.reg-success .big-check{font-size:3rem;margin-bottom:14px}
+.reg-success h3{font-family:"Ma Shan Zheng",serif;font-size:1.3rem;color:var(--gold);margin-bottom:8px}
+.reg-success p{font-size:.85rem;color:var(--text4);line-height:1.7}
+.reg-success .api-note{margin-top:14px;padding:12px;background:var(--gold4);border-radius:10px;border:1px solid var(--border);text-align:left}
+.reg-success .api-note p{font-size:.78rem;color:var(--text4);line-height:1.8}
 
-/* Responsive */
-@media(max-width:900px){.right-panel{display:none}}
-@media(max-width:680px){
-  .sidebar{width:56px}
-  .side-item .label,.side-section-label,.topbar-poem,.topbar-today{display:none}
-  .topbar{height:50px;padding:0 12px}
-  .topbar-title{font-size:1.7rem}
-}
+.remember-row{display:flex;align-items:center;gap:8px;margin-top:12px}
+.remember-row input[type=checkbox]{width:16px;height:16px;accent-color:var(--gold);cursor:pointer}
+.remember-row label{font-size:.78rem;color:var(--text4);cursor:pointer}
 
-@keyframes bounce{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
-@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.step{display:none}
+.step.active{display:block}
 </style>
 </head>
 <body>
 
-<!-- TOP BAR -->
-<div class="topbar">
-  <span class="topbar-title">问渠</span>
-  <div class="topbar-poem">半亩方塘一鉴开，天光云影共徘徊。<span class="hl">问渠那得清如许？</span>为有源头活水来。</div>
-  <div class="topbar-divider"></div>
-  <div class="topbar-today">
-    <div class="topbar-today-label" id="today-label">📅 历史上的今天</div>
-    <div class="topbar-today-events" id="topbar-today-events"><div style="color:#444;font-size:.78rem">加载中…</div></div>
-  </div>
-  <div class="topbar-right">
-    <div class="user-badge" id="user-badge" onclick="showMemPanel()">
-      <span id="badge-avatar">👤</span>
-      <span id="badge-name"></span>
+<!-- 侧边栏 -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div>
+      <div class="logo-font">问渠</div>
+      <div class="sidebar-tagline">有问必有答</div>
     </div>
-    <span class="topbar-badge">● 在线</span>
+  </div>
+  <nav class="sidebar-nav" id="sidebarNav">
+    <div class="nav-section">
+      <div class="nav-section-title open" data-section="history"><span>📜</span> 历史文化<span class="arr">▸</span></div>
+      <div class="nav-items open" id="nav-history"></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title" data-section="science"><span>🔬</span> 现代科技<span class="arr">▸</span></div>
+      <div class="nav-items" id="nav-science"></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title" data-section="life"><span>🏠</span> 生活百科<span class="arr">▸</span></div>
+      <div class="nav-items" id="nav-life"></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title" data-section="tools"><span>⚡</span> 效率工具<span class="arr">▸</span></div>
+      <div class="nav-items" id="nav-tools"></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title" data-section="finance"><span>💰</span> 财经商业<span class="arr">▸</span></div>
+      <div class="nav-items" id="nav-finance"></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title" data-section="geo"><span>🌍</span> 天文地理<span class="arr">▸</span></div>
+      <div class="nav-items" id="nav-geo"></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title" data-section="art"><span>🎨</span> 艺术娱乐<span class="arr">▸</span></div>
+      <div class="nav-items" id="nav-art"></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title" data-section="ai"><span>🤖</span> AI工具<span class="arr">▸</span></div>
+      <div class="nav-items" id="nav-ai"></div>
+    </div>
+  </nav>
+  <div class="member-zone">
+    <button class="member-btn" id="memberBtn" onclick="openRegModal()">
+      <span class="m-icon" id="memberIcon">🔑</span>
+      <div class="m-text">
+        <div class="m-name" id="memberName">注册 / 登录</div>
+        <div class="m-sub" id="memberSub">开启会员专属记忆</div>
+      </div>
+      <span class="m-arrow">›</span>
+    </button>
+  </div>
+</aside>
+
+<!-- 主区域 -->
+<div class="main-area">
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title">问渠AI智能助手</div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-status">
+        <span class="dot"></span>
+        <span>永久免费</span>
+      </div>
+      <!-- 主题切换 -->
+      <div class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="切换深色/浅色">
+        <span class="sun">☀️</span>
+        <span class="moon">🌙</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="chat-area" id="chatArea">
+    <div class="welcome-box">
+      <h2>有问必有答</h2>
+      <p>问渠是一个综合知识问答平台，AI助手可以回答各种问题。<br>试试问一个实时问题，比如：今天的新闻、成都天气、LNG价格走势……</p>
+      <div class="hint-grid">
+        <span class="hint-chip" onclick="ask('今天成都天气如何？')">成都天气</span>
+        <span class="hint-chip" onclick="ask('2026年LNG天然气价格走势如何？')">LNG价格</span>
+        <span class="hint-chip" onclick="ask('什么是天然气？LNG和CNG有什么区别？')">LNG与CNG</span>
+        <span class="hint-chip" onclick="ask('四川工业用户用气安全注意事项有哪些？')">用气安全</span>
+        <span class="hint-chip" onclick="ask('企业如何申请天然气供应？')">申请供气</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <div class="input-row">
+      <textarea class="chat-input" id="chatInput" rows="1" placeholder="输入问题，Shift+Enter换行，Enter发送…" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+      <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
+    </div>
   </div>
 </div>
 
-<!-- MAIN LAYOUT -->
-<div class="layout">
+<!-- 注册Modal -->
+<div class="modal-overlay" id="regModal">
+  <div class="reg-modal" onclick="event.stopPropagation()">
+    <div style="position:relative">
+      <button class="modal-close" onclick="closeRegModal()">✕</button>
+    </div>
+    <div class="modal-header">
+      <h2 id="modalTitle">会员注册</h2>
+      <p id="modalSub">注册后自动获得API Key，免费使用问渠AI</p>
+    </div>
+    <div class="modal-body">
 
-  <!-- LEFT SIDEBAR -->
-  <div class="sidebar">
-    <div class="side-section">
-      <div class="side-section-label">AI 助手</div>
-      <button class="side-item active" onclick="showChat()"><span class="emoji">💬</span><span class="label">AI对话</span></button>
-    </div>
-    <div class="side-section">
-      <div class="side-section-label">工具分类</div>
-      <button class="side-item" onclick="showTool('history')"><span class="emoji">📜</span><span class="label">历史文化</span></button>
-      <button class="side-item" onclick="showTool('geography')"><span class="emoji">🌍</span><span class="label">天文地理</span></button>
-      <button class="side-item" onclick="showTool('tech')"><span class="emoji">💻</span><span class="label">现代科技</span></button>
-      <button class="side-item" onclick="showTool('life')"><span class="emoji">🏠</span><span class="label">生活综合</span></button>
-      <button class="side-item" onclick="showTool('agriculture')"><span class="emoji">🌾</span><span class="label">农业百科</span></button>
-      <button class="side-item" onclick="showTool('metaphysics')"><span class="emoji">🔮</span><span class="label">玄学命理</span></button>
-      <button class="side-item" onclick="showTool('health')"><span class="emoji">🌿</span><span class="label">健康养生</span></button>
-      <button class="side-item" onclick="showTool('education')"><span class="emoji">📚</span><span class="label">教育学习</span></button>
-    </div>
-    <div class="side-divider"></div>
-    <div class="side-section">
-      <div class="side-section-label">快捷</div>
-      <button class="side-item" onclick="sendQuick('历史上的今天')"><span class="emoji">📅</span><span class="label">今日历史</span></button>
-      <button class="side-item" onclick="sendQuick('成都天气')"><span class="emoji">⛅</span><span class="label">成都天气</span></button>
-    </div>
-  </div>
+      <div class="progress-bar">
+        <div class="progress-step" id="ps1"></div>
+        <div class="progress-step" id="ps2"></div>
+        <div class="progress-step" id="ps3"></div>
+        <div class="progress-step" id="ps4"></div>
+      </div>
 
-  <!-- CENTER -->
-  <div class="center">
-    <div id="chat-view" style="display:flex;flex-direction:column;height:100%;">
-      <div class="chat-header">
-        <span style="font-size:1.05rem;">🤖</span>
-        <div>
-          <div class="chat-header-title">AI 智能助手</div>
-          <div class="chat-header-sub">有问必答 · 随时服务</div>
+      <!-- 注册页 -->
+      <div class="step active" id="stepReg">
+        <div class="alert error" id="regErr"></div>
+        <div class="form-group">
+          <label>手机号码（登录账号）</label>
+          <input type="tel" class="form-input" id="regPhone" placeholder="请输入中国大陆手机号" maxlength="11">
         </div>
-        <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
-          <button onclick="showMemPanel()" style="background:rgba(212,175,55,.07);border:1px solid rgba(212,175,55,.18);border-radius:8px;padding:4px 10px;color:#666;font-size:.72rem;cursor:pointer;transition:all .2s;font-family:system-ui" onmouseover="this.style.color='#d4af37';this.style.borderColor='rgba(212,175,55,.4)'" onmouseout="this.style.color='#666';this.style.borderColor='rgba(212,175,55,.18)'">📋 记忆</button>
+        <div class="form-group">
+          <label>姓名（选填）</label>
+          <input type="text" class="form-input" id="regName" placeholder="请输入姓名">
+        </div>
+        <div class="form-group">
+          <label>设置密码</label>
+          <input type="password" class="form-input" id="regPw" placeholder="请设置密码（至少6位）">
+        </div>
+        <div class="form-group">
+          <label>短信验证码</label>
+          <div class="otp-row">
+            <input type="text" class="form-input" id="regOtp" placeholder="请输入6位验证码" maxlength="6">
+            <button class="otp-btn" id="otpBtn" onclick="sendOtp()">获取验证码</button>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-primary" id="regSubmit" onclick="doRegister()">立即注册</button>
+          <button class="btn-ghost" onclick="switchToLogin()">已有账号？立即登录</button>
         </div>
       </div>
 
-      <div class="messages" id="messages">
-        <div class="welcome-box">
-          <div class="welcome-title">问 渠</div>
-          <div class="welcome-desc">有问必有答，为有源头活水来<br>AI百科助手 · 八大工具 · 客户记忆</div>
-          <div class="tool-chips">
-            <span class="tool-chip" onclick="sendQuick('LNG是什么？')">LNG是什么</span>
-            <span class="tool-chip" onclick="sendQuick('历史上的今天')">今日历史</span>
-            <span class="tool-chip" onclick="sendQuick('成都天气')">成都天气</span>
-            <span class="tool-chip" onclick="sendQuick('LNG气价走势')">LNG气价</span>
-            <span class="tool-chip" onclick="sendQuick('帮我写一首诗')">写首诗</span>
+      <!-- 注册成功 -->
+      <div class="step" id="stepSuccess">
+        <div class="reg-success">
+          <div class="big-check">🎉</div>
+          <h3>注册成功！</h3>
+          <p>欢迎加入问渠，您的专属API Key如下：</p>
+          <div class="key-box">
+            <div class="key-label">您的专属 API KEY（永久有效）</div>
+            <div class="key-value" id="displayKey">wq_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</div>
+            <button class="key-copy" onclick="copyKey()">复制</button>
+          </div>
+          <div class="api-note">
+            <p><strong>💡 使用说明</strong></p>
+            <p>• 此Key为您的身份凭证，请妥善保存</p>
+            <p>• 可用于调用问渠API接口</p>
+            <p>• 有效期：永久（免费）</p>
+          </div>
+          <div class="btn-row">
+            <button class="btn-primary" onclick="closeRegModal();loadUser()">开始使用</button>
           </div>
         </div>
       </div>
 
-      <div class="typing-row" id="typing-row">
-        <div class="typing-dots"><span></span><span></span><span></span></div>
-        <span class="typing-label">AI思考中…</span>
-      </div>
-
-      <div class="input-area">
-        <div class="input-hint"><span><span class="key">Enter</span> 发送 · <span class="key">Shift+Enter</span> 换行 · <span class="key">★</span> 收藏回答</span></div>
-        <div class="input-row">
-          <input id="msg-input" placeholder="输入问题，AI即时回答…" autocomplete="off" autofocus />
-          <button class="send-btn" id="send-btn" onclick="sendMsg()">发送</button>
+      <!-- 登录页 -->
+      <div class="step" id="stepLogin">
+        <div class="alert error" id="loginErr"></div>
+        <div class="form-group">
+          <label>手机号码</label>
+          <input type="tel" class="form-input" id="loginPhone" placeholder="请输入手机号" maxlength="11">
+        </div>
+        <div class="form-group">
+          <label>密码</label>
+          <input type="password" class="form-input" id="loginPw" placeholder="请输入密码" onkeydown="if(event.key==='Enter')doLogin()">
+        </div>
+        <div class="remember-row">
+          <input type="checkbox" id="rememberMe" checked>
+          <label for="rememberMe">记住我（30天免登录）</label>
+        </div>
+        <div class="btn-row">
+          <button class="btn-primary" id="loginBtn" onclick="doLogin()">登录</button>
+          <button class="btn-ghost" onclick="switchToReg()">没有账号？立即注册</button>
         </div>
       </div>
+
     </div>
-
-    <!-- Tool panel -->
-    <div class="tool-panel" id="tool-panel">
-      <div class="back-link" onclick="showChat()">← 返回对话</div>
-      <div class="tool-panel-header" id="tool-panel-title">📜 历史文化</div>
-      <div id="tool-list"></div>
-    </div>
-  </div>
-
-  <!-- RIGHT PANEL -->
-  <div class="right-panel" id="right-panel">
-
-    <!-- TOP: Memory (2/3 height) -->
-    <div class="right-memory" id="right-memory">
-      <div class="right-header">
-        <div class="right-header-title" id="right-title">📋 客户记忆</div>
-        <div class="right-header-sub" id="right-sub">登录保存记录 · 注册获取API</div>
-      </div>
-
-      <!-- Login / Register Form -->
-      <div class="login-prompt" id="login-prompt">
-        <div class="login-prompt-icon">👤</div>
-        <div class="login-prompt-title">登录记忆系统</div>
-
-        <!-- Login Form -->
-        <div class="login-form" id="login-form">
-          <input id="login-name" placeholder="昵称 / 手机号" maxlength="20" />
-          <input id="login-pwd" type="password" placeholder="密码" maxlength="30" />
-          <button class="login-btn2" onclick="doLogin()">登录</button>
-          <div class="login-tip">登录后同步聊天记录和收藏</div>
-        </div>
-
-        <!-- Register -->
-        <div class="reg-section">
-          <div class="reg-title">—— 没有账号？立即注册 ——</div>
-          <button class="reg-btn" onclick="showReg()">📝 实名注册 · 获取API密钥</button>
-        </div>
-      </div>
-
-      <!-- Register Form (hidden by default) -->
-      <div class="login-prompt" id="reg-prompt" style="display:none">
-        <div class="login-prompt-icon">🔐</div>
-        <div class="login-prompt-title">实名注册</div>
-        <div class="login-form">
-          <input id="reg-name" placeholder="真实姓名（必填）" maxlength="20" />
-          <input id="reg-phone" placeholder="手机号（必填）" maxlength="11" type="tel" />
-          <input id="reg-company" placeholder="公司名称（选填）" maxlength="50" />
-          <button class="login-btn2" onclick="doRegister()">提交注册申请</button>
-        </div>
-        <div class="login-tip">注册后获取专属API密钥<br>用于调用问渠AI能力</div>
-        <button class="reg-btn" onclick="showLogin()" style="margin-top:6px">已有账号？返回登录</button>
-      </div>
-
-      <!-- Memory view (logged in) -->
-      <div class="memory-view" id="memory-view">
-        <div class="mem-tabs">
-          <div class="mem-tab active" id="history-tab" onclick="switchTab('history-tab')">💬 记录</div>
-          <div class="mem-tab" id="stars-tab" onclick="switchTab('stars-tab')">★ 收藏</div>
-        </div>
-        <div class="mem-content" id="mem-list">
-          <div class="mem-empty"><div class="mem-empty-icon">💭</div>暂无记录<br>开始对话吧</div>
-        </div>
-        <div class="mem-user-bar">
-          <div class="mem-user-avatar" id="mem-avatar">👤</div>
-          <div class="mem-user-name" id="mem-username">访客</div>
-          <div style="margin-left:auto;display:flex;gap:4px;align-items:center">
-            <span id="api-key-badge" style="font-size:.6rem;color:#2eb46e;display:none;background:rgba(46,180,100,.08);padding:2px 6px;border-radius:4px;border:1px solid rgba(46,180,100,.2)">API</span>
-            <button class="mem-logout" onclick="doLogout()">退出</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- BOTTOM: Ads/Recommendations (1/3 height) -->
-    <div class="right-ads">
-      <div class="ads-title">精选推荐</div>
-      <div class="ads-placeholder">
-        <div class="ads-placeholder-icon">💰</div>
-        <div class="ads-placeholder-text">智能推荐位</div>
-        <div class="ads-placeholder-hint">根据你的搜索内容<br>精准推荐相关服务</div>
-      </div>
-    </div>
-
   </div>
 </div>
 
 <script>
-// ===== TODAY IN HISTORY =====
+const API = 'https://1423198240-0conai1m1r.ap-guangzhou.tencentscf.com';
+let currentUser = null;
+let chatHistory = [];
+
+// ====== 主题 ======
+function toggleTheme(){
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('wq_theme', next);
+}
 (function(){
-  var now=new Date(),m=now.getMonth()+1,d=now.getDate();
-  var sec=['零','一','二','三','四','五','六','七','八','九','十'];
-  function toC(n){if(n<10)return sec[n];if(n<20)return'十'+sec[n-10];if(n<100)return sec[Math.floor(n/10)]+'十'+sec[n%10];return String(n);}
-  document.getElementById('today-label').textContent='📅 历史上的今天 · '+now.getFullYear()+'年'+toC(m)+'月'+toC(d)+'日';
-  var el=document.getElementById('topbar-today-events');
-  function render(arr){
-    if(!arr||arr.length===0){el.innerHTML='<div style="color:#444;font-size:.78rem">暂无</div>';return}
-    el.innerHTML='';
-    arr.slice(0,4).forEach(function(ev){
-      var div=document.createElement('div');div.className='today-item';
-      div.innerHTML='<span class=yr>'+ev.year+'</span><span class=tx>'+(ev.text||ev.title||'').slice(0,22)+'</span>';
-      el.appendChild(div);
-    });
-  }
-  var apis=[
-    ['https://api.youradi.cn/todayinhistory?m='+m+'&d='+d,function(d){return(d.events||d.data||[]).slice(0,4)}],
-    ['https://today.api.get996.top/api/today?m='+m+'&d='+d,function(d){return(d.data||[]).slice(0,4)}],
-  ];
-  function tryAPI(i){
-    if(i>=apis.length){el.innerHTML='<div style="color:#444;font-size:.78rem">暂无</div>';return}
-    fetch(apis[i][0]).then(function(r){return r.json()}).then(function(d2){
-      var arr=apis[i][1](d2);
-      if(arr&&arr.length>0)render(arr);else tryAPI(i+1);
-    }).catch(function(){tryAPI(i+1)});
-  }
-  tryAPI(0);
+  const saved = localStorage.getItem('wq_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
 })();
 
-// ===== TOOL DATA =====
-var TOOLS={
-  history:{label:'📜 历史文化',cards:[
-    {title:'朝代纪年换算',desc:'输入公元年份，自动换算成中国朝代纪年',url:'history.html'},
-    {title:'历史年代人物',desc:'查询各朝代重大历史事件和著名人物',url:'history.html'},
-    {title:'古币换算',desc:'古代钱币与现代货币价值换算',url:'history.html'},
-    {title:'百家姓查询',desc:'姓氏来源、名人、历史分布查询',url:'history.html'},
-    {title:'历史年表',desc:'中国历史年表，从夏商周到近现代',url:'history.html'},
-    {title:'成语接龙',desc:'输入成语，AI自动接龙',url:'history.html'},
-  ]},
-  geography:{label:'🌍 天文地理',cards:[
-    {title:'天文单位换算',desc:'光年、天文单位(AU)、秒差距换算',url:'geography.html'},
-    {title:'世界城市人口',desc:'全球城市人口数量及密度排名',url:'geography.html'},
-    {title:'经纬度查询',desc:'城市名查询经纬度、海拔高度',url:'geography.html'},
-    {title:'海拔气压计算',desc:'根据海拔计算大气压强和沸点',url:'geography.html'},
-    {title:'时区换算',desc:'全球城市时区对照和时差计算',url:'geography.html'},
-  ]},
-  tech:{label:'💻 现代科技',cards:[
-    {title:'字节换算器',desc:'字节、KB、MB、GB换算',url:'tech.html'},
-    {title:'进制转换',desc:'二进制、八进制、十进制、十六进制互转',url:'tech.html'},
-    {title:'ASCII码表',desc:'完整ASCII字符对照表',url:'tech.html'},
-    {title:'AI算力计算',desc:'GPU算力FLOPS换算',url:'tech.html'},
-    {title:'编码检测',desc:'文本编码格式检测',url:'tech.html'},
-    {title:'JSON格式化',desc:'JSON美化、压缩、校验',url:'tech.html'},
-  ]},
-  life:{label:'🏠 生活综合',cards:[
-    {title:'个税计算器',desc:'2026最新个税税率，支持专项附加扣除',url:'life.html'},
-    {title:'房贷计算器',desc:'商业贷款/公积金月供计算',url:'life.html'},
-    {title:'身份证信息',desc:'输入身份证号查询性别、年龄、籍贯',url:'life.html'},
-    {title:'亲戚关系计算',desc:'计算亲戚称呼',url:'life.html'},
-    {title:'数字大写转换',desc:'金额数字转中文大写',url:'life.html'},
-    {title:'日期计算器',desc:'日期间隔、工作日计算',url:'life.html'},
-    {title:'BMI计算器',desc:'身体质量指数计算',url:'life.html'},
-  ]},
-  agriculture:{label:'🌾 农业百科',cards:[
-    {title:'亩产计算器',desc:'根据面积和产量计算亩产量',url:'agriculture.html'},
-    {title:'饲料配方',desc:'畜禽饲料配比计算',url:'agriculture.html'},
-    {title:'化肥用量计算',desc:'根据作物和面积计算施肥量',url:'agriculture.html'},
-    {title:'养殖密度',desc:'养殖密度推荐和超标预警',url:'agriculture.html'},
-    {title:'灌溉用水量',desc:'计算灌溉需水量',url:'agriculture.html'},
-  ]},
-  metaphysics:{label:'🔮 玄学命理',cards:[
-    {title:'八字排盘',desc:'AI排出精确生辰八字',url:'metaphysics.html'},
-    {title:'五行纳音',desc:'天干地支查五行属性',url:'metaphysics.html'},
-    {title:'周公解梦',desc:'AI解读梦境吉凶',url:'metaphysics.html'},
-    {title:'数字凶吉',desc:'手机号/车牌号凶吉分析',url:'metaphysics.html'},
-    {title:'黄道吉日',desc:'宜嫁娶、开业、出行查询',url:'metaphysics.html'},
-  ]},
-  health:{label:'🌿 健康养生',cards:[
-    {title:'BMI计算',desc:'身体质量指数及健康建议',url:'health.html'},
-    {title:'血压评估',desc:'输入血压值评估等级',url:'health.html'},
-    {title:'卡路里计算',desc:'日常活动消耗热量',url:'health.html'},
-    {title:'饮水记录',desc:'每日建议饮水量计算',url:'health.html'},
-    {title:'睡眠计算',desc:'反推最佳入睡时间',url:'health.html'},
-  ]},
-  education:{label:'📚 教育学习',cards:[
-    {title:'成语接龙',desc:'AI自动成语接龙',url:'education.html'},
-    {title:'历史年表',desc:'中国/世界历史大事件',url:'education.html'},
-    {title:'拼音大全',desc:'汉字拼音查询，支持多音字',url:'education.html'},
-    {title:'汉字笔画',desc:'汉字笔画数、部首查询',url:'education.html'},
-    {title:'古诗词鉴赏',desc:'诗词意境和用典分析',url:'education.html'},
-  ]}
+// ====== 导航 ======
+const NAV_DATA = {
+  history:[{name:"中国历史",url:"history/chinese-history.html",emoji:"🏛️"},{name:"世界历史",url:"history/world-history.html",emoji:"🌍"},{name:"成语故事",url:"culture/chengyu.html",emoji:"📖"},{name:"诗词鉴赏",url:"culture/poetry.html",emoji:"🪷"},{name:"历史人物",url:"history/figures.html",emoji:"👤"}],
+  science:[{name:"科技百科",url:"science/tech.html",emoji:"🔬"},{name:"编程开发",url:"science/programming.html",emoji:"💻"},{name:"AI工具",url:"ai/ai-tools.html",emoji:"🤖"},{name:"科普知识",url:"science/science.html",emoji:"🧪"}],
+  life:[{name:"生活百科",url:"life/daily.html",emoji:"🏠"},{name:"健康养生",url:"life/health.html",emoji:"🍵"},{name:"烹饪食谱",url:"life/cooking.html",emoji:"🍜"},{name:"法律常识",url:"life/law.html",emoji:"⚖️"}],
+  tools:[{name:"JSON格式化",url:"tools/json.html",emoji:"📄"},{name:"颜色转换器",url:"tools/color.html",emoji:"🎨"},{name:"密码生成器",url:"tools/password.html",emoji:"🔐"},{name:"Base64编码",url:"tools/base64.html",emoji:"🔤"},{name:"二维码生成",url:"tools/qrcode.html",emoji:"📱"},{name:"URL编码解码",url:"tools/url.html",emoji:"🔗"},{name:"正则测试",url:"tools/regex.html",emoji:"🔍"},{name:"单位换算",url:"tools/unit.html",emoji:"⚖️"},{name:"时间戳转换",url:"tools/timestamp.html",emoji:"⏰"},{name:"进制转换",url:"tools/base.html",emoji:"🔢"}],
+  finance:[{name:"股票行情",url:"finance/stocks.html",emoji:"📈"},{name:"基金筛选",url:"finance/funds.html",emoji:"💹"},{name:"汇率换算",url:"finance/forex.html",emoji:"💱"},{name:"房贷计算",url:"finance/loan.html",emoji:"🏦"},{name:"理财工具",url:"finance/wealth.html",emoji:"💰"}],
+  geo:[{name:"世界地图",url:"geo/map.html",emoji:"🗺️"},{name:"国家百科",url:"geo/countries.html",emoji:"🌐"},{name:"天气查询",url:"geo/weather.html",emoji:"🌤️"},{name:"时区转换",url:"geo/timezone.html",emoji:"🕐"}],
+  art:[{name:"音乐欣赏",url:"art/music.html",emoji:"🎵"},{name:"电影推荐",url:"art/movies.html",emoji:"🎬"},{name:"读书笔记",url:"art/books.html",emoji:"📚"},{name:"艺术鉴赏",url:"art/art.html",emoji:"🖼️"}],
+  ai:[{name:"AI智能助手",url:"ai.html",emoji:"🤖"},{name:"AI写作助手",url:"ai/writer.html",emoji:"✍️"},{name:"AI翻译",url:"ai/translator.html",emoji:"🌐"},{name:"AI代码助手",url:"ai/coder.html",emoji:"⚡"}]
 };
-
-// ===== NAVIGATION =====
-function setActive(){
-  document.querySelectorAll('.side-item').forEach(function(el){el.classList.remove('active')});
-}
-function showChat(){
-  document.getElementById('chat-view').style.display='flex';
-  document.getElementById('tool-panel').classList.remove('visible');
-  document.querySelectorAll('.side-item').forEach(function(el){el.classList.remove('active')});
-  var items=document.querySelectorAll('.side-item');
-  if(items[0])items[0].classList.add('active');
-  document.getElementById('msg-input').focus();
-}
-function showTool(name){
-  var data=TOOLS[name];if(!data)return;
-  document.getElementById('chat-view').style.display='none';
-  document.getElementById('tool-panel').classList.add('visible');
-  document.getElementById('tool-panel-title').textContent=data.label;
-  var list=document.getElementById('tool-list');
-  list.innerHTML='';
-  data.cards.forEach(function(card){
-    var a=document.createElement('a');a.className='tool-card';
-    a.href='javascript:void(0)';a.onclick=function(){window.open(card.url)};
-    a.innerHTML='<h3>'+card.title+'</h3><p>'+card.desc+'</p>';
-    list.appendChild(a);
-  });
-  setActive();
-}
-function sendQuick(q){showChat();document.getElementById('msg-input').value=q;sendMsg()}
-
-// ===== MEMORY SYSTEM =====
-var currentUser=null;
-var isRegistered=false; // has API key
-var currentTab='history-tab';
-
-function getMemKey(){return'wenqu_mem_'+(currentUser||'guest');}
-
-function getMemory(){
-  try{return JSON.parse(localStorage.getItem(getMemKey())||'{"records":[],"stars":[]}');}catch(e){return{records:[],stars:[]};}
-}
-function saveMemory(mem){localStorage.setItem(getMemKey(),JSON.stringify(mem));}
-
-function checkLogin(){
-  var saved=localStorage.getItem('wenqu_current_user');
-  if(saved){
-    currentUser=saved;
-    isRegistered=localStorage.getItem('wenqu_reg_'+(saved))==='1';
-    showMemView();return true;
+(function initNav(){
+  for(const [section,items] of Object.entries(NAV_DATA)){
+    const el=document.getElementById('nav-'+section);
+    if(el){
+      items.forEach(item=>{
+        const a=document.createElement('a');
+        a.className='nav-item';
+        a.href=item.url;
+        a.innerHTML='<span class="emoji">'+item.emoji+'</span>'+item.name;
+        el.appendChild(a);
+      });
+    }
   }
-  showLoginView();return false;
-}
-
-function showLoginView(){
-  document.getElementById('login-prompt').style.display='flex';
-  document.getElementById('reg-prompt').style.display='none';
-  document.getElementById('memory-view').classList.remove('visible');
-  document.getElementById('right-title').textContent='📋 客户记忆';
-  document.getElementById('right-sub').textContent='登录保存记录 · 注册获取API';
-  document.getElementById('user-badge').style.display='none';
-  document.getElementById('api-key-badge').style.display='none';
-}
-
-function showReg(){
-  document.getElementById('login-prompt').style.display='none';
-  document.getElementById('reg-prompt').style.display='flex';
-  document.getElementById('right-title').textContent='🔐 实名注册';
-  document.getElementById('right-sub').textContent='注册后获取专属API密钥';
-}
-
-function showLogin(){
-  document.getElementById('login-prompt').style.display='flex';
-  document.getElementById('reg-prompt').style.display='none';
-  document.getElementById('right-title').textContent='📋 客户记忆';
-  document.getElementById('right-sub').textContent='登录保存记录 · 注册获取API';
-}
-
-function showMemView(){
-  document.getElementById('login-prompt').style.display='none';
-  document.getElementById('reg-prompt').style.display='none';
-  document.getElementById('memory-view').classList.add('visible');
-  document.getElementById('right-title').textContent=isRegistered?'📋 会员记忆':'📋 客户记忆';
-  document.getElementById('right-sub').textContent=isRegistered?'已登录 · API已开通':'已登录 · 游客模式';
-  document.getElementById('mem-username').textContent=currentUser||'访客';
-  document.getElementById('mem-avatar').textContent=(currentUser||'👤').slice(0,1);
-  document.getElementById('user-badge').style.display='flex';
-  document.getElementById('badge-name').textContent=currentUser||'访客';
-  document.getElementById('badge-avatar').textContent=(currentUser||'👤').slice(0,1);
-  document.getElementById('api-key-badge').style.display=isRegistered?'inline':'none';
-  renderMemList();
-}
-
-function showMemPanel(){
-  if(!currentUser){
-    showLoginView();
-  }
-  // Scroll right panel into view (on mobile)
-}
-
-function doLogin(){
-  var name=document.getElementById('login-name').value.trim();
-  var pwd=document.getElementById('login-pwd').value;
-  if(!name){document.getElementById('login-name').focus();return;}
-  // Simple demo: any login succeeds
-  currentUser=name;
-  isRegistered=localStorage.getItem('wenqu_reg_'+name)==='1';
-  localStorage.setItem('wenqu_current_user',name);
-  showMemView();
-}
-
-function doRegister(){
-  var name=document.getElementById('reg-name').value.trim();
-  var phone=document.getElementById('reg-phone').value.trim();
-  var company=document.getElementById('reg-company').value.trim();
-  if(!name||!phone){alert('姓名和手机号必填');return;}
-  if(!/^1\d{10}$/.test(phone)){alert('请输入正确的手机号');return;}
-
-  // Demo: register succeeds, save
-  localStorage.setItem('wenqu_reg_'+name,'1');
-  localStorage.setItem('wenqu_current_user',name);
-  // Generate demo API key
-  var apikey='wq_'+name.slice(0,2)+'_'+(Math.random().toString(36).slice(2,10)).toUpperCase()+Date.now().toString(36).slice(-6);
-  localStorage.setItem('wenqu_apikey_'+name,apikey);
-
-  currentUser=name;
-  isRegistered=true;
-  showMemView();
-  // Show API key
-  alert('注册成功！\n\n您的API密钥：\n'+apikey+'\n\n请妥善保存，用于调用问渠AI能力。');
-}
-
-function doLogout(){
-  var prev=currentUser;
-  currentUser=null;isRegistered=false;
-  localStorage.removeItem('wenqu_current_user');
-  showLoginView();
-  // Clear form
-  document.getElementById('login-name').value='';
-  document.getElementById('login-pwd').value='';
-}
-
-function switchTab(tab){
-  currentTab=tab;
-  document.querySelectorAll('.mem-tab').forEach(function(el){el.classList.remove('active')});
-  document.getElementById(tab).classList.add('active');
-  renderMemList();
-}
-
-function renderMemList(){
-  var mem=getMemory();
-  var el=document.getElementById('mem-list');
-  var items=currentTab==='stars-tab'?mem.stars:mem.records;
-  if(!items||items.length===0){
-    el.innerHTML='<div class="mem-empty"><div class="mem-empty-icon">'+(currentTab==='stars-tab'?'★':'💭')+'</div>'+(currentTab==='stars-tab'?'暂无收藏<br>点击 ★ 收藏重要':'暂无记录<br>开始对话吧')+'</div>';
-    return;
-  }
-  el.innerHTML='';
-  items.slice(0,60).forEach(function(item){
-    var div=document.createElement('div');div.className='mem-record';
-    div.innerHTML='<div class="mem-record-q">'+escHtml(item.q)+'</div><div class="mem-record-a">'+escHtml(item.a||'').slice(0,80)+'</div><div class="mem-record-meta"><span class="mem-record-time">'+item.time+'</span>'+(item.star?'<span class="mem-record-star">★</span>':'')+'</div>';
-    div.onclick=function(){jumpToRecord(item.q)};
-    el.appendChild(div);
-  });
-}
-
-function escHtml(s){return String(s).replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-
-function jumpToRecord(q){
-  showChat();document.getElementById('msg-input').value=q;
-}
-
-function addRecord(q,a){
-  var mem=getMemory();
-  var exists=mem.records.some(function(r){return r.q===q});
-  if(!exists){
-    mem.records.unshift({q:q,a:a,time:nowStr(),star:false});
-    if(mem.records.length>300)mem.records=mem.records.slice(0,300);
-  }
-  saveMemory(mem);
-  if(currentUser)renderMemList();
-}
-
-function nowStr(){
-  var d=new Date();
-  return(d.getMonth()+1)+'/'+d.getDate()+' '+d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
-}
-
-checkLogin();
-
-// ===== AI CHAT =====
-var API='https://1423198240-0conai1m1r.ap-guangzhou.tencentscf.com/chat';
-var msgsEl=document.getElementById('messages');
-var inputEl=document.getElementById('msg-input');
-var sendBtn=document.getElementById('send-btn');
-var typingEl=document.getElementById('typing-row');
-
-function addMsg(text,type,extraQ){
-  var wb=document.querySelector('.welcome-box');
-  if(wb)wb.remove();
-  var div=document.createElement('div');div.className='msg '+type;
-  var safe=text.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
-  var starId='star_'+Date.now();
-  var starBtn='<div class="msg-star" id="'+starId+'" onclick="toggleStarRecord(\''+escAttr(extraQ||'')+'\')" title="收藏此回答">☆ 收藏</div>';
-  div.innerHTML='<div class=msg-avatar>'+(type==='bot'?'🤖':'你')+'</div><div><div class=msg-bubble>'+safe+'</div>'+(type==='bot'?starBtn:'<div class=msg-time>'+nowStr()+'</div>')+'</div>';
-  msgsEl.appendChild(div);msgsEl.scrollTop=msgsEl.scrollHeight;
-}
-
-function toggleStarRecord(q){
-  if(!q)return;
-  var mem=getMemory();
-  var idx=mem.records.findIndex(function(r){return r.q===q});
-  if(idx>=0){
-    mem.records[idx].star=!mem.records[idx].star;
-    if(mem.records[idx].star&&!mem.stars.some(function(s){return s.q===q}))mem.stars.unshift(mem.records[idx]);
-    else mem.stars=mem.stars.filter(function(s){return s.q!==q});
-    saveMemory(mem);
-    document.querySelectorAll('.msg-star').forEach(function(el){
-      var title=el.getAttribute('title')||'';
-      if(title==='收藏此回答'){
-        if(mem.records[idx].star){el.textContent='★ 已收藏';el.classList.add('starred');el.setAttribute('title','取消收藏');}
-        else{el.textContent='☆ 收藏';el.classList.remove('starred');el.setAttribute('title','收藏此回答');}
-      }
+  document.querySelectorAll('.nav-section-title').forEach(el=>{
+    el.addEventListener('click',()=>{
+      el.classList.toggle('open');
+      const items=el.nextElementSibling;
+      if(items) items.classList.toggle('open');
     });
+  });
+})();
+
+// ====== 聊天 ======
+function ask(q){
+  document.getElementById('chatInput').value=q;
+  sendMessage();
+}
+async function sendMessage(){
+  const input=document.getElementById('chatInput');
+  const text=input.value.trim();
+  if(!text) return;
+  input.value='';
+  input.style.height='auto';
+  addMsg(text,'user');
+  showTyping();
+  try{
+    const res=await fetch(API+'/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text})});
+    const data=await res.json();
+    removeTyping();
+    addMsg(data.reply||'抱歉，服务暂时不可用','ai');
+  }catch(e){
+    removeTyping();
+    addMsg('网络错误，请检查网络连接','ai');
   }
 }
+function addMsg(text,sender){
+  const area=document.getElementById('chatArea');
+  const welcome=area.querySelector('.welcome-box');
+  if(welcome) welcome.remove();
+  const div=document.createElement('div');
+  div.className='msg '+sender;
+  const time=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
+  div.innerHTML='<div class="msg-avatar">'+(sender==='user'?'🧑':'🤖')+'</div><div><div class="msg-bubble">'+escapeHtml(text).replace(/\n/g,'<br>')+'</div><div class="msg-time">'+time+'</div></div>';
+  area.appendChild(div);
+  area.scrollTop=area.scrollHeight;
+  chatHistory.push({role:sender==='user'?'user':'assistant',content:text});
+}
+function showTyping(){
+  const area=document.getElementById('chatArea');
+  const div=document.createElement('div');
+  div.className='msg ai';
+  div.id='typingMsg';
+  div.innerHTML='<div class="msg-avatar">🤖</div><div><div class="msg-bubble"><div class="typing-indicator"><span></span><span></span><span></span></div></div></div>';
+  area.appendChild(div);
+  area.scrollTop=area.scrollHeight;
+}
+function removeTyping(){const t=document.getElementById('typingMsg');if(t)t.remove();}
+function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}
+function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,140)+'px';}
+function escapeHtml(str){if(!str)return'';return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-function escAttr(s){return String(s).replace(/'/g,"\\'").replace(/\n/g,'\\n');}
-
-function sendMsg(){
-  var q=inputEl.value.trim();if(!q)return;
-  inputEl.value='';addMsg(q,'user');sendBtn.disabled=true;typingEl.style.display='flex';msgsEl.scrollTop=msgsEl.scrollHeight;
-  fetch(API,{method:'POST',headers:{'Content-Type':'application/json; charset=utf-8'},body:JSON.stringify({message:q})})
-  .then(function(r){if(!r.ok)throw new Error(r.status);return r.json()})
-  .then(function(d){
-    typingEl.style.display='none';sendBtn.disabled=false;
-    addMsg(d.reply||'(无回复)','bot',q);
-    addRecord(q,d.reply||'');
-  })
-  .catch(function(e){typingEl.style.display='none';sendBtn.disabled=false;addMsg('网络错误('+e.message+')，请重试','bot')});
+// ====== 注册 ======
+function openRegModal(){
+  document.getElementById('regModal').classList.add('show');
+  if(localStorage.getItem('wq_user')){
+    switchToLogin();
+    const u=JSON.parse(localStorage.getItem('wq_user'));
+    document.getElementById('loginPhone').value=u.phone||'';
+  } else {switchToReg();}
+}
+function closeRegModal(){document.getElementById('regModal').classList.remove('show');}
+function switchToReg(){
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('stepReg').classList.add('active');
+  document.getElementById('modalTitle').textContent='会员注册';
+  document.getElementById('modalSub').textContent='注册后自动获得API Key，免费使用问渠AI';
+  document.querySelectorAll('.progress-step').forEach((el,i)=>el.className='progress-step');
+}
+function switchToLogin(){
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('stepLogin').classList.add('active');
+  document.getElementById('modalTitle').textContent='会员登录';
+  document.getElementById('modalSub').textContent='登录后查看您的专属记忆和API Key';
+  document.querySelectorAll('.progress-step').forEach((el,i)=>el.className='progress-step');
 }
 
-inputEl.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg()}});
+async function sendOtp(){
+  const phone=document.getElementById('regPhone').value.trim();
+  if(phone.length!==11){showErr('regErr','请输入正确的11位手机号');return;}
+  const btn=document.getElementById('otpBtn');
+  btn.disabled=true;btn.textContent='发送中…';
+  try{
+    const res=await fetch(API+'/api/send_otp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone})});
+    const data=await res.json();
+    if(data.success){
+      showInfo('regErr','验证码已发送（请查收短信）');
+      startCountdown(60);
+    } else {
+      showErr('regErr',data.message||'发送失败');
+      btn.disabled=false;btn.textContent='获取验证码';
+    }
+  } catch(e){
+    showErr('regErr','网络错误，请重试');btn.disabled=false;btn.textContent='获取验证码';
+  }
+}
+function startCountdown(seconds){
+  let remaining=seconds;
+  const btn=document.getElementById('otpBtn');
+  const timer=setInterval(()=>{
+    remaining--;
+    btn.textContent=remaining+'秒后重发';
+    if(remaining<=0){clearInterval(timer);btn.disabled=false;btn.textContent='获取验证码';}
+  },1000);
+}
+
+async function doRegister(){
+  const phone=document.getElementById('regPhone').value.trim();
+  const name=document.getElementById('regName').value.trim();
+  const pw=document.getElementById('regPw').value;
+  const otp=document.getElementById('regOtp').value.trim();
+  if(!phone||phone.length!==11){showErr('regErr','请输入正确的11位手机号');return;}
+  if(!pw||pw.length<6){showErr('regErr','密码至少6位');return;}
+  if(!otp||otp.length!==6){showErr('regErr','请输入6位验证码');return;}
+  const btn=document.getElementById('regSubmit');
+  btn.disabled=true;btn.textContent='注册中…';
+  try{
+    const v=await fetch(API+'/api/verify_otp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,code:otp})});
+    const vd=await v.json();
+    if(!vd.success){showErr('regErr','验证码错误: '+vd.message);btn.disabled=false;btn.textContent='立即注册';return;}
+    const res=await fetch(API+'/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,name,password:pw})});
+    const data=await res.json();
+    if(data.success){
+      document.getElementById('displayKey').textContent=data.user.api_key;
+      document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+      document.getElementById('stepSuccess').classList.add('active');
+      localStorage.setItem('wq_user',JSON.stringify({phone,name,api_key:data.user.api_key}));
+      currentUser={phone,name,api_key:data.user.api_key};
+      updateMemberBtn();
+    } else {showErr('regErr',data.message||'注册失败');}
+  } catch(e){showErr('regErr','注册失败，请重试');}
+  btn.disabled=false;btn.textContent='立即注册';
+}
+
+async function doLogin(){
+  const phone=document.getElementById('loginPhone').value.trim();
+  const pw=document.getElementById('loginPw').value;
+  if(!phone||!pw){showErr('loginErr','请输入手机号和密码');return;}
+  const btn=document.getElementById('loginBtn');
+  btn.disabled=true;btn.textContent='登录中…';
+  try{
+    const res=await fetch(API+'/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,password:pw})});
+    const data=await res.json();
+    if(data.success){
+      localStorage.setItem('wq_user',JSON.stringify({phone,name:data.user.name,api_key:data.user.api_key}));
+      currentUser={phone,name:data.user.name,api_key:data.user.api_key};
+      updateMemberBtn();
+      closeRegModal();
+    } else {showErr('loginErr',data.message||'登录失败');}
+  } catch(e){showErr('loginErr','网络错误，请重试');}
+  btn.disabled=false;btn.textContent='登录';
+}
+
+function loadUser(){}
+function updateMemberBtn(){
+  if(currentUser){
+    document.getElementById('memberIcon').textContent='👤';
+    document.getElementById('memberName').textContent=currentUser.name||currentUser.phone;
+    document.getElementById('memberSub').textContent='已登录会员';
+  }
+}
+function copyKey(){
+  const key=document.getElementById('displayKey').textContent;
+  navigator.clipboard.writeText(key).then(()=>{
+    const btn=document.querySelector('.key-copy');
+    btn.textContent='已复制!';
+    setTimeout(()=>btn.textContent='复制',1500);
+  });
+}
+function showErr(id,msg){const el=document.getElementById(id);if(el){el.textContent=msg;el.className='alert error show';setTimeout(()=>el.classList.remove('show'),4000);}}
+function showInfo(id,msg){const el=document.getElementById(id);if(el){el.textContent=msg;el.className='alert info show';setTimeout(()=>el.classList.remove('show'),4000);}}
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeRegModal();});
+document.getElementById('regModal').addEventListener('click',function(e){if(e.target===this)closeRegModal();});
+(function loadLocalUser(){
+  const stored=localStorage.getItem('wq_user');
+  if(stored){try{currentUser=JSON.parse(stored);updateMemberBtn();}catch(e){}}
+})();
 </script>
 </body>
 </html>
