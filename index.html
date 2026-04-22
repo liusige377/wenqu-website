@@ -68,9 +68,6 @@ body{font-family:'Microsoft YaHei',sans-serif;background:var(--bg);height:100vh;
 .ad-placeholder{background:linear-gradient(135deg,#f0e6d3,#e8dcc8);border-radius:10px;border:2px dashed var(--border);padding:20px;text-align:center;flex-shrink:0}
 .ad-placeholder p{font-size:12px;color:#aaa}
 
-/* 历史上的今天 - 获取中 */
-.history-loading{font-size:11px;color:#999;text-align:center;padding:5px}
-
 /* 响应式 */
 @media(max-width:900px){
   .side-panel{display:none}
@@ -99,7 +96,7 @@ body{font-family:'Microsoft YaHei',sans-serif;background:var(--bg);height:100vh;
   
   <div class="history-widget">
     <h4>历史上的今天</h4>
-    <div id="historyToday" class="history-loading">加载中...</div>
+    <div id="historyToday" style="font-size:11px;color:#999;text-align:center;padding:5px">加载中...</div>
   </div>
   
   <div class="divider"></div>
@@ -107,19 +104,19 @@ body{font-family:'Microsoft YaHei',sans-serif;background:var(--bg);height:100vh;
   <div class="tools-section">
     <h3>工具导航</h3>
     <div class="tools-grid">
-      <a href="/" class="tool-btn" onclick="jumpHome(event)"><span class="icon">🏠</span><span class="name">首页</span></a>
-      <a href="/" class="tool-btn" onclick="jumpTools(event)"><span class="icon">🛠️</span><span class="name">工具</span></a>
-      <a href="/" class="tool-btn" onclick="jumpSearch(event)"><span class="icon">🔍</span><span class="name">搜索</span></a>
-      <a href="/" class="tool-btn" onclick="jumpConvert(event)"><span class="icon">🔄</span><span class="name">转换</span></a>
-      <a href="/" class="tool-btn" onclick="jumpCode(event)"><span class="icon">💻</span><span class="name">代码</span></a>
-      <a href="/" class="tool-btn" onclick="jumpImage(event)"><span class="icon">🖼️</span><span class="name">图片</span></a>
-      <a href="/" class="tool-btn" onclick="jumpText(event)"><span class="icon">📝</span><span class="name">文本</span></a>
-      <a href="/" class="tool-btn" onclick="jumpAI(event)"><span class="icon">🤖</span><span class="name">AI助手</span></a>
+      <a href="/" class="tool-btn"><span class="icon">&#127968;</span><span class="name">首页</span></a>
+      <a href="/math.html" class="tool-btn"><span class="icon">&#128290;</span><span class="name">数学工具</span></a>
+      <a href="/history.html" class="tool-btn"><span class="icon">&#128220;</span><span class="name">历史百科</span></a>
+      <a href="/tech.html" class="tool-btn"><span class="icon">&#128187;</span><span class="name">技术工具</span></a>
+      <a href="/geography.html" class="tool-btn"><span class="icon">&#127758;</span><span class="name">地理知识</span></a>
+      <a href="/units.html" class="tool-btn"><span class="icon">&#8635;</span><span class="name">单位转换</span></a>
+      <a href="/agriculture.html" class="tool-btn"><span class="icon">&#127806;</span><span class="name">农业工具</span></a>
+      <a href="/ai.html" class="tool-btn"><span class="icon">&#129302;</span><span class="name">AI助手</span></a>
     </div>
   </div>
   
   <div class="auth-section">
-    <button class="auth-btn" id="authBtn" onclick="toggleAuth()">登录 / 注册</button>
+    <button class="auth-btn" onclick="alert('注册功能即将上线，请联系管理员获取API密钥')">登录 / 注册</button>
   </div>
 </div>
 
@@ -132,7 +129,7 @@ body{font-family:'Microsoft YaHei',sans-serif;background:var(--bg);height:100vh;
     </div>
     
     <div class="chat-messages" id="chatMessages">
-      <div class="msg ai"><div class="bubble">👋 您好！我是问渠AI助手，有什么可以帮助您的吗？</div></div>
+      <div class="msg ai"><div class="bubble">&#128075; 您好！我是问渠AI助手，有什么可以帮助您的吗？</div></div>
     </div>
     
     <div class="typing" id="typingIndicator">AI正在思考中...</div>
@@ -140,30 +137,31 @@ body{font-family:'Microsoft YaHei',sans-serif;background:var(--bg);height:100vh;
     <div class="chat-input-area">
       <div class="input-row">
         <input type="text" id="userInput" placeholder="输入问题，按回车发送..." onkeydown="if(event.key==='Enter')sendMessage()">
-        <button class="send-btn" onclick="sendMessage()">➤</button>
+        <button class="send-btn" onclick="sendMessage()">&#10148;</button>
       </div>
     </div>
   </div>
   
-  <!-- 右侧1/5面板 -->
+  <!-- 右侧面板 -->
   <div class="side-panel">
     <div class="panel-section">
-      <h4>📋 重要纪要</h4>
+      <h4>&#128203; 重要纪要</h4>
       <div class="content" id="memoryPanel">
         <p>登录后查看重要纪要</p>
       </div>
     </div>
     
     <div class="ad-placeholder">
-      <p>📢 广告位招商<br><small>精准投放 · 效果付费</small></p>
+      <p>&#128226; 广告位招商<br><small>精准投放 · 效果付费</small></p>
     </div>
   </div>
 </div>
 
 <script>
-const API = 'https://1423198240-0conai1m1r.ap-guangzhou.tencentscf.com';
+// 硅基流动API（前端直连，零成本）
+const SILICONFLOW_KEY = 'sk-bpbwbmbqkcjqjbrjiijkmkmpypwitkkypifldowwhghecruc';
+const SILICONFLOW_URL = 'https://api.siliconflow.cn/v1/chat/completions';
 let chatHistory = [];
-let currentUser = null;
 
 // 历史上的今天
 async function loadHistory() {
@@ -172,13 +170,11 @@ async function loadHistory() {
     const today = new Date();
     const m = String(today.getMonth()+1).padStart(2,'0');
     const d = String(today.getDate()).padStart(2,'0');
-    const r = await fetch(`https://en.wikipedia.org/api/rest_v1/feed/onthisday/events/${m}/${d}?limit=3`);
+    const r = await fetch('https://en.wikipedia.org/api/rest_v1/feed/onthisday/events/'+m+'/'+d+'?limit=3');
     const j = await r.json();
-    if(j.events && j.events.length>0) {
+    if(j.events && j.events.length > 0) {
       const ev = j.events[0];
-      const year = ev.year || '';
-      const text = (ev.text || '').substring(0,60);
-      el.innerHTML = `<p><b>${year}</b> ${text}</p>`;
+      el.innerHTML = '<p><b>'+(ev.year||'')+'</b> '+(ev.text||'').substring(0,60)+'</p>';
     } else {
       el.innerHTML = '<p>暂无数据</p>';
     }
@@ -186,16 +182,6 @@ async function loadHistory() {
     el.innerHTML = '<p>加载失败</p>';
   }
 }
-
-// 工具跳转
-function jumpHome(e){ e.preventDefault(); location.href='/'; }
-function jumpTools(e){ e.preventDefault(); location.href='/tools.html'; }
-function jumpSearch(e){ e.preventDefault(); location.href='/search.html'; }
-function jumpConvert(e){ e.preventDefault(); location.href='/convert.html'; }
-function jumpCode(e){ e.preventDefault(); location.href='/code.html'; }
-function jumpImage(e){ e.preventDefault(); location.href='/image.html'; }
-function jumpText(e){ e.preventDefault(); location.href='/text.html'; }
-function jumpAI(e){ e.preventDefault(); }
 
 // 发送消息
 async function sendMessage() {
@@ -207,54 +193,55 @@ async function sendMessage() {
   showTyping(true);
   
   try {
-    const r = await fetch(API+'/api/chat', {
+    chatHistory.push({role:'user', content:text});
+    const r = await fetch(SILICONFLOW_URL, {
       method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({prompt:text, history:chatHistory})
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization':'Bearer '+SILICONFLOW_KEY
+      },
+      body: JSON.stringify({
+        model:'Qwen/Qwen2.5-7B-Instruct',
+        messages:chatHistory,
+        max_tokens:1024,
+        temperature:0.7
+      })
     });
     const d = await r.json();
     showTyping(false);
-    if(d.answer) {
-      addMsg(d.answer, 'ai');
-      chatHistory.push({role:'user',content:text},{role:'assistant',content:d.answer});
+    let reply = '';
+    if(d.choices && d.choices[0]) {
+      reply = d.choices[0].message.content || '（空回复）';
+    } else if(d.error) {
+      reply = '错误：'+(d.error.message || JSON.stringify(d.error));
     } else {
-      addMsg('抱歉，AI暂时无法回复', 'ai');
+      reply = '未知响应';
     }
+    addMsg(reply, 'ai');
+    chatHistory.push({role:'assistant', content:reply});
   } catch(e) {
     showTyping(false);
-    addMsg('网络错误，请检查网络后重试', 'ai');
+    addMsg('网络错误：'+e.message, 'ai');
   }
 }
 
 function addMsg(text, who) {
   const box = document.getElementById('chatMessages');
   const div = document.createElement('div');
-  div.className = `msg ${who}`;
-  div.innerHTML = `<div class="bubble">${escapeHtml(text)}</div>`;
+  div.className = 'msg '+who;
+  div.innerHTML = '<div class="bubble">'+escHtml(text)+'</div>';
   box.appendChild(div);
   box.scrollTop = box.scrollHeight;
 }
 
 function showTyping(show) {
-  document.getElementById('typingIndicator').className = show?'typing active':'typing';
+  document.getElementById('typingIndicator').className = show ? 'typing active' : 'typing';
 }
 
-function escapeHtml(t) {
+function escHtml(t) {
   return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-function toggleAuth() {
-  const btn = document.getElementById('authBtn');
-  if(currentUser) {
-    currentUser = null;
-    btn.textContent = '登录 / 注册';
-    document.getElementById('memoryPanel').innerHTML = '<p>登录后查看重要纪要</p>';
-  } else {
-    alert('注册功能即将上线，请联系管理员获取API密钥');
-  }
-}
-
-// 初始化
 loadHistory();
 document.getElementById('userInput').focus();
 </script>
