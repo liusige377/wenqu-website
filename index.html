@@ -4,258 +4,190 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>问渠 · 有问必有答</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+XiaoWei&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%;overflow:hidden}
-
-body{
-  font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif;
-  background:#0a0a0f;color:#e8e8e8;
-  display:flex;flex-direction:column;
-  height:100vh;
-}
+body{font-family:"ZCOOL XiaoWei","Noto Serif SC",system-ui,-apple-system,"Microsoft YaHei",sans-serif;background:#0a0a0f;color:#e8e8e8;display:flex;flex-direction:column;height:100vh}
 
 /* ===== TOP BAR ===== */
-.topbar{
-  height:60px;background:#111118;
-  border-bottom:1px solid rgba(212,175,55,.2);
-  display:flex;align-items:center;
-  padding:0 20px;gap:0;
-  flex-shrink:0;z-index:10;
-}
+.topbar{height:64px;background:#0e0e18;border-bottom:1px solid rgba(212,175,55,.2);display:flex;align-items:center;padding:0 20px;gap:0;flex-shrink:0;z-index:10}
 .topbar-title{
-  font-size:1.35rem;font-weight:900;
-  color:#d4af37;letter-spacing:.2em;
-  margin-right:20px;flex-shrink:0;
-  text-shadow:0 0 20px rgba(212,175,55,.3);
+  font-family:'Ma Shan Zheng','ZCOOL XiaoWei',"Noto Serif SC",serif;
+  font-size:2.1rem;color:#d4af37;letter-spacing:.08em;
+  text-shadow:0 0 30px rgba(212,175,55,.4);
+  flex-shrink:0;cursor:default;
+  user-select:none;
 }
-.topbar-poem{
-  color:#888;font-size:.82rem;
-  border-left:1px solid rgba(212,175,55,.2);
-  padding-left:20px;
-  line-height:1.5;letter-spacing:.05em;
-  margin-right:20px;flex-shrink:0;
-}
+.topbar-poem{color:#888;font-size:.82rem;border-left:1px solid rgba(212,175,55,.2);padding-left:20px;line-height:1.6;letter-spacing:.05em;margin-left:20px;flex-shrink:0}
 .topbar-poem .hl{color:#d4af37}
-.topbar-divider{width:1px;height:30px;background:rgba(212,175,55,.15);margin:0 20px;flex-shrink:0}
-.topbar-today{
-  display:flex;flex-direction:column;gap:2px;
-  flex:1;min-width:0;
-}
-.topbar-today-label{
-  font-size:.65rem;color:#555;letter-spacing:.1em;
-}
-.topbar-today-events{
-  display:flex;gap:20px;overflow:hidden;
-  align-items:center;
-}
-.today-item{
-  display:flex;align-items:center;gap:6px;font-size:.78rem;
-  white-space:nowrap;
-}
-.today-item .yr{color:#d4af37;font-weight:600}
+.topbar-divider{width:1px;height:32px;background:rgba(212,175,55,.12);margin:0 20px;flex-shrink:0}
+.topbar-today{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.topbar-today-label{font-size:.65rem;color:#555;letter-spacing:.1em}
+.topbar-today-events{display:flex;gap:20px;overflow:hidden;align-items:center}
+.today-item{display:flex;align-items:center;gap:6px;font-size:.78rem;white-space:nowrap}
+.today-item .yr{color:#d4af37;font-weight:700}
 .today-item .tx{color:#888}
 .topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px;flex-shrink:0}
-.topbar-badge{background:rgba(46,180,100,.12);color:#2eb46e;font-size:.7rem;padding:3px 10px;border-radius:12px}
+.topbar-badge{background:rgba(46,180,100,.1);color:#2eb46e;font-size:.7rem;padding:3px 10px;border-radius:12px;border:1px solid rgba(46,180,100,.2)}
 
 /* ===== MAIN LAYOUT ===== */
 .layout{display:flex;flex:1;overflow:hidden}
 
 /* ===== LEFT SIDEBAR ===== */
-.sidebar{
-  width:200px;flex-shrink:0;
-  background:#0e0e16;
-  border-right:1px solid rgba(212,175,55,.12);
-  overflow-y:auto;padding:16px 0;
-  display:flex;flex-direction:column;gap:4px;
-}
+.sidebar{width:196px;flex-shrink:0;background:#0c0c16;border-right:1px solid rgba(212,175,55,.1);overflow-y:auto;padding:14px 0;display:flex;flex-direction:column;gap:3px}
 .sidebar::-webkit-scrollbar{width:3px}
-.sidebar::-webkit-scrollbar-thumb{background:rgba(212,175,55,.2)}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(212,175,55,.18)}
+.side-section{margin-bottom:6px}
+.side-section-label{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:#4a4a5a;padding:8px 16px 3px;font-family:system-ui}
+.side-item{display:flex;align-items:center;gap:10px;padding:8px 14px;cursor:pointer;font-size:.83rem;color:#9090a0;transition:all .2s;border:none;background:none;width:100%;text-align:left;border-left:2px solid transparent}
+.side-item:hover{background:rgba(212,175,55,.06);color:#d4af37;border-left-color:rgba(212,175,55,.3)}
+.side-item.active{background:rgba(212,175,55,.1);color:#d4af37;border-left-color:#d4af37}
+.side-item .emoji{font-size:1.05rem;width:20px;text-align:center;flex-shrink:0}
+.side-divider{height:1px;background:rgba(212,175,55,.08);margin:6px 14px}
 
-.side-section{margin-bottom:8px}
-.side-section-label{
-  font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;
-  color:#555;padding:8px 16px 4px;
-}
-.side-item{
-  display:flex;align-items:center;gap:10px;
-  padding:9px 16px;cursor:pointer;
-  font-size:.85rem;color:#999;
-  transition:all .2s;border-radius:0;
-  text-decoration:none;border:none;background:none;width:100%;text-align:left;
-}
-.side-item:hover{background:rgba(212,175,55,.08);color:#d4af37}
-.side-item.active{background:rgba(212,175,55,.12);color:#d4af37;border-left:2px solid #d4af37}
-.side-item .emoji{font-size:1.1rem;width:22px;text-align:center;flex-shrink:0}
-
-.side-divider{height:1px;background:rgba(212,175,55,.1);margin:8px 16px}
-
-/* ===== CENTER AREA ===== */
-.center{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;background:#0a0a0f}
-
-.chat-header{
-  padding:14px 24px;border-bottom:1px solid rgba(212,175,55,.1);
-  display:flex;align-items:center;gap:10px;flex-shrink:0;
-}
+/* ===== CENTER ===== */
+.center{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;background:#090910}
+.chat-header{padding:13px 22px;border-bottom:1px solid rgba(212,175,55,.1);display:flex;align-items:center;gap:10px;flex-shrink:0}
 .chat-header-title{font-size:.9rem;color:#d4af37;font-weight:600}
 .chat-header-sub{color:#555;font-size:.75rem}
 
-.messages{
-  flex:1;overflow-y:auto;padding:20px 24px;
-  display:flex;flex-direction:column;gap:16px;
-}
+.messages{flex:1;overflow-y:auto;padding:18px 22px;display:flex;flex-direction:column;gap:14px}
 .messages::-webkit-scrollbar{width:4px}
-.messages::-webkit-scrollbar-thumb{background:rgba(212,175,55,.2);border-radius:2px}
+.messages::-webkit-scrollbar-thumb{background:rgba(212,175,55,.18);border-radius:2px}
 
-.msg{display:flex;gap:12px;max-width:80%;animation:fadeIn .3s ease}
+.msg{display:flex;gap:10px;max-width:80%;animation:fadeIn .3s ease}
 .msg.user{flex-direction:row-reverse;align-self:flex-end;max-width:72%}
-.msg-avatar{width:36px;height:36px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
-.msg.bot .msg-avatar{background:rgba(212,175,55,.2);color:#d4af37;border:1px solid rgba(212,175,55,.3)}
-.msg.user .msg-avatar{background:rgba(80,120,200,.2);color:#8ab4f8;border:1px solid rgba(100,150,255,.3)}
-.msg-bubble{padding:12px 16px;border-radius:14px;line-height:1.6;font-size:.9rem}
-.msg.bot .msg-bubble{background:rgba(255,255,255,.05);border:1px solid rgba(212,175,55,.12);border-radius:4px 14px 14px 14px}
-.msg.user .msg-bubble{background:rgba(212,175,55,.15);border:1px solid rgba(212,175,55,.2);border-radius:14px 4px 14px 14px}
-.msg.user .msg-bubble{color:#e8e0c0}
-.msg-time{font-size:.68rem;color:#444;margin-top:4px;padding:0 4px}
+.msg-avatar{width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1rem}
+.msg.bot .msg-avatar{background:rgba(212,175,55,.18);color:#d4af37;border:1px solid rgba(212,175,55,.28)}
+.msg.user .msg-avatar{background:rgba(80,120,200,.15);color:#8ab4f8;border:1px solid rgba(100,150,255,.25)}
+.msg-bubble{padding:11px 15px;border-radius:14px;line-height:1.65;font-size:.88rem}
+.msg.bot .msg-bubble{background:rgba(255,255,255,.04);border:1px solid rgba(212,175,55,.1);border-radius:3px 14px 14px 14px}
+.msg.user .msg-bubble{background:rgba(212,175,55,.13);border:1px solid rgba(212,175,55,.2);border-radius:14px 3px 14px 14px;color:#e8e0c0}
+.msg-time{font-size:.65rem;color:#3a3a4a;margin-top:3px;padding:0 3px}
 .msg.user .msg-time{text-align:right}
+.msg-star{cursor:pointer;color:#555;font-size:.7rem;margin-top:2px;padding:0 3px;transition:color .2s}
+.msg-star:hover{color:#d4af37}
+.msg-star.starred{color:#d4af37}
 
-.welcome-box{text-align:center;padding:40px 20px;animation:fadeIn .4s ease}
-.welcome-title{font-size:2.5rem;color:#d4af37;font-family:'Noto Serif SC',serif;margin-bottom:10px}
-.welcome-tip{color:#555;font-size:.82rem;margin-top:16px;line-height:2}
-.welcome-tip div{display:flex;align-items:center;justify-content:center;gap:8px}
-.tool-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:20px}
-.tool-chip{
-  background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.2);
-  border-radius:20px;padding:6px 14px;font-size:.78rem;color:#aaa;
-  cursor:pointer;transition:all .2s;
+.welcome-box{text-align:center;padding:36px 16px;animation:fadeIn .4s ease}
+.welcome-title{
+  font-family:'Ma Shan Zheng','ZCOOL XiaoWei',"Noto Serif SC",serif;
+  font-size:3rem;color:#d4af37;margin-bottom:6px;
+  text-shadow:0 0 40px rgba(212,175,55,.25);
 }
-.tool-chip:hover{background:rgba(212,175,55,.2);color:#d4af37;border-color:rgba(212,175,55,.4)}
+.welcome-desc{color:#666;font-size:.83rem;margin-top:10px;line-height:2}
+.tool-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin-top:18px}
+.tool-chip{background:rgba(212,175,55,.07);border:1px solid rgba(212,175,55,.18);border-radius:18px;padding:5px 13px;font-size:.76rem;color:#9090a0;cursor:pointer;transition:all .2s}
+.tool-chip:hover{background:rgba(212,175,55,.18);color:#d4af37;border-color:rgba(212,175,55,.4)}
 
-.input-area{
-  padding:16px 24px 20px;
-  border-top:1px solid rgba(212,175,55,.1);flex-shrink:0;
-}
-.input-hint{font-size:.72rem;color:#444;margin-bottom:8px}
-.input-hint span{display:flex;align-items:center;gap:4px}
-.input-hint .key{background:rgba(255,255,255,.06);padding:1px 6px;border-radius:4px;font-size:.68rem}
-.input-row{display:flex;gap:10px;align-items:flex-end}
-.input-row input{
-  flex:1;background:rgba(255,255,255,.05);
-  border:1px solid rgba(212,175,55,.2);
-  border-radius:24px;padding:12px 18px;
-  color:#e8e8e8;font-size:.9rem;outline:none;
-  transition:border-color .3s;
-}
+.input-area{padding:14px 22px 18px;border-top:1px solid rgba(212,175,55,.08);flex-shrink:0}
+.input-hint{font-size:.7rem;color:#3a3a4a;margin-bottom:7px;font-family:system-ui}
+.input-hint .key{background:rgba(255,255,255,.05);padding:1px 5px;border-radius:3px;font-size:.65rem}
+.input-row{display:flex;gap:8px;align-items:flex-end}
+.input-row input{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(212,175,55,.2);border-radius:22px;padding:11px 16px;color:#e8e8e8;font-size:.88rem;outline:none;transition:border-color .3s;font-family:"ZCOOL XiaoWei",system-ui}
 .input-row input:focus{border-color:rgba(212,175,55,.5)}
-.input-row input::placeholder{color:#555}
-.send-btn{
-  background:linear-gradient(135deg,#d4af37,#b8932a);
-  border:none;border-radius:24px;padding:12px 22px;
-  color:#0a0a0f;font-weight:700;font-size:.88rem;
-  cursor:pointer;transition:all .3s;flex-shrink:0;
-}
+.input-row input::placeholder{color:#505060}
+.send-btn{background:linear-gradient(135deg,#d4af37,#b8932a);border:none;border-radius:22px;padding:11px 20px;color:#0a0a0f;font-weight:700;font-size:.85rem;cursor:pointer;transition:all .25s;flex-shrink:0}
 .send-btn:hover{background:linear-gradient(135deg,#e8c44a,#d4af37);transform:scale(1.03)}
 .send-btn:active{transform:scale(.97)}
-.send-btn:disabled{opacity:.4;cursor:not-allowed}
+.send-btn:disabled{opacity:.35;cursor:not-allowed}
 
-.typing-row{
-  display:none;align-items:center;gap:8px;padding:0 24px 10px;
-}
-.typing-label{color:#555;font-size:.75rem}
+.typing-row{display:none;align-items:center;gap:7px;padding:0 22px 8px}
+.typing-label{color:#505060;font-size:.73rem;font-family:system-ui}
 .typing-dots{display:flex;gap:3px}
-.typing-dots span{width:5px;height:5px;border-radius:50%;background:#666;animation:bounce 1.2s infinite}
+.typing-dots span{width:4px;height:4px;border-radius:50%;background:#555;animation:bounce 1.2s infinite}
 .typing-dots span:nth-child(2){animation-delay:.2s}
 .typing-dots span:nth-child(3){animation-delay:.4s}
 
 /* ===== TOOL PANEL ===== */
-.tool-panel{display:none;padding:24px;flex:1;overflow-y:auto}
+.tool-panel{display:none;padding:22px;flex:1;overflow-y:auto}
 .tool-panel.visible{display:block}
-.tool-panel-header{font-size:1.1rem;color:#d4af37;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid rgba(212,175,55,.15)}
-.tool-card{
-  background:rgba(255,255,255,.04);border:1px solid rgba(212,175,55,.12);
-  border-radius:14px;padding:20px;margin-bottom:12px;
-  cursor:pointer;transition:all .3s;
-  text-decoration:none;color:inherit;display:block;
-}
-.tool-card:hover{background:rgba(212,175,55,.08);border-color:rgba(212,175,55,.3);transform:translateY(-2px)}
-.tool-card h3{color:#d4af37;font-size:.95rem;margin-bottom:6px}
-.tool-card p{color:#777;font-size:.82rem;line-height:1.5}
-.back-link{
-  display:inline-flex;align-items:center;gap:6px;
-  color:#666;font-size:.82rem;cursor:pointer;margin-bottom:16px;padding:6px 0;transition:color .2s;
-}
+.tool-panel-header{font-size:1.05rem;color:#d4af37;margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid rgba(212,175,55,.12)}
+.tool-card{background:rgba(255,255,255,.03);border:1px solid rgba(212,175,55,.1);border-radius:12px;padding:18px;margin-bottom:10px;cursor:pointer;transition:all .25s;display:block;color:inherit;text-decoration:none}
+.tool-card:hover{background:rgba(212,175,55,.07);border-color:rgba(212,175,55,.28);transform:translateY(-2px)}
+.tool-card h3{color:#d4af37;font-size:.9rem;margin-bottom:5px}
+.tool-card p{color:#6a6a7a;font-size:.8rem;line-height:1.5}
+.back-link{display:inline-flex;align-items:center;gap:5px;color:#555;font-size:.8rem;cursor:pointer;margin-bottom:14px;padding:5px 0;transition:color .2s}
 .back-link:hover{color:#d4af37}
 
 /* ===== RIGHT PANEL ===== */
-.right-panel{
-  width:20%;flex-shrink:0;
-  background:#0c0c14;
-  border-left:1px solid rgba(212,175,55,.08);
-  overflow-y:auto;padding:20px 16px;
-  display:flex;flex-direction:column;gap:16px;
-}
+.right-panel{width:20%;flex-shrink:0;background:#0b0b14;border-left:1px solid rgba(212,175,55,.08);overflow:hidden;display:flex;flex-direction:column}
 .right-panel::-webkit-scrollbar{width:3px}
 .right-panel::-webkit-scrollbar-thumb{background:rgba(212,175,55,.15)}
-.right-section-title{font-size:.72rem;color:#555;letter-spacing:.12em;margin-bottom:8px;text-transform:uppercase}
-.right-placeholder{
-  background:rgba(255,255,255,.02);border:1px dashed rgba(212,175,55,.15);
-  border-radius:12px;padding:24px 16px;text-align:center;
-  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
-}
-.right-placeholder-icon{font-size:2rem;opacity:.3}
-.right-placeholder-text{color:#444;font-size:.78rem;text-align:center;line-height:1.6}
-.right-card{
-  background:rgba(255,255,255,.03);border:1px solid rgba(212,175,55,.1);
-  border-radius:12px;padding:14px;
-}
-.right-card-title{font-size:.8rem;color:#d4af37;margin-bottom:6px}
-.right-card-val{font-size:1.4rem;color:#e8e8e8;font-weight:600}
-.right-card-sub{font-size:.7rem;color:#555;margin-top:2px}
 
-/* ===== LOGIN BUTTON ===== */
-.login-btn{
-  display:flex;align-items:center;gap:8px;
-  background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.25);
-  border-radius:10px;padding:10px 14px;
-  color:#d4af37;font-size:.82rem;cursor:pointer;width:100%;
-  text-align:left;transition:all .2s;margin-top:8px;
-}
-.login-btn:hover{background:rgba(212,175,55,.18);border-color:rgba(212,175,55,.4)}
-.login-btn .emoji{font-size:1rem}
+.right-header{padding:14px 16px 10px;border-bottom:1px solid rgba(212,175,55,.08);flex-shrink:0}
+.right-header-title{font-size:.85rem;color:#d4af37;font-weight:600;margin-bottom:2px}
+.right-header-sub{font-size:.68rem;color:#444;font-family:system-ui}
 
-/* ===== RESPONSIVE ===== */
-@media(max-width:900px){
-  .right-panel{display:none}
-}
-@media(max-width:700px){
-  .sidebar{width:60px}
+/* Login prompt */
+.login-prompt{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 16px;gap:12px}
+.login-prompt-icon{font-size:2.5rem;opacity:.25}
+.login-prompt-text{color:#505060;font-size:.8rem;text-align:center;line-height:1.7}
+.login-prompt-input{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(212,175,55,.2);border-radius:10px;padding:9px 12px;color:#e8e8e8;font-size:.82rem;outline:none;text-align:center;font-family:"ZCOOL XiaoWei",system-ui}
+.login-prompt-input::placeholder{color:#444}
+.login-prompt-input:focus{border-color:rgba(212,175,55,.5)}
+.login-btn2{width:100%;background:linear-gradient(135deg,#d4af37,#b8932a);border:none;border-radius:10px;padding:9px;color:#0a0a0f;font-weight:700;font-size:.82rem;cursor:pointer;transition:all .25s;font-family:"ZCOOL XiaoWei"}
+.login-btn2:hover{transform:scale(1.02);background:linear-gradient(135deg,#e8c44a,#d4af37)}
+.login-btn2:active{transform:scale(.98)}
+
+/* Memory view */
+.memory-view{display:none;flex-direction:column;height:100%}
+.memory-view.visible{display:flex}
+
+.mem-tabs{padding:8px 14px 0;display:flex;gap:2px;border-bottom:1px solid rgba(212,175,55,.07);flex-shrink:0}
+.mem-tab{padding:6px 10px;font-size:.72rem;color:#555;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;font-family:system-ui}
+.mem-tab:hover{color:#888}
+.mem-tab.active{color:#d4af37;border-bottom-color:#d4af37}
+
+.mem-content{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.mem-content::-webkit-scrollbar{width:3px}
+.mem-content::-webkit-scrollbar-thumb{background:rgba(212,175,55,.15)}
+
+.mem-record{padding:10px 12px;background:rgba(255,255,255,.025);border:1px solid rgba(212,175,55,.07);border-radius:10px;cursor:pointer;transition:all .2s}
+.mem-record:hover{border-color:rgba(212,175,55,.2);background:rgba(212,175,55,.05)}
+.mem-record-q{font-size:.78rem;color:#a0a0b0;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mem-record-a{font-size:.72rem;color:#555;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mem-record-meta{display:flex;align-items:center;justify-content:space-between;margin-top:5px}
+.mem-record-time{font-size:.65rem;color:#3a3a4a;font-family:system-ui}
+.mem-record-star{font-size:.7rem;color:#d4af37}
+
+.mem-empty{color:#3a3a4a;font-size:.78rem;text-align:center;padding:30px 10px;line-height:2;font-family:system-ui}
+.mem-empty-icon{font-size:1.8rem;margin-bottom:8px;opacity:.3}
+
+.mem-user-bar{padding:10px 14px;border-top:1px solid rgba(212,175,55,.08);display:flex;align-items:center;gap:8px;flex-shrink:0}
+.mem-user-avatar{width:28px;height:28px;border-radius:50%;background:rgba(212,175,55,.15);color:#d4af37;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+.mem-user-name{font-size:.8rem;color:#9090a0;flex:1}
+.mem-logout{font-size:.68rem;color:#555;cursor:pointer;padding:3px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.06);background:none;transition:all .2s;font-family:system-ui}
+.mem-logout:hover{color:#c05050;border-color:rgba(200,80,80,.3)}
+
+/* Responsive */
+@media(max-width:900px){.right-panel{display:none}}
+@media(max-width:680px){
+  .sidebar{width:56px}
   .side-item .label,.side-section-label,.topbar-poem,.topbar-today{display:none}
-  .topbar{height:50px}
+  .topbar{height:50px;padding:0 12px}
+  .topbar-title{font-size:1.7rem}
 }
 
 @keyframes bounce{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 </style>
-<meta name="360-site-verification" content="ffc9f73cacab7ac71ffc3686d16894e2" />
 </head>
 <body>
 
 <!-- TOP BAR -->
 <div class="topbar">
-  <span class="topbar-title">问 渠</span>
-  <div class="topbar-poem">
-    半亩方塘一鉴开，天光云影共徘徊。<br>
-    <span class="hl">问渠那得清如许？</span>为有源头活水来。
-  </div>
+  <span class="topbar-title">问渠</span>
+  <div class="topbar-poem">半亩方塘一鉴开，天光云影共徘徊。<span class="hl">问渠那得清如许？</span>为有源头活水来。</div>
   <div class="topbar-divider"></div>
   <div class="topbar-today">
-    <div class="topbar-today-label">📅 历史上的今天</div>
-    <div class="topbar-today-events" id="topbar-today-events">
-      <div style="color:#555;font-size:.78rem">加载中…</div>
-    </div>
+    <div class="topbar-today-label" id="today-label">📅 历史上的今天</div>
+    <div class="topbar-today-events" id="topbar-today-events"><div style="color:#444;font-size:.78rem">加载中…</div></div>
   </div>
   <div class="topbar-right">
-    <span class="topbar-badge">● 在线</span>
+    <span class="topbar-badge" id="online-badge">● 在线</span>
   </div>
 </div>
 
@@ -266,76 +198,51 @@ body{
   <div class="sidebar">
     <div class="side-section">
       <div class="side-section-label">AI 助手</div>
-      <button class="side-item active" onclick="showChat()">
-        <span class="emoji">💬</span><span class="label">AI对话</span>
-      </button>
+      <button class="side-item active" onclick="showChat()"><span class="emoji">💬</span><span class="label">AI对话</span></button>
     </div>
-
     <div class="side-section">
-      <div class="side-section-label">八大工具</div>
-      <button class="side-item" onclick="showTool('history')">
-        <span class="emoji">📜</span><span class="label">历史文化</span>
-      </button>
-      <button class="side-item" onclick="showTool('geography')">
-        <span class="emoji">🌍</span><span class="label">天文地理</span>
-      </button>
-      <button class="side-item" onclick="showTool('tech')">
-        <span class="emoji">💻</span><span class="label">现代科技</span>
-      </button>
-      <button class="side-item" onclick="showTool('life')">
-        <span class="emoji">🏠</span><span class="label">生活综合</span>
-      </button>
-      <button class="side-item" onclick="showTool('agriculture')">
-        <span class="emoji">🌾</span><span class="label">农业百科</span>
-      </button>
-      <button class="side-item" onclick="showTool('metaphysics')">
-        <span class="emoji">🔮</span><span class="label">玄学命理</span>
-      </button>
-      <button class="side-item" onclick="showTool('health')">
-        <span class="emoji">🌿</span><span class="label">健康养生</span>
-      </button>
-      <button class="side-item" onclick="showTool('education')">
-        <span class="emoji">📚</span><span class="label">教育学习</span>
-      </button>
+      <div class="side-section-label">工具分类</div>
+      <button class="side-item" onclick="showTool('history')"><span class="emoji">📜</span><span class="label">历史文化</span></button>
+      <button class="side-item" onclick="showTool('geography')"><span class="emoji">🌍</span><span class="label">天文地理</span></button>
+      <button class="side-item" onclick="showTool('tech')"><span class="emoji">💻</span><span class="label">现代科技</span></button>
+      <button class="side-item" onclick="showTool('life')"><span class="emoji">🏠</span><span class="label">生活综合</span></button>
+      <button class="side-item" onclick="showTool('agriculture')"><span class="emoji">🌾</span><span class="label">农业百科</span></button>
+      <button class="side-item" onclick="showTool('metaphysics')"><span class="emoji">🔮</span><span class="label">玄学命理</span></button>
+      <button class="side-item" onclick="showTool('health')"><span class="emoji">🌿</span><span class="label">健康养生</span></button>
+      <button class="side-item" onclick="showTool('education')"><span class="emoji">📚</span><span class="label">教育学习</span></button>
     </div>
-
     <div class="side-divider"></div>
-
     <div class="side-section">
-      <div class="side-section-label">客户</div>
-      <button class="login-btn" onclick="alert('客户登录系统开发中，敬请期待')">
-        <span class="emoji">👤</span>
-        <span>客户登录</span>
-      </button>
+      <div class="side-section-label">快捷</div>
+      <button class="side-item" onclick="sendQuick('历史上的今天')"><span class="emoji">📅</span><span class="label">今日历史</span></button>
+      <button class="side-item" onclick="sendQuick('成都天气')"><span class="emoji">⛅</span><span class="label">成都天气</span></button>
     </div>
   </div>
 
   <!-- CENTER -->
   <div class="center">
-
-    <!-- Chat view -->
     <div id="chat-view" style="display:flex;flex-direction:column;height:100%;">
       <div class="chat-header">
-        <span style="font-size:1.1rem;">🤖</span>
+        <span style="font-size:1.05rem;">🤖</span>
         <div>
           <div class="chat-header-title">AI 智能助手</div>
-          <div class="chat-header-sub">有问必答 · 随时为你服务</div>
+          <div class="chat-header-sub">有问必答 · 随时服务</div>
+        </div>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+          <span id="user-indicator" style="font-size:.7rem;color:#444;display:none"></span>
+          <button onclick="switchTab('history-tab')" style="background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.2);border-radius:8px;padding:4px 10px;color:#666;font-size:.72rem;cursor:pointer;transition:all .2s" id="mem-toggle-btn" onmouseover="this.style.color='#d4af37';this.style.borderColor='rgba(212,175,55,.4)'" onmouseout="this.style.color='#666';this.style.borderColor='rgba(212,175,55,.2)'">📋 记忆</button>
         </div>
       </div>
 
       <div class="messages" id="messages">
         <div class="welcome-box">
           <div class="welcome-title">问 渠</div>
-          <div class="welcome-tip">
-            <div>💡 有问题直接问我，AI秒答</div>
-            <div>🔧 从左侧菜单选择专业工具</div>
-            <div>📋 登录后可查看专属档案</div>
-          </div>
+          <div class="welcome-desc">有问必有答，为有源头活水来<br>AI百科助手 · 八大工具 · 客户记忆</div>
           <div class="tool-chips">
             <span class="tool-chip" onclick="sendQuick('LNG是什么？')">LNG是什么</span>
-            <span class="tool-chip" onclick="sendQuick('成都今天天气')">成都天气</span>
-            <span class="tool-chip" onclick="sendQuick('历史上的今天')">历史上的今天</span>
-            <span class="tool-chip" onclick="sendQuick('LNG气价走势分析')">LNG气价</span>
+            <span class="tool-chip" onclick="sendQuick('历史上的今天')">今日历史</span>
+            <span class="tool-chip" onclick="sendQuick('成都天气')">成都天气</span>
+            <span class="tool-chip" onclick="sendQuick('LNG气价走势')">LNG气价</span>
             <span class="tool-chip" onclick="sendQuick('帮我写一首诗')">写首诗</span>
           </div>
         </div>
@@ -347,9 +254,7 @@ body{
       </div>
 
       <div class="input-area">
-        <div class="input-hint">
-          <span><span class="key">Enter</span> 发送 · <span class="key">Shift+Enter</span> 换行</span>
-        </div>
+        <div class="input-hint"><span><span class="key">Enter</span> 发送 · <span class="key">Shift+Enter</span> 换行 · <span class="key">★</span> 收藏回答</span></div>
         <div class="input-row">
           <input id="msg-input" placeholder="输入问题，AI即时回答…" autocomplete="off" autofocus />
           <button class="send-btn" id="send-btn" onclick="sendMsg()">发送</button>
@@ -359,50 +264,76 @@ body{
 
     <!-- Tool panel -->
     <div class="tool-panel" id="tool-panel">
-      <div class="back-link" onclick="showChat()">← 返回AI对话</div>
+      <div class="back-link" onclick="showChat()">← 返回对话</div>
       <div class="tool-panel-header" id="tool-panel-title">📜 历史文化</div>
       <div id="tool-list"></div>
     </div>
-
   </div>
 
-  <!-- RIGHT PANEL -->
-  <div class="right-panel">
-    <div class="right-section-title">预留区域</div>
-    <div class="right-placeholder">
-      <div class="right-placeholder-icon">📦</div>
-      <div class="right-placeholder-text">功能开发中<br>敬请期待</div>
+  <!-- RIGHT PANEL: memory system -->
+  <div class="right-panel" id="right-panel">
+    <div class="right-header">
+      <div class="right-header-title" id="right-title">📋 客户记忆</div>
+      <div class="right-header-sub" id="right-sub">登录后保留对话记录</div>
+    </div>
+
+    <!-- Login prompt -->
+    <div class="login-prompt" id="login-prompt">
+      <div class="login-prompt-icon">👤</div>
+      <div class="login-prompt-text">登录后保存聊天记录<br>重要内容一键收藏</div>
+      <input class="login-prompt-input" id="nickname-input" placeholder="输入昵称，开始记忆之旅" maxlength="20" />
+      <button class="login-btn2" onclick="doLogin()">进入记忆系统</button>
+    </div>
+
+    <!-- Memory view -->
+    <div class="memory-view" id="memory-view">
+      <div class="mem-tabs">
+        <div class="mem-tab active" id="history-tab" onclick="switchTab('history-tab')">💬 记录</div>
+        <div class="mem-tab" id="stars-tab" onclick="switchTab('stars-tab')">★ 收藏</div>
+      </div>
+      <div class="mem-content" id="mem-list">
+        <div class="mem-empty"><div class="mem-empty-icon">💭</div>暂无记录<br>开始对话吧</div>
+      </div>
+      <div class="mem-user-bar">
+        <div class="mem-user-avatar" id="mem-avatar">👤</div>
+        <div class="mem-user-name" id="mem-username">访客</div>
+        <button class="mem-logout" onclick="doLogout()">退出</button>
+      </div>
     </div>
   </div>
 
 </div>
 
 <script>
-// ===== TODAY IN HISTORY (TOP BAR) =====
+// ===== TODAY IN HISTORY =====
 (function(){
   var now=new Date(),m=now.getMonth()+1,d=now.getDate();
-  var sec=['零','一','二','三','四','五','六','七','八','九','十'],toC=function(n){if(n<10)return sec[n];if(n<20)return'十'+sec[n-10];if(n<100)return sec[Math.floor(n/10)]+'十'+sec[n%10];return String(n)};
-  document.querySelector('.topbar-today-label').textContent='📅 历史上的今天 · '+now.getFullYear()+'年'+toC(m)+'月'+toC(d)+'日';
+  var sec=['零','一','二','三','四','五','六','七','八','九','十'];
+  function toC(n){if(n<10)return sec[n];if(n<20)return'十'+sec[n-10];if(n<100)return sec[Math.floor(n/10)]+'十'+sec[n%10];return String(n);}
+  document.getElementById('today-label').textContent='📅 历史上的今天 · '+now.getFullYear()+'年'+toC(m)+'月'+toC(d)+'日';
 
   var el=document.getElementById('topbar-today-events');
   function render(arr){
-    if(!arr||arr.length===0){el.innerHTML='<div style="color:#555;font-size:.78rem">暂无记录</div>';return}
-    arr.slice(0,3).forEach(function(ev){
+    if(!arr||arr.length===0){el.innerHTML='<div style="color:#444;font-size:.78rem">暂无</div>';return}
+    el.innerHTML='';
+    arr.slice(0,4).forEach(function(ev){
       var div=document.createElement('div');div.className='today-item';
-      div.innerHTML='<span class=yr>'+ev.year+'</span><span class=tx>'+(ev.text||ev.title||'').slice(0,20)+'</span>';
+      div.innerHTML='<span class=yr>'+ev.year+'</span><span class=tx>'+(ev.text||ev.title||'').slice(0,22)+'</span>';
       el.appendChild(div);
     });
   }
-  // Try today-api
-  fetch('https://today.api.get996.top/api/today?m='+m+'&d='+d).then(function(r){return r.json()}).then(function(d2){
-    if(d2.data&&d2.data.length>0)render(d2.data);else throw new Error('no data');
-  }).catch(function(){
-    fetch('https://api.youradi.cn/todayinhistory?m='+m+'&d='+d).then(function(r){return r.json()}).then(function(d3){
-      render((d3.events||[]).slice(0,3));
-    }).catch(function(){
-      el.innerHTML='<div style="color:#555;font-size:.78rem">暂无记录</div>';
-    });
-  });
+  var apis=[
+    ['https://api.youradi.cn/todayinhistory?m='+m+'&d='+d,function(d){return(d.events||d.data||[]).slice(0,4)}],
+    ['https://today.api.get996.top/api/today?m='+m+'&d='+d,function(d){return(d.data||[]).slice(0,4)}],
+  ];
+  function tryAPI(i){
+    if(i>=apis.length){el.innerHTML='<div style="color:#444;font-size:.78rem">暂无</div>';return}
+    fetch(apis[i][0]).then(function(r){return r.json()}).then(function(d2){
+      var arr=apis[i][1](d2);
+      if(arr&&arr.length>0)render(arr);else tryAPI(i+1);
+    }).catch(function(){tryAPI(i+1)});
+  }
+  tryAPI(0);
 })();
 
 // ===== TOOL DATA =====
@@ -437,7 +368,6 @@ var TOOLS={
     {title:'亲戚关系计算',desc:'计算亲戚称呼',url:'life.html'},
     {title:'数字大写转换',desc:'金额数字转中文大写',url:'life.html'},
     {title:'日期计算器',desc:'日期间隔、工作日计算',url:'life.html'},
-    {title:'密码生成器',desc:'随机强密码生成',url:'life.html'},
     {title:'BMI计算器',desc:'身体质量指数计算',url:'life.html'},
   ]},
   agriculture:{label:'🌾 农业百科',cards:[
@@ -471,7 +401,7 @@ var TOOLS={
 };
 
 // ===== NAVIGATION =====
-function setActive(name){
+function setActive(){
   document.querySelectorAll('.side-item').forEach(function(el){el.classList.remove('active')});
 }
 function showChat(){
@@ -491,14 +421,131 @@ function showTool(name){
   list.innerHTML='';
   data.cards.forEach(function(card){
     var a=document.createElement('a');a.className='tool-card';
-    a.href='javascript:void(0)';
-    a.onclick=function(){window.open(card.url)};
+    a.href='javascript:void(0)';a.onclick=function(){window.open(card.url)};
     a.innerHTML='<h3>'+card.title+'</h3><p>'+card.desc+'</p>';
     list.appendChild(a);
   });
-  setActive(name);
+  setActive();
 }
 function sendQuick(q){showChat();document.getElementById('msg-input').value=q;sendMsg()}
+
+// ===== MEMORY SYSTEM =====
+var currentUser=null;
+var currentTab='history-tab';
+
+function getMemKey(){return'wenqu_mem_'+(currentUser||'guest');}
+
+function getMemory(){
+  try{return JSON.parse(localStorage.getItem(getMemKey())||'{"records":[],"stars":[]}');}catch(e){return{records:[],stars:[]};}
+}
+function saveMemory(mem){localStorage.setItem(getMemKey(),JSON.stringify(mem));}
+
+function checkLogin(){
+  var saved=localStorage.getItem('wenqu_current_user');
+  if(saved){currentUser=saved;showMemView();return true;}
+  showLoginView();return false;
+}
+
+function showLoginView(){
+  document.getElementById('login-prompt').style.display='flex';
+  document.getElementById('memory-view').classList.remove('visible');
+  document.getElementById('right-title').textContent='📋 客户记忆';
+  document.getElementById('right-sub').textContent='登录后保留对话记录';
+  document.getElementById('user-indicator').style.display='none';
+}
+
+function showMemView(){
+  document.getElementById('login-prompt').style.display='none';
+  document.getElementById('memory-view').classList.add('visible');
+  document.getElementById('right-title').textContent='📋 记忆系统';
+  document.getElementById('right-sub').textContent='已记住 '+currentUser;
+  document.getElementById('mem-username').textContent=currentUser||'访客';
+  document.getElementById('mem-avatar').textContent=(currentUser||'👤').slice(0,1);
+  document.getElementById('user-indicator').style.display='inline';
+  document.getElementById('user-indicator').textContent='👤 '+currentUser;
+  renderMemList();
+}
+
+function doLogin(){
+  var nick=document.getElementById('nickname-input').value.trim();
+  if(!nick){document.getElementById('nickname-input').focus();return;}
+  currentUser=nick;
+  localStorage.setItem('wenqu_current_user',nick);
+  showMemView();
+}
+
+function doLogout(){
+  currentUser=null;
+  localStorage.removeItem('wenqu_current_user');
+  showLoginView();
+}
+
+function switchTab(tab){
+  currentTab=tab;
+  document.querySelectorAll('.mem-tab').forEach(function(el){el.classList.remove('active')});
+  document.getElementById(tab).classList.add('active');
+  renderMemList();
+}
+
+function renderMemList(){
+  var mem=getMemory();
+  var el=document.getElementById('mem-list');
+  var items=currentTab==='stars-tab'?mem.stars:mem.records;
+  if(!items||items.length===0){
+    el.innerHTML='<div class="mem-empty"><div class="mem-empty-icon">'+(currentTab==='stars-tab'?'★':'💭')+'</div>'+(currentTab==='stars-tab'?'暂无收藏<br>点击 ★ 收藏重要内容':'暂无记录<br>开始对话吧')+'</div>';
+    return;
+  }
+  el.innerHTML='';
+  items.slice(0,50).forEach(function(item,i){
+    var div=document.createElement('div');div.className='mem-record';
+    div.innerHTML='<div class="mem-record-q">'+escHtml(item.q)+'</div><div class="mem-record-a">'+escHtml(item.a||'').slice(0,80)+'</div><div class="mem-record-meta"><span class="mem-record-time">'+item.time+'</span>'+(item.star?'<span class="mem-record-star">★</span>':'')+'</div>';
+    div.onclick=function(){jumpToRecord(item.q)};
+    el.appendChild(div);
+  });
+}
+
+function escHtml(s){return String(s).replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function jumpToRecord(q){
+  showChat();
+  document.getElementById('msg-input').value=q;
+}
+
+// Add record after AI responds
+function addRecord(q,a){
+  var mem=getMemory();
+  // Deduplicate by question text
+  var exists=mem.records.some(function(r){return r.q===q});
+  if(!exists){
+    mem.records.unshift({q:q,a:a,time:nowStr(),star:false});
+    if(mem.records.length>200)mem.records=mem.records.slice(0,200);
+  }
+  saveMemory(mem);
+  if(currentUser)renderMemList();
+}
+function toggleStar(q){
+  var mem=getMemory();
+  var idx=mem.records.findIndex(function(r){return r.q===q});
+  if(idx>=0){
+    mem.records[idx].star=!mem.records[idx].star;
+    if(mem.records[idx].star){
+      if(!mem.stars.some(function(s){return s.q===q}))mem.stars.unshift(mem.records[idx]);
+    } else {
+      mem.stars=mem.stars.filter(function(s){return s.q!==q});
+    }
+    saveMemory(mem);
+    if(currentTab==='stars-tab')renderMemList();
+    else renderMemList();
+  }
+}
+
+function nowStr(){
+  var d=new Date();
+  return(d.getMonth()+1)+'/'+d.getDate()+' '+d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+}
+
+// Init
+checkLogin();
 
 // ===== AI CHAT =====
 var API='https://1423198240-0conai1m1r.ap-guangzhou.tencentscf.com/chat';
@@ -507,30 +554,61 @@ var inputEl=document.getElementById('msg-input');
 var sendBtn=document.getElementById('send-btn');
 var typingEl=document.getElementById('typing-row');
 
-function now(){
-  var d=new Date();
-  return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
-}
-
-function addMsg(text,type){
+function addMsg(text,type,extraQ){
   var wb=document.querySelector('.welcome-box');
   if(wb)wb.remove();
   var div=document.createElement('div');div.className='msg '+type;
   var safe=text.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
-  div.innerHTML='<div class=msg-avatar>'+(type==='bot'?'🤖':'你')+'</div><div><div class=msg-bubble>'+safe+'</div><div class=msg-time>'+now()+'</div></div>';
+  var starId='star_'+Date.now();
+  var starBtn='<div class="msg-star" id="'+starId+'" onclick="toggleStarRecord(\''+escAttr(extraQ||'')+'\')" title="收藏此回答">☆ 收藏</div>';
+  div.innerHTML='<div class=msg-avatar>'+(type==='bot'?'🤖':'你')+'</div><div><div class=msg-bubble>'+safe+'</div>'+(type==='bot'?starBtn:'<div class=msg-time>'+nowStr()+'</div>')+'</div>';
   msgsEl.appendChild(div);msgsEl.scrollTop=msgsEl.scrollHeight;
+  return extraQ;
 }
 
+var lastQ='';
 function sendMsg(){
   var q=inputEl.value.trim();if(!q)return;
-  inputEl.value='';addMsg(q,'user');sendBtn.disabled=true;typingEl.style.display='flex';msgsEl.scrollTop=msgsEl.scrollHeight;
+  lastQ=q;inputEl.value='';addMsg(q,'user');sendBtn.disabled=true;typingEl.style.display='flex';msgsEl.scrollTop=msgsEl.scrollHeight;
   fetch(API,{method:'POST',headers:{'Content-Type':'application/json; charset=utf-8'},body:JSON.stringify({message:q})})
   .then(function(r){if(!r.ok)throw new Error(r.status);return r.json()})
-  .then(function(d){typingEl.style.display='none';sendBtn.disabled=false;addMsg(d.reply||'（无回复）','bot')})
-  .catch(function(e){typingEl.style.display='none';sendBtn.disabled=false;addMsg('网络错误（'+e.message+'），请稍后重试','bot')});
+  .then(function(d){
+    typingEl.style.display='none';sendBtn.disabled=false;
+    addMsg(d.reply||'(无回复)','bot',q);
+    addRecord(q,d.reply||'');
+  })
+  .catch(function(e){typingEl.style.display='none';sendBtn.disabled=false;addMsg('网络错误('+e.message+')，请重试','bot')});
+}
+
+function toggleStarRecord(q){
+  if(!q)return;
+  var mem=getMemory();
+  var idx=mem.records.findIndex(function(r){return r.q===q});
+  if(idx>=0){
+    mem.records[idx].star=!mem.records[idx].star;
+    if(mem.records[idx].star&&!mem.stars.some(function(s){return s.q===q}))mem.stars.unshift(mem.records[idx]);
+    else mem.stars=mem.stars.filter(function(s){return s.q!==q});
+    saveMemory(mem);
+    // Update button
+    document.querySelectorAll('.msg-star').forEach(function(el){
+      var title=el.getAttribute('title')||'';
+      if(title==='收藏此回答'||el.textContent.includes('收藏')){
+        if(mem.records[idx].star){el.textContent='★ 已收藏';el.classList.add('starred');el.setAttribute('title','取消收藏');}
+        else{el.textContent='☆ 收藏';el.classList.remove('starred');el.setAttribute('title','收藏此回答');}
+      }
+    });
+  }
 }
 
 inputEl.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg()}});
+
+// Memory button in chat header
+document.getElementById('mem-toggle-btn').addEventListener('click',function(){
+  if(!currentUser){
+    var nick=prompt('输入昵称进入记忆系统：');
+    if(nick&&nick.trim()){currentUser=nick.trim();localStorage.setItem('wenqu_current_user',currentUser);showMemView();}
+  } else {showMemView();}
+});
 </script>
 </body>
 </html>
