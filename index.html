@@ -14,22 +14,20 @@ body{font-family:"ZCOOL XiaoWei","Noto Serif SC",system-ui,-apple-system,"Micros
 /* ===== TOP BAR ===== */
 .topbar{height:64px;background:#0e0e18;border-bottom:1px solid rgba(212,175,55,.2);display:flex;align-items:center;padding:0 20px;gap:0;flex-shrink:0;z-index:10}
 .topbar-title{
-  font-family:'Ma Shan Zheng','ZCOOL XiaoWei',"Noto Serif SC",serif;
+  font-family:'Ma Shan Zheng','ZCOOL XiaoWei','Noto Serif SC',serif;
   font-size:2.1rem;color:#d4af37;letter-spacing:.08em;
-  text-shadow:0 0 30px rgba(212,175,55,.4);
-  flex-shrink:0;cursor:default;
-  user-select:none;
+  text-shadow:0 0 30px rgba(212,175,55,.4);flex-shrink:0;cursor:default;user-select:none;
 }
 .topbar-poem{color:#888;font-size:.82rem;border-left:1px solid rgba(212,175,55,.2);padding-left:20px;line-height:1.6;letter-spacing:.05em;margin-left:20px;flex-shrink:0}
 .topbar-poem .hl{color:#d4af37}
 .topbar-divider{width:1px;height:32px;background:rgba(212,175,55,.12);margin:0 20px;flex-shrink:0}
 .topbar-today{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
 .topbar-today-label{font-size:.65rem;color:#555;letter-spacing:.1em}
-.topbar-today-events{display:flex;gap:20px;overflow:hidden;align-items:center}
-.today-item{display:flex;align-items:center;gap:6px;font-size:.78rem;white-space:nowrap}
+.topbar-today-events{display:flex;gap:18px;overflow:hidden;align-items:center}
+.today-item{display:flex;align-items:center;gap:5px;font-size:.77rem;white-space:nowrap}
 .today-item .yr{color:#d4af37;font-weight:700}
 .today-item .tx{color:#888}
-.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-shrink:0}
 .topbar-badge{background:rgba(46,180,100,.1);color:#2eb46e;font-size:.7rem;padding:3px 10px;border-radius:12px;border:1px solid rgba(46,180,100,.2)}
 
 /* ===== MAIN LAYOUT ===== */
@@ -67,15 +65,14 @@ body{font-family:"ZCOOL XiaoWei","Noto Serif SC",system-ui,-apple-system,"Micros
 .msg.user .msg-bubble{background:rgba(212,175,55,.13);border:1px solid rgba(212,175,55,.2);border-radius:14px 3px 14px 14px;color:#e8e0c0}
 .msg-time{font-size:.65rem;color:#3a3a4a;margin-top:3px;padding:0 3px}
 .msg.user .msg-time{text-align:right}
-.msg-star{cursor:pointer;color:#555;font-size:.7rem;margin-top:2px;padding:0 3px;transition:color .2s}
+.msg-star{cursor:pointer;color:#555;font-size:.7rem;margin-top:3px;padding:0 3px;transition:color .2s}
 .msg-star:hover{color:#d4af37}
 .msg-star.starred{color:#d4af37}
 
 .welcome-box{text-align:center;padding:36px 16px;animation:fadeIn .4s ease}
 .welcome-title{
-  font-family:'Ma Shan Zheng','ZCOOL XiaoWei',"Noto Serif SC",serif;
-  font-size:3rem;color:#d4af37;margin-bottom:6px;
-  text-shadow:0 0 40px rgba(212,175,55,.25);
+  font-family:'Ma Shan Zheng','ZCOOL XiaoWei','Noto Serif SC',serif;
+  font-size:3rem;color:#d4af37;margin-bottom:6px;text-shadow:0 0 40px rgba(212,175,55,.25);
 }
 .welcome-desc{color:#666;font-size:.83rem;margin-top:10px;line-height:2}
 .tool-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin-top:18px}
@@ -113,54 +110,96 @@ body{font-family:"ZCOOL XiaoWei","Noto Serif SC",system-ui,-apple-system,"Micros
 .back-link:hover{color:#d4af37}
 
 /* ===== RIGHT PANEL ===== */
-.right-panel{width:20%;flex-shrink:0;background:#0b0b14;border-left:1px solid rgba(212,175,55,.08);overflow:hidden;display:flex;flex-direction:column}
-.right-panel::-webkit-scrollbar{width:3px}
-.right-panel::-webkit-scrollbar-thumb{background:rgba(212,175,55,.15)}
+.right-panel{
+  width:20%;flex-shrink:0;
+  background:#0b0b14;
+  border-left:1px solid rgba(212,175,55,.08);
+  overflow:hidden;display:flex;flex-direction:column;
+}
 
 .right-header{padding:14px 16px 10px;border-bottom:1px solid rgba(212,175,55,.08);flex-shrink:0}
 .right-header-title{font-size:.85rem;color:#d4af37;font-weight:600;margin-bottom:2px}
 .right-header-sub{font-size:.68rem;color:#444;font-family:system-ui}
 
-/* Login prompt */
-.login-prompt{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 16px;gap:12px}
-.login-prompt-icon{font-size:2.5rem;opacity:.25}
-.login-prompt-text{color:#505060;font-size:.8rem;text-align:center;line-height:1.7}
-.login-prompt-input{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(212,175,55,.2);border-radius:10px;padding:9px 12px;color:#e8e8e8;font-size:.82rem;outline:none;text-align:center;font-family:"ZCOOL XiaoWei",system-ui}
-.login-prompt-input::placeholder{color:#444}
-.login-prompt-input:focus{border-color:rgba(212,175,55,.5)}
-.login-btn2{width:100%;background:linear-gradient(135deg,#d4af37,#b8932a);border:none;border-radius:10px;padding:9px;color:#0a0a0f;font-weight:700;font-size:.82rem;cursor:pointer;transition:all .25s;font-family:"ZCOOL XiaoWei"}
-.login-btn2:hover{transform:scale(1.02);background:linear-gradient(135deg,#e8c44a,#d4af37)}
-.login-btn2:active{transform:scale(.98)}
+/* ===== RIGHT: TOP 2/3 — MEMORY ===== */
+.right-memory{flex:2;display:flex;flex-direction:column;overflow:hidden;border-bottom:1px solid rgba(212,175,55,.06)}
 
-/* Memory view */
+.login-prompt{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 14px;gap:10px}
+.login-prompt-icon{font-size:2.2rem;opacity:.2}
+.login-prompt-title{font-size:.85rem;color:#d4af37;font-weight:600;text-align:center}
+.login-prompt-text{color:#505060;font-size:.75rem;text-align:center;line-height:1.7}
+.login-form{display:flex;flex-direction:column;gap:7px;width:100%}
+.login-form input{
+  width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(212,175,55,.2);
+  border-radius:8px;padding:8px 11px;color:#e8e8e8;font-size:.8rem;outline:none;
+  font-family:"ZCOOL XiaoWei",system-ui;text-align:center;
+}
+.login-form input::placeholder{color:#444}
+.login-form input:focus{border-color:rgba(212,175,55,.5)}
+.login-form input[type="tel"]{font-size:.78rem}
+.login-btn2{width:100%;background:linear-gradient(135deg,#d4af37,#b8932a);border:none;border-radius:8px;padding:9px;color:#0a0a0f;font-weight:700;font-size:.82rem;cursor:pointer;transition:all .25s;font-family:"ZCOOL XiaoWei"}
+.login-btn2:hover{transform:scale(1.02)}
+.login-btn2:active{transform:scale(.98)}
+.login-tip{font-size:.68rem;color:#444;text-align:center;line-height:1.5;font-family:system-ui}
+
+.reg-section{width:100%;margin-top:6px;padding-top:10px;border-top:1px solid rgba(212,175,55,.08)}
+.reg-title{font-size:.7rem;color:#555;text-align:center;margin-bottom:8px;font-family:system-ui;letter-spacing:.05em}
+.reg-btn{width:100%;background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.2);border-radius:8px;padding:8px;color:#d4af37;font-size:.78rem;cursor:pointer;transition:all .2s;font-family:"ZCOOL XiaoWei"}
+.reg-btn:hover{background:rgba(212,175,55,.18);border-color:rgba(212,175,55,.35)}
+
 .memory-view{display:none;flex-direction:column;height:100%}
 .memory-view.visible{display:flex}
-
-.mem-tabs{padding:8px 14px 0;display:flex;gap:2px;border-bottom:1px solid rgba(212,175,55,.07);flex-shrink:0}
-.mem-tab{padding:6px 10px;font-size:.72rem;color:#555;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;font-family:system-ui}
-.mem-tab:hover{color:#888}
+.mem-tabs{padding:8px 12px 0;display:flex;gap:2px;border-bottom:1px solid rgba(212,175,55,.07);flex-shrink:0}
+.mem-tab{padding:5px 9px;font-size:.7rem;color:#444;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;font-family:system-ui;background:none;border-top:none;border-left:none;border-right:none}
+.mem-tab:hover{color:#666}
 .mem-tab.active{color:#d4af37;border-bottom-color:#d4af37}
-
-.mem-content{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.mem-content{flex:1;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
 .mem-content::-webkit-scrollbar{width:3px}
 .mem-content::-webkit-scrollbar-thumb{background:rgba(212,175,55,.15)}
-
-.mem-record{padding:10px 12px;background:rgba(255,255,255,.025);border:1px solid rgba(212,175,55,.07);border-radius:10px;cursor:pointer;transition:all .2s}
+.mem-record{padding:9px 11px;background:rgba(255,255,255,.025);border:1px solid rgba(212,175,55,.07);border-radius:9px;cursor:pointer;transition:all .2s}
 .mem-record:hover{border-color:rgba(212,175,55,.2);background:rgba(212,175,55,.05)}
-.mem-record-q{font-size:.78rem;color:#a0a0b0;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mem-record-a{font-size:.72rem;color:#555;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.mem-record-meta{display:flex;align-items:center;justify-content:space-between;margin-top:5px}
-.mem-record-time{font-size:.65rem;color:#3a3a4a;font-family:system-ui}
-.mem-record-star{font-size:.7rem;color:#d4af37}
+.mem-record-q{font-size:.76rem;color:#9090a8;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mem-record-a{font-size:.7rem;color:#4a4a5a;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mem-record-meta{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+.mem-record-time{font-size:.63rem;color:#333;font-family:system-ui}
+.mem-record-star{font-size:.68rem;color:#d4af37}
+.mem-empty{color:#3a3a4a;font-size:.75rem;text-align:center;padding:24px 8px;line-height:2;font-family:system-ui}
+.mem-empty-icon{font-size:1.6rem;margin-bottom:6px;opacity:.25}
+.mem-user-bar{padding:8px 12px;border-top:1px solid rgba(212,175,55,.07);display:flex;align-items:center;gap:7px;flex-shrink:0}
+.mem-user-avatar{width:26px;height:26px;border-radius:50%;background:rgba(212,175,55,.12);color:#d4af37;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
+.mem-user-name{font-size:.75rem;color:#8080a0;flex:1}
+.mem-logout{font-size:.65rem;color:#444;cursor:pointer;padding:2px 7px;border-radius:5px;border:1px solid rgba(255,255,255,.05);background:none;transition:all .2s;font-family:system-ui}
+.mem-logout:hover{color:#c05050;border-color:rgba(200,80,80,.25)}
 
-.mem-empty{color:#3a3a4a;font-size:.78rem;text-align:center;padding:30px 10px;line-height:2;font-family:system-ui}
-.mem-empty-icon{font-size:1.8rem;margin-bottom:8px;opacity:.3}
+/* ===== RIGHT: BOTTOM 1/3 — ADS/RECOMMENDATIONS ===== */
+.right-ads{
+  flex:1;min-height:0;
+  display:flex;flex-direction:column;
+  padding:10px 14px 12px;
+  gap:8px;
+}
+.ads-title{font-size:.68rem;color:#444;letter-spacing:.12em;text-transform:uppercase;font-family:system-ui;margin-bottom:2px}
+.ads-placeholder{
+  flex:1;
+  background:rgba(212,175,55,.03);
+  border:1px dashed rgba(212,175,55,.12);
+  border-radius:10px;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:8px;min-height:0;
+}
+.ads-placeholder-icon{font-size:1.8rem;opacity:.2}
+.ads-placeholder-text{color:#3a3a4a;font-size:.72rem;text-align:center;line-height:1.7;font-family:system-ui}
+.ads-placeholder-hint{color:#555;font-size:.65rem;text-align:center;font-family:system-ui}
 
-.mem-user-bar{padding:10px 14px;border-top:1px solid rgba(212,175,55,.08);display:flex;align-items:center;gap:8px;flex-shrink:0}
-.mem-user-avatar{width:28px;height:28px;border-radius:50%;background:rgba(212,175,55,.15);color:#d4af37;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
-.mem-user-name{font-size:.8rem;color:#9090a0;flex:1}
-.mem-logout{font-size:.68rem;color:#555;cursor:pointer;padding:3px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.06);background:none;transition:all .2s;font-family:system-ui}
-.mem-logout:hover{color:#c05050;border-color:rgba(200,80,80,.3)}
+/* User badge in topbar when logged in */
+.user-badge{
+  display:none;align-items:center;gap:6px;
+  background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.2);
+  border-radius:20px;padding:3px 10px 3px 6px;font-size:.72rem;color:#d4af37;
+  cursor:pointer;
+}
+.user-badge:hover{background:rgba(212,175,55,.18)}
 
 /* Responsive */
 @media(max-width:900px){.right-panel{display:none}}
@@ -187,7 +226,11 @@ body{font-family:"ZCOOL XiaoWei","Noto Serif SC",system-ui,-apple-system,"Micros
     <div class="topbar-today-events" id="topbar-today-events"><div style="color:#444;font-size:.78rem">加载中…</div></div>
   </div>
   <div class="topbar-right">
-    <span class="topbar-badge" id="online-badge">● 在线</span>
+    <div class="user-badge" id="user-badge" onclick="showMemPanel()">
+      <span id="badge-avatar">👤</span>
+      <span id="badge-name"></span>
+    </div>
+    <span class="topbar-badge">● 在线</span>
   </div>
 </div>
 
@@ -229,8 +272,7 @@ body{font-family:"ZCOOL XiaoWei","Noto Serif SC",system-ui,-apple-system,"Micros
           <div class="chat-header-sub">有问必答 · 随时服务</div>
         </div>
         <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
-          <span id="user-indicator" style="font-size:.7rem;color:#444;display:none"></span>
-          <button onclick="switchTab('history-tab')" style="background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.2);border-radius:8px;padding:4px 10px;color:#666;font-size:.72rem;cursor:pointer;transition:all .2s" id="mem-toggle-btn" onmouseover="this.style.color='#d4af37';this.style.borderColor='rgba(212,175,55,.4)'" onmouseout="this.style.color='#666';this.style.borderColor='rgba(212,175,55,.2)'">📋 记忆</button>
+          <button onclick="showMemPanel()" style="background:rgba(212,175,55,.07);border:1px solid rgba(212,175,55,.18);border-radius:8px;padding:4px 10px;color:#666;font-size:.72rem;cursor:pointer;transition:all .2s;font-family:system-ui" onmouseover="this.style.color='#d4af37';this.style.borderColor='rgba(212,175,55,.4)'" onmouseout="this.style.color='#666';this.style.borderColor='rgba(212,175,55,.18)'">📋 记忆</button>
         </div>
       </div>
 
@@ -270,38 +312,81 @@ body{font-family:"ZCOOL XiaoWei","Noto Serif SC",system-ui,-apple-system,"Micros
     </div>
   </div>
 
-  <!-- RIGHT PANEL: memory system -->
+  <!-- RIGHT PANEL -->
   <div class="right-panel" id="right-panel">
-    <div class="right-header">
-      <div class="right-header-title" id="right-title">📋 客户记忆</div>
-      <div class="right-header-sub" id="right-sub">登录后保留对话记录</div>
+
+    <!-- TOP: Memory (2/3 height) -->
+    <div class="right-memory" id="right-memory">
+      <div class="right-header">
+        <div class="right-header-title" id="right-title">📋 客户记忆</div>
+        <div class="right-header-sub" id="right-sub">登录保存记录 · 注册获取API</div>
+      </div>
+
+      <!-- Login / Register Form -->
+      <div class="login-prompt" id="login-prompt">
+        <div class="login-prompt-icon">👤</div>
+        <div class="login-prompt-title">登录记忆系统</div>
+
+        <!-- Login Form -->
+        <div class="login-form" id="login-form">
+          <input id="login-name" placeholder="昵称 / 手机号" maxlength="20" />
+          <input id="login-pwd" type="password" placeholder="密码" maxlength="30" />
+          <button class="login-btn2" onclick="doLogin()">登录</button>
+          <div class="login-tip">登录后同步聊天记录和收藏</div>
+        </div>
+
+        <!-- Register -->
+        <div class="reg-section">
+          <div class="reg-title">—— 没有账号？立即注册 ——</div>
+          <button class="reg-btn" onclick="showReg()">📝 实名注册 · 获取API密钥</button>
+        </div>
+      </div>
+
+      <!-- Register Form (hidden by default) -->
+      <div class="login-prompt" id="reg-prompt" style="display:none">
+        <div class="login-prompt-icon">🔐</div>
+        <div class="login-prompt-title">实名注册</div>
+        <div class="login-form">
+          <input id="reg-name" placeholder="真实姓名（必填）" maxlength="20" />
+          <input id="reg-phone" placeholder="手机号（必填）" maxlength="11" type="tel" />
+          <input id="reg-company" placeholder="公司名称（选填）" maxlength="50" />
+          <button class="login-btn2" onclick="doRegister()">提交注册申请</button>
+        </div>
+        <div class="login-tip">注册后获取专属API密钥<br>用于调用问渠AI能力</div>
+        <button class="reg-btn" onclick="showLogin()" style="margin-top:6px">已有账号？返回登录</button>
+      </div>
+
+      <!-- Memory view (logged in) -->
+      <div class="memory-view" id="memory-view">
+        <div class="mem-tabs">
+          <div class="mem-tab active" id="history-tab" onclick="switchTab('history-tab')">💬 记录</div>
+          <div class="mem-tab" id="stars-tab" onclick="switchTab('stars-tab')">★ 收藏</div>
+        </div>
+        <div class="mem-content" id="mem-list">
+          <div class="mem-empty"><div class="mem-empty-icon">💭</div>暂无记录<br>开始对话吧</div>
+        </div>
+        <div class="mem-user-bar">
+          <div class="mem-user-avatar" id="mem-avatar">👤</div>
+          <div class="mem-user-name" id="mem-username">访客</div>
+          <div style="margin-left:auto;display:flex;gap:4px;align-items:center">
+            <span id="api-key-badge" style="font-size:.6rem;color:#2eb46e;display:none;background:rgba(46,180,100,.08);padding:2px 6px;border-radius:4px;border:1px solid rgba(46,180,100,.2)">API</span>
+            <button class="mem-logout" onclick="doLogout()">退出</button>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Login prompt -->
-    <div class="login-prompt" id="login-prompt">
-      <div class="login-prompt-icon">👤</div>
-      <div class="login-prompt-text">登录后保存聊天记录<br>重要内容一键收藏</div>
-      <input class="login-prompt-input" id="nickname-input" placeholder="输入昵称，开始记忆之旅" maxlength="20" />
-      <button class="login-btn2" onclick="doLogin()">进入记忆系统</button>
+    <!-- BOTTOM: Ads/Recommendations (1/3 height) -->
+    <div class="right-ads">
+      <div class="ads-title">精选推荐</div>
+      <div class="ads-placeholder">
+        <div class="ads-placeholder-icon">💰</div>
+        <div class="ads-placeholder-text">智能推荐位</div>
+        <div class="ads-placeholder-hint">根据你的搜索内容<br>精准推荐相关服务</div>
+      </div>
     </div>
 
-    <!-- Memory view -->
-    <div class="memory-view" id="memory-view">
-      <div class="mem-tabs">
-        <div class="mem-tab active" id="history-tab" onclick="switchTab('history-tab')">💬 记录</div>
-        <div class="mem-tab" id="stars-tab" onclick="switchTab('stars-tab')">★ 收藏</div>
-      </div>
-      <div class="mem-content" id="mem-list">
-        <div class="mem-empty"><div class="mem-empty-icon">💭</div>暂无记录<br>开始对话吧</div>
-      </div>
-      <div class="mem-user-bar">
-        <div class="mem-user-avatar" id="mem-avatar">👤</div>
-        <div class="mem-user-name" id="mem-username">访客</div>
-        <button class="mem-logout" onclick="doLogout()">退出</button>
-      </div>
-    </div>
   </div>
-
 </div>
 
 <script>
@@ -311,7 +396,6 @@ body{font-family:"ZCOOL XiaoWei","Noto Serif SC",system-ui,-apple-system,"Micros
   var sec=['零','一','二','三','四','五','六','七','八','九','十'];
   function toC(n){if(n<10)return sec[n];if(n<20)return'十'+sec[n-10];if(n<100)return sec[Math.floor(n/10)]+'十'+sec[n%10];return String(n);}
   document.getElementById('today-label').textContent='📅 历史上的今天 · '+now.getFullYear()+'年'+toC(m)+'月'+toC(d)+'日';
-
   var el=document.getElementById('topbar-today-events');
   function render(arr){
     if(!arr||arr.length===0){el.innerHTML='<div style="color:#444;font-size:.78rem">暂无</div>';return}
@@ -431,6 +515,7 @@ function sendQuick(q){showChat();document.getElementById('msg-input').value=q;se
 
 // ===== MEMORY SYSTEM =====
 var currentUser=null;
+var isRegistered=false; // has API key
 var currentTab='history-tab';
 
 function getMemKey(){return'wenqu_mem_'+(currentUser||'guest');}
@@ -442,42 +527,100 @@ function saveMemory(mem){localStorage.setItem(getMemKey(),JSON.stringify(mem));}
 
 function checkLogin(){
   var saved=localStorage.getItem('wenqu_current_user');
-  if(saved){currentUser=saved;showMemView();return true;}
+  if(saved){
+    currentUser=saved;
+    isRegistered=localStorage.getItem('wenqu_reg_'+(saved))==='1';
+    showMemView();return true;
+  }
   showLoginView();return false;
 }
 
 function showLoginView(){
   document.getElementById('login-prompt').style.display='flex';
+  document.getElementById('reg-prompt').style.display='none';
   document.getElementById('memory-view').classList.remove('visible');
   document.getElementById('right-title').textContent='📋 客户记忆';
-  document.getElementById('right-sub').textContent='登录后保留对话记录';
-  document.getElementById('user-indicator').style.display='none';
+  document.getElementById('right-sub').textContent='登录保存记录 · 注册获取API';
+  document.getElementById('user-badge').style.display='none';
+  document.getElementById('api-key-badge').style.display='none';
+}
+
+function showReg(){
+  document.getElementById('login-prompt').style.display='none';
+  document.getElementById('reg-prompt').style.display='flex';
+  document.getElementById('right-title').textContent='🔐 实名注册';
+  document.getElementById('right-sub').textContent='注册后获取专属API密钥';
+}
+
+function showLogin(){
+  document.getElementById('login-prompt').style.display='flex';
+  document.getElementById('reg-prompt').style.display='none';
+  document.getElementById('right-title').textContent='📋 客户记忆';
+  document.getElementById('right-sub').textContent='登录保存记录 · 注册获取API';
 }
 
 function showMemView(){
   document.getElementById('login-prompt').style.display='none';
+  document.getElementById('reg-prompt').style.display='none';
   document.getElementById('memory-view').classList.add('visible');
-  document.getElementById('right-title').textContent='📋 记忆系统';
-  document.getElementById('right-sub').textContent='已记住 '+currentUser;
+  document.getElementById('right-title').textContent=isRegistered?'📋 会员记忆':'📋 客户记忆';
+  document.getElementById('right-sub').textContent=isRegistered?'已登录 · API已开通':'已登录 · 游客模式';
   document.getElementById('mem-username').textContent=currentUser||'访客';
   document.getElementById('mem-avatar').textContent=(currentUser||'👤').slice(0,1);
-  document.getElementById('user-indicator').style.display='inline';
-  document.getElementById('user-indicator').textContent='👤 '+currentUser;
+  document.getElementById('user-badge').style.display='flex';
+  document.getElementById('badge-name').textContent=currentUser||'访客';
+  document.getElementById('badge-avatar').textContent=(currentUser||'👤').slice(0,1);
+  document.getElementById('api-key-badge').style.display=isRegistered?'inline':'none';
   renderMemList();
 }
 
+function showMemPanel(){
+  if(!currentUser){
+    showLoginView();
+  }
+  // Scroll right panel into view (on mobile)
+}
+
 function doLogin(){
-  var nick=document.getElementById('nickname-input').value.trim();
-  if(!nick){document.getElementById('nickname-input').focus();return;}
-  currentUser=nick;
-  localStorage.setItem('wenqu_current_user',nick);
+  var name=document.getElementById('login-name').value.trim();
+  var pwd=document.getElementById('login-pwd').value;
+  if(!name){document.getElementById('login-name').focus();return;}
+  // Simple demo: any login succeeds
+  currentUser=name;
+  isRegistered=localStorage.getItem('wenqu_reg_'+name)==='1';
+  localStorage.setItem('wenqu_current_user',name);
   showMemView();
 }
 
+function doRegister(){
+  var name=document.getElementById('reg-name').value.trim();
+  var phone=document.getElementById('reg-phone').value.trim();
+  var company=document.getElementById('reg-company').value.trim();
+  if(!name||!phone){alert('姓名和手机号必填');return;}
+  if(!/^1\d{10}$/.test(phone)){alert('请输入正确的手机号');return;}
+
+  // Demo: register succeeds, save
+  localStorage.setItem('wenqu_reg_'+name,'1');
+  localStorage.setItem('wenqu_current_user',name);
+  // Generate demo API key
+  var apikey='wq_'+name.slice(0,2)+'_'+(Math.random().toString(36).slice(2,10)).toUpperCase()+Date.now().toString(36).slice(-6);
+  localStorage.setItem('wenqu_apikey_'+name,apikey);
+
+  currentUser=name;
+  isRegistered=true;
+  showMemView();
+  // Show API key
+  alert('注册成功！\n\n您的API密钥：\n'+apikey+'\n\n请妥善保存，用于调用问渠AI能力。');
+}
+
 function doLogout(){
-  currentUser=null;
+  var prev=currentUser;
+  currentUser=null;isRegistered=false;
   localStorage.removeItem('wenqu_current_user');
   showLoginView();
+  // Clear form
+  document.getElementById('login-name').value='';
+  document.getElementById('login-pwd').value='';
 }
 
 function switchTab(tab){
@@ -492,11 +635,11 @@ function renderMemList(){
   var el=document.getElementById('mem-list');
   var items=currentTab==='stars-tab'?mem.stars:mem.records;
   if(!items||items.length===0){
-    el.innerHTML='<div class="mem-empty"><div class="mem-empty-icon">'+(currentTab==='stars-tab'?'★':'💭')+'</div>'+(currentTab==='stars-tab'?'暂无收藏<br>点击 ★ 收藏重要内容':'暂无记录<br>开始对话吧')+'</div>';
+    el.innerHTML='<div class="mem-empty"><div class="mem-empty-icon">'+(currentTab==='stars-tab'?'★':'💭')+'</div>'+(currentTab==='stars-tab'?'暂无收藏<br>点击 ★ 收藏重要':'暂无记录<br>开始对话吧')+'</div>';
     return;
   }
   el.innerHTML='';
-  items.slice(0,50).forEach(function(item,i){
+  items.slice(0,60).forEach(function(item){
     var div=document.createElement('div');div.className='mem-record';
     div.innerHTML='<div class="mem-record-q">'+escHtml(item.q)+'</div><div class="mem-record-a">'+escHtml(item.a||'').slice(0,80)+'</div><div class="mem-record-meta"><span class="mem-record-time">'+item.time+'</span>'+(item.star?'<span class="mem-record-star">★</span>':'')+'</div>';
     div.onclick=function(){jumpToRecord(item.q)};
@@ -507,36 +650,18 @@ function renderMemList(){
 function escHtml(s){return String(s).replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 function jumpToRecord(q){
-  showChat();
-  document.getElementById('msg-input').value=q;
+  showChat();document.getElementById('msg-input').value=q;
 }
 
-// Add record after AI responds
 function addRecord(q,a){
   var mem=getMemory();
-  // Deduplicate by question text
   var exists=mem.records.some(function(r){return r.q===q});
   if(!exists){
     mem.records.unshift({q:q,a:a,time:nowStr(),star:false});
-    if(mem.records.length>200)mem.records=mem.records.slice(0,200);
+    if(mem.records.length>300)mem.records=mem.records.slice(0,300);
   }
   saveMemory(mem);
   if(currentUser)renderMemList();
-}
-function toggleStar(q){
-  var mem=getMemory();
-  var idx=mem.records.findIndex(function(r){return r.q===q});
-  if(idx>=0){
-    mem.records[idx].star=!mem.records[idx].star;
-    if(mem.records[idx].star){
-      if(!mem.stars.some(function(s){return s.q===q}))mem.stars.unshift(mem.records[idx]);
-    } else {
-      mem.stars=mem.stars.filter(function(s){return s.q!==q});
-    }
-    saveMemory(mem);
-    if(currentTab==='stars-tab')renderMemList();
-    else renderMemList();
-  }
 }
 
 function nowStr(){
@@ -544,7 +669,6 @@ function nowStr(){
   return(d.getMonth()+1)+'/'+d.getDate()+' '+d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
 }
 
-// Init
 checkLogin();
 
 // ===== AI CHAT =====
@@ -563,21 +687,6 @@ function addMsg(text,type,extraQ){
   var starBtn='<div class="msg-star" id="'+starId+'" onclick="toggleStarRecord(\''+escAttr(extraQ||'')+'\')" title="收藏此回答">☆ 收藏</div>';
   div.innerHTML='<div class=msg-avatar>'+(type==='bot'?'🤖':'你')+'</div><div><div class=msg-bubble>'+safe+'</div>'+(type==='bot'?starBtn:'<div class=msg-time>'+nowStr()+'</div>')+'</div>';
   msgsEl.appendChild(div);msgsEl.scrollTop=msgsEl.scrollHeight;
-  return extraQ;
-}
-
-var lastQ='';
-function sendMsg(){
-  var q=inputEl.value.trim();if(!q)return;
-  lastQ=q;inputEl.value='';addMsg(q,'user');sendBtn.disabled=true;typingEl.style.display='flex';msgsEl.scrollTop=msgsEl.scrollHeight;
-  fetch(API,{method:'POST',headers:{'Content-Type':'application/json; charset=utf-8'},body:JSON.stringify({message:q})})
-  .then(function(r){if(!r.ok)throw new Error(r.status);return r.json()})
-  .then(function(d){
-    typingEl.style.display='none';sendBtn.disabled=false;
-    addMsg(d.reply||'(无回复)','bot',q);
-    addRecord(q,d.reply||'');
-  })
-  .catch(function(e){typingEl.style.display='none';sendBtn.disabled=false;addMsg('网络错误('+e.message+')，请重试','bot')});
 }
 
 function toggleStarRecord(q){
@@ -589,10 +698,9 @@ function toggleStarRecord(q){
     if(mem.records[idx].star&&!mem.stars.some(function(s){return s.q===q}))mem.stars.unshift(mem.records[idx]);
     else mem.stars=mem.stars.filter(function(s){return s.q!==q});
     saveMemory(mem);
-    // Update button
     document.querySelectorAll('.msg-star').forEach(function(el){
       var title=el.getAttribute('title')||'';
-      if(title==='收藏此回答'||el.textContent.includes('收藏')){
+      if(title==='收藏此回答'){
         if(mem.records[idx].star){el.textContent='★ 已收藏';el.classList.add('starred');el.setAttribute('title','取消收藏');}
         else{el.textContent='☆ 收藏';el.classList.remove('starred');el.setAttribute('title','收藏此回答');}
       }
@@ -600,15 +708,22 @@ function toggleStarRecord(q){
   }
 }
 
-inputEl.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg()}});
+function escAttr(s){return String(s).replace(/'/g,"\\'").replace(/\n/g,'\\n');}
 
-// Memory button in chat header
-document.getElementById('mem-toggle-btn').addEventListener('click',function(){
-  if(!currentUser){
-    var nick=prompt('输入昵称进入记忆系统：');
-    if(nick&&nick.trim()){currentUser=nick.trim();localStorage.setItem('wenqu_current_user',currentUser);showMemView();}
-  } else {showMemView();}
-});
+function sendMsg(){
+  var q=inputEl.value.trim();if(!q)return;
+  inputEl.value='';addMsg(q,'user');sendBtn.disabled=true;typingEl.style.display='flex';msgsEl.scrollTop=msgsEl.scrollHeight;
+  fetch(API,{method:'POST',headers:{'Content-Type':'application/json; charset=utf-8'},body:JSON.stringify({message:q})})
+  .then(function(r){if(!r.ok)throw new Error(r.status);return r.json()})
+  .then(function(d){
+    typingEl.style.display='none';sendBtn.disabled=false;
+    addMsg(d.reply||'(无回复)','bot',q);
+    addRecord(q,d.reply||'');
+  })
+  .catch(function(e){typingEl.style.display='none';sendBtn.disabled=false;addMsg('网络错误('+e.message+')，请重试','bot')});
+}
+
+inputEl.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg()}});
 </script>
 </body>
 </html>
