@@ -1,649 +1,262 @@
-<!DOCTYPE html>
-<html lang="zh">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>问渠 · 有问必有答</title>
-<style>
-/* ===== 主题变量 ===== */
-:root {
-  --bg: #0a0a0f;
-  --bg2: rgba(10,10,18,.97);
-  --bg3: rgba(18,18,28,.8);
-  --bg4: rgba(20,20,32,.9);
-  --border: rgba(212,175,55,.12);
-  --border2: rgba(212,175,55,.08);
-  --gold: #d4af37;
-  --gold2: rgba(212,175,55,.08);
-  --gold3: rgba(212,175,55,.15);
-  --gold4: rgba(212,175,55,.05);
-  --text: #e8e8e8;
-  --text2: #aaa;
-  --text3: #888;
-  --text4: #666;
-  --text5: #555;
-  --text6: #444;
-  --muted: #555;
-  --green: #4ade80;
-  --red: #fca5a5;
-  --modal-bg: #111118;
-  --shadow: rgba(0,0,0,.5);
-  --card-bg: rgba(18,18,28,.8);
-  --card-border: rgba(212,175,55,.1);
-  --input-bg: rgba(20,20,32,.9);
-  --input-border: rgba(212,175,55,.15);
-  --input-focus: rgba(212,175,55,.5);
-  --glass-bg: rgba(10,10,18,.8);
-}
-[data-theme="light"] {
-  --bg: #f5f0e8;
-  --bg2: rgba(248,244,235,.98);
-  --bg3: rgba(255,252,245,.95);
-  --bg4: rgba(255,252,245,.97);
-  --border: rgba(180,140,40,.2);
-  --border2: rgba(180,140,40,.12);
-  --gold: #b8942a;
-  --gold2: rgba(180,140,40,.08);
-  --gold3: rgba(180,140,40,.15);
-  --gold4: rgba(180,140,40,.04);
-  --text: #2a2016;
-  --text2: #4a3828;
-  --text3: #6a5840;
-  --text4: #8a7858;
-  --text5: #7a6848;
-  --text6: #9a8868;
-  --muted: #8a7858;
-  --green: #22c55e;
-  --red: #dc2626;
-  --modal-bg: #faf7f0;
-  --shadow: rgba(100,80,20,.15);
-  --card-bg: rgba(255,252,245,.95);
-  --card-border: rgba(180,140,40,.18);
-  --input-bg: rgba(255,252,245,.97);
-  --input-border: rgba(180,140,40,.25);
-  --input-focus: rgba(180,140,40,.5);
-  --glass-bg: rgba(248,244,235,.9);
-}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow:hidden;transition:background .3s,color .3s}
-
-/* ===== 侧边栏 ===== */
-.sidebar{position:fixed;left:0;top:0;bottom:0;width:248px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;transition:transform .3s,background .3s}
-.sidebar-header{padding:16px 16px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
-.logo-font{font-family:"Ma Shan Zheng","Ma Shan Zheng Fallback","Noto Serif SC",serif;font-size:1.5rem;color:var(--gold);letter-spacing:.15em;text-shadow:0 0 20px rgba(212,175,55,.2)}
-.sidebar-tagline{font-size:.68rem;color:var(--text5);letter-spacing:.05em}
-
-.sidebar-nav{flex:1;overflow-y:auto;padding:6px 0}
-.sidebar-nav::-webkit-scrollbar{width:3px}
-.sidebar-nav::-webkit-scrollbar-thumb{background:var(--gold3);border-radius:2px}
-
-.nav-section{margin-bottom:2px}
-.nav-section-title{padding:7px 16px;font-size:.68rem;color:var(--muted);letter-spacing:.1em;cursor:pointer;display:flex;align-items:center;gap:6px;transition:color .2s}
-.nav-section-title:hover{color:var(--text2)}
-.nav-section-title .arr{margin-left:auto;font-size:.6rem;transition:transform .2s;color:var(--text6)}
-.nav-section-title.open .arr{transform:rotate(90deg)}
-.nav-items{display:none;padding:2px 8px 4px}
-.nav-items.open{display:block}
-.nav-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;color:var(--text2);font-size:.82rem;cursor:pointer;transition:all .2s;text-decoration:none}
-.nav-item:hover{background:var(--gold2);color:var(--gold)}
-.nav-item .emoji{font-size:1rem}
-.nav-item .count{margin-left:auto;font-size:.65rem;color:var(--text6);background:var(--gold4);padding:1px 5px;border-radius:4px}
-
-/* 会员入口 */
-.member-zone{border-top:1px solid var(--border);padding:10px 12px}
-.member-btn{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:var(--gold4);cursor:pointer;transition:all .25s;width:100%}
-.member-btn:hover{border-color:var(--gold);background:var(--gold2)}
-.member-btn .m-icon{font-size:1.3rem}
-.member-btn .m-text{flex:1;text-align:left}
-.member-btn .m-name{font-size:.85rem;color:var(--gold);font-weight:600}
-.member-btn .m-sub{font-size:.68rem;color:var(--text6);margin-top:2px}
-.member-btn .m-arrow{font-size:.7rem;color:var(--text6)}
-
-/* ===== 主区域 ===== */
-.main-area{position:fixed;left:248px;top:0;right:0;bottom:0;display:flex;flex-direction:column}
-
-/* 顶部 */
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-bottom:1px solid var(--border2);background:var(--glass-bg);backdrop-filter:blur(10px);z-index:50;transition:background .3s}
-.topbar-left{display:flex;align-items:center;gap:16px}
-.topbar-title{font-size:1.05rem;color:var(--gold);font-weight:600;font-family:"Ma Shan Zheng","Noto Serif SC",serif;letter-spacing:.1em}
-.topbar-right{display:flex;align-items:center;gap:12px}
-.topbar-status{display:flex;align-items:center;gap:6px;font-size:.72rem;color:var(--text5)}
-.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px rgba(74,222,128,.5);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-
-/* 主题切换 */
-.theme-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:var(--gold4);transition:all .2s}
-.theme-toggle:hover{background:var(--gold2);border-color:var(--gold3)}
-.theme-toggle .sun,.theme-toggle .moon{font-size:1rem;transition:all .3s}
-[data-theme="dark"] .theme-toggle .sun{display:none}
-[data-theme="light"] .theme-toggle .moon{display:none}
-[data-theme="light"] .theme-toggle{background:rgba(255,200,50,.08);border-color:rgba(255,180,0,.2)}
-
-/* Chat */
-.chat-area{flex:1;overflow-y:auto;padding:20px 30px;display:flex;flex-direction:column;gap:16px;transition:background .3s}
-.chat-area::-webkit-scrollbar{width:4px}
-.chat-area::-webkit-scrollbar-thumb{background:var(--gold3);border-radius:2px}
-
-.msg{max-width:680px;display:flex;gap:12px;animation:fadeIn .3s ease}
-.msg.user{flex-direction:row-reverse;align-self:flex-end}
-.msg-avatar{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
-.msg.user .msg-avatar{background:linear-gradient(135deg,var(--gold),#c49930);color:#0a0a0f}
-.msg.ai .msg-avatar{background:var(--gold4);border:1px solid var(--border);color:var(--gold);font-size:1.1rem}
-.msg-bubble{flex:1;padding:12px 16px;border-radius:12px;font-size:.9rem;line-height:1.7;word-break:break-word}
-.msg.user .msg-bubble{background:var(--gold2);border:1px solid var(--border);color:var(--text);border-radius:12px 12px 2px 12px}
-.msg.ai .msg-bubble{background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px 12px 12px 2px;color:var(--text)}
-.msg-time{font-size:.65rem;color:var(--text6);margin-top:6px;padding:0 4px}
-.msg.user .msg-time{text-align:right}
-
-.welcome-box{max-width:640px;margin:20px auto;text-align:center;padding:30px}
-.welcome-box h2{font-family:"Ma Shan Zheng","Noto Serif SC",serif;font-size:1.8rem;color:var(--gold);margin-bottom:10px;letter-spacing:.2em}
-.welcome-box p{font-size:.88rem;color:var(--text4);line-height:1.8}
-.hint-grid{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px}
-.hint-chip{padding:6px 14px;background:var(--gold4);border:1px solid var(--border);border-radius:20px;font-size:.78rem;color:var(--text3);cursor:pointer;transition:all .2s}
-.hint-chip:hover{border-color:var(--gold3);color:var(--gold);background:var(--gold2)}
-
-/* 输入区 */
-.input-area{padding:16px 24px 20px;border-top:1px solid var(--border2);background:var(--glass-bg);transition:background .3s}
-.input-row{display:flex;gap:10px;align-items:flex-end;max-width:760px;margin:0 auto}
-.chat-input{flex:1;background:var(--input-bg);border:1px solid var(--input-border);border-radius:12px;padding:12px 16px;font-size:.9rem;color:var(--text);outline:none;resize:none;line-height:1.5;min-height:48px;max-height:140px;transition:border-color .2s,background .3s,color .3s;font-family:inherit}
-.chat-input:focus{border-color:var(--input-focus);box-shadow:0 0 0 3px var(--gold4)}
-.chat-input::placeholder{color:var(--text5)}
-.send-btn{width:48px;height:48px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--gold),#c49930);color:#0a0a0f;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
-.send-btn:hover{transform:scale(1.05);box-shadow:0 0 20px rgba(212,175,55,.3)}
-.send-btn:disabled{opacity:.4;transform:none;cursor:not-allowed}
-
-.typing-indicator{display:inline-flex;gap:4px;padding:4px 0}
-.typing-indicator span{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:typing 1.2s infinite}
-.typing-indicator span:nth-child(2){animation-delay:.2s}
-.typing-indicator span:nth-child(3){animation-delay:.4s}
-@keyframes typing{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}}
-
-/* ===== 注册Modal ===== */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(4px)}
-.modal-overlay.show{display:flex}
-.reg-modal{background:var(--modal-bg);border:1px solid var(--border);border-radius:20px;width:min(460px,95vw);max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px var(--shadow);animation:modalIn .3s ease;transition:background .3s}
-@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(10px)}}
-.modal-header{text-align:center;padding:28px 30px 18px;border-bottom:1px solid var(--border2)}
-.modal-close{position:absolute;right:16px;top:16px;width:32px;height:32px;border-radius:8px;border:none;background:var(--gold4);color:var(--text5);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
-.modal-close:hover{background:var(--gold2);color:var(--text)}
-.reg-modal h2{font-family:"Ma Shan Zheng","Noto Serif SC",serif;font-size:1.6rem;color:var(--gold);letter-spacing:.15em;margin-bottom:6px}
-.reg-modal p{font-size:.82rem;color:var(--text4)}
-.modal-body{padding:26px 30px}
-
-.progress-bar{display:flex;align-items:center;gap:4px;margin-bottom:26px}
-.progress-step{flex:1;height:3px;border-radius:2px;background:var(--gold4);transition:background .4s}
-.progress-step.done,.progress-step.current{background:var(--gold)}
-
-.form-group{margin-bottom:16px}
-.form-group label{display:block;font-size:.78rem;color:var(--text3);margin-bottom:7px;letter-spacing:.05em}
-.form-input{width:100%;background:var(--input-bg);border:1px solid var(--input-border);border-radius:10px;padding:12px 14px;font-size:.9rem;color:var(--text);outline:none;transition:border-color .2s,background .3s,color .3s;font-family:inherit}
-.form-input:focus{border-color:var(--input-focus);box-shadow:0 0 0 3px var(--gold4)}
-.form-input::placeholder{color:var(--text5)}
-.form-hint{font-size:.72rem;color:var(--text5);margin-top:5px}
-
-.otp-row{display:flex;gap:10px}
-.otp-row .form-input{flex:1}
-.otp-btn{width:110px;height:46px;border-radius:10px;border:1px solid var(--border);background:var(--gold4);color:var(--gold);font-size:.8rem;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .2s;font-family:inherit}
-.otp-btn:hover:not(:disabled){background:var(--gold2)}
-.otp-btn:disabled{opacity:.4;cursor:not-allowed}
-
-.btn-primary{width:100%;height:48px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--gold),#c49930);color:#0a0a0f;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;font-family:inherit;letter-spacing:.05em}
-.btn-primary:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 4px 20px rgba(212,175,55,.3)}
-.btn-primary:disabled{opacity:.4;cursor:not-allowed;transform:none}
-.btn-ghost{width:100%;height:46px;border-radius:12px;border:1px solid var(--border);background:transparent;color:var(--text4);font-size:.9rem;cursor:pointer;transition:all .2s;font-family:inherit}
-.btn-ghost:hover{background:var(--gold2);color:var(--gold);border-color:var(--gold3)}
-.btn-row{display:flex;flex-direction:column;gap:10px;margin-top:22px}
-
-.key-box{background:var(--gold4);border:1px solid var(--border);border-radius:12px;padding:16px;margin-top:18px;position:relative}
-.key-label{font-size:.7rem;color:var(--text4);margin-bottom:8px;letter-spacing:.1em}
-.key-value{font-family:monospace;font-size:.85rem;color:var(--gold);word-break:break-all;background:var(--bg4);padding:8px 10px;border-radius:6px;border:1px solid var(--border2)}
-.key-copy{position:absolute;right:12px;top:12px;padding:4px 10px;background:var(--gold2);border:1px solid var(--border);border-radius:6px;color:var(--gold);font-size:.72rem;cursor:pointer;transition:all .2s}
-.key-copy:hover{background:var(--gold3)}
-
-.switch-mode{text-align:center;margin-top:14px;font-size:.8rem;color:var(--text5)}
-.switch-mode a{color:var(--gold);text-decoration:none;cursor:pointer}
-.switch-mode a:hover{text-decoration:underline}
-
-.alert{padding:10px 14px;border-radius:10px;font-size:.82rem;margin-bottom:12px;display:none}
-.alert.show{display:block}
-.alert.error{background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.2);color:var(--red)}
-.alert.success{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);color:var(--green)}
-.alert.info{background:var(--gold4);border:1px solid var(--border);color:var(--gold)}
-
-.reg-success{text-align:center;padding:16px 0}
-.reg-success .big-check{font-size:3rem;margin-bottom:14px}
-.reg-success h3{font-family:"Ma Shan Zheng",serif;font-size:1.3rem;color:var(--gold);margin-bottom:8px}
-.reg-success p{font-size:.85rem;color:var(--text4);line-height:1.7}
-.reg-success .api-note{margin-top:14px;padding:12px;background:var(--gold4);border-radius:10px;border:1px solid var(--border);text-align:left}
-.reg-success .api-note p{font-size:.78rem;color:var(--text4);line-height:1.8}
-
-.remember-row{display:flex;align-items:center;gap:8px;margin-top:12px}
-.remember-row input[type=checkbox]{width:16px;height:16px;accent-color:var(--gold);cursor:pointer}
-.remember-row label{font-size:.78rem;color:var(--text4);cursor:pointer}
-
-.step{display:none}
-.step.active{display:block}
-</style>
-</head>
-<body>
-
-<!-- 侧边栏 -->
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-header">
-    <div>
-      <div class="logo-font">问渠</div>
-      <div class="sidebar-tagline">有问必有答</div>
-    </div>
-  </div>
-  <nav class="sidebar-nav" id="sidebarNav">
-    <div class="nav-section">
-      <div class="nav-section-title open" data-section="history"><span>📜</span> 历史文化<span class="arr">▸</span></div>
-      <div class="nav-items open" id="nav-history"></div>
-    </div>
-    <div class="nav-section">
-      <div class="nav-section-title" data-section="science"><span>🔬</span> 现代科技<span class="arr">▸</span></div>
-      <div class="nav-items" id="nav-science"></div>
-    </div>
-    <div class="nav-section">
-      <div class="nav-section-title" data-section="life"><span>🏠</span> 生活百科<span class="arr">▸</span></div>
-      <div class="nav-items" id="nav-life"></div>
-    </div>
-    <div class="nav-section">
-      <div class="nav-section-title" data-section="tools"><span>⚡</span> 效率工具<span class="arr">▸</span></div>
-      <div class="nav-items" id="nav-tools"></div>
-    </div>
-    <div class="nav-section">
-      <div class="nav-section-title" data-section="finance"><span>💰</span> 财经商业<span class="arr">▸</span></div>
-      <div class="nav-items" id="nav-finance"></div>
-    </div>
-    <div class="nav-section">
-      <div class="nav-section-title" data-section="geo"><span>🌍</span> 天文地理<span class="arr">▸</span></div>
-      <div class="nav-items" id="nav-geo"></div>
-    </div>
-    <div class="nav-section">
-      <div class="nav-section-title" data-section="art"><span>🎨</span> 艺术娱乐<span class="arr">▸</span></div>
-      <div class="nav-items" id="nav-art"></div>
-    </div>
-    <div class="nav-section">
-      <div class="nav-section-title" data-section="ai"><span>🤖</span> AI工具<span class="arr">▸</span></div>
-      <div class="nav-items" id="nav-ai"></div>
-    </div>
-  </nav>
-  <div class="member-zone">
-    <button class="member-btn" id="memberBtn" onclick="openRegModal()">
-      <span class="m-icon" id="memberIcon">🔑</span>
-      <div class="m-text">
-        <div class="m-name" id="memberName">注册 / 登录</div>
-        <div class="m-sub" id="memberSub">开启会员专属记忆</div>
-      </div>
-      <span class="m-arrow">›</span>
-    </button>
-  </div>
-</aside>
-
-<!-- 主区域 -->
-<div class="main-area">
-  <header class="topbar">
-    <div class="topbar-left">
-      <div class="topbar-title">问渠AI智能助手</div>
-    </div>
-    <div class="topbar-right">
-      <div class="topbar-status">
-        <span class="dot"></span>
-        <span>永久免费</span>
-      </div>
-      <!-- 主题切换 -->
-      <div class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="切换深色/浅色">
-        <span class="sun">☀️</span>
-        <span class="moon">🌙</span>
-      </div>
-    </div>
-  </header>
-
-  <div class="chat-area" id="chatArea">
-    <div class="welcome-box">
-      <h2>有问必有答</h2>
-      <p>问渠是一个综合知识问答平台，AI助手可以回答各种问题。<br>试试问一个实时问题，比如：今天的新闻、成都天气、LNG价格走势……</p>
-      <div class="hint-grid">
-        <span class="hint-chip" onclick="ask('今天成都天气如何？')">成都天气</span>
-        <span class="hint-chip" onclick="ask('2026年LNG天然气价格走势如何？')">LNG价格</span>
-        <span class="hint-chip" onclick="ask('什么是天然气？LNG和CNG有什么区别？')">LNG与CNG</span>
-        <span class="hint-chip" onclick="ask('四川工业用户用气安全注意事项有哪些？')">用气安全</span>
-        <span class="hint-chip" onclick="ask('企业如何申请天然气供应？')">申请供气</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="input-area">
-    <div class="input-row">
-      <textarea class="chat-input" id="chatInput" rows="1" placeholder="输入问题，Shift+Enter换行，Enter发送…" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-      <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
-    </div>
-  </div>
-</div>
-
-<!-- 注册Modal -->
-<div class="modal-overlay" id="regModal">
-  <div class="reg-modal" onclick="event.stopPropagation()">
-    <div style="position:relative">
-      <button class="modal-close" onclick="closeRegModal()">✕</button>
-    </div>
-    <div class="modal-header">
-      <h2 id="modalTitle">会员注册</h2>
-      <p id="modalSub">注册后自动获得API Key，免费使用问渠AI</p>
-    </div>
-    <div class="modal-body">
-
-      <div class="progress-bar">
-        <div class="progress-step" id="ps1"></div>
-        <div class="progress-step" id="ps2"></div>
-        <div class="progress-step" id="ps3"></div>
-        <div class="progress-step" id="ps4"></div>
-      </div>
-
-      <!-- 注册页 -->
-      <div class="step active" id="stepReg">
-        <div class="alert error" id="regErr"></div>
-        <div class="form-group">
-          <label>手机号码（登录账号）</label>
-          <input type="tel" class="form-input" id="regPhone" placeholder="请输入中国大陆手机号" maxlength="11">
-        </div>
-        <div class="form-group">
-          <label>姓名（选填）</label>
-          <input type="text" class="form-input" id="regName" placeholder="请输入姓名">
-        </div>
-        <div class="form-group">
-          <label>设置密码</label>
-          <input type="password" class="form-input" id="regPw" placeholder="请设置密码（至少6位）">
-        </div>
-        <div class="form-group">
-          <label>短信验证码</label>
-          <div class="otp-row">
-            <input type="text" class="form-input" id="regOtp" placeholder="请输入6位验证码" maxlength="6">
-            <button class="otp-btn" id="otpBtn" onclick="sendOtp()">获取验证码</button>
-          </div>
-        </div>
-        <div class="btn-row">
-          <button class="btn-primary" id="regSubmit" onclick="doRegister()">立即注册</button>
-          <button class="btn-ghost" onclick="switchToLogin()">已有账号？立即登录</button>
-        </div>
-      </div>
-
-      <!-- 注册成功 -->
-      <div class="step" id="stepSuccess">
-        <div class="reg-success">
-          <div class="big-check">🎉</div>
-          <h3>注册成功！</h3>
-          <p>欢迎加入问渠，您的专属API Key如下：</p>
-          <div class="key-box">
-            <div class="key-label">您的专属 API KEY（永久有效）</div>
-            <div class="key-value" id="displayKey">wq_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</div>
-            <button class="key-copy" onclick="copyKey()">复制</button>
-          </div>
-          <div class="api-note">
-            <p><strong>💡 使用说明</strong></p>
-            <p>• 此Key为您的身份凭证，请妥善保存</p>
-            <p>• 可用于调用问渠API接口</p>
-            <p>• 有效期：永久（免费）</p>
-          </div>
-          <div class="btn-row">
-            <button class="btn-primary" onclick="closeRegModal();loadUser()">开始使用</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- 登录页 -->
-      <div class="step" id="stepLogin">
-        <div class="alert error" id="loginErr"></div>
-        <div class="form-group">
-          <label>手机号码</label>
-          <input type="tel" class="form-input" id="loginPhone" placeholder="请输入手机号" maxlength="11">
-        </div>
-        <div class="form-group">
-          <label>密码</label>
-          <input type="password" class="form-input" id="loginPw" placeholder="请输入密码" onkeydown="if(event.key==='Enter')doLogin()">
-        </div>
-        <div class="remember-row">
-          <input type="checkbox" id="rememberMe" checked>
-          <label for="rememberMe">记住我（30天免登录）</label>
-        </div>
-        <div class="btn-row">
-          <button class="btn-primary" id="loginBtn" onclick="doLogin()">登录</button>
-          <button class="btn-ghost" onclick="switchToReg()">没有账号？立即注册</button>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<script>
-const API = 'https://1423198240-0conai1m1r.ap-guangzhou.tencentscf.com';
-let currentUser = null;
-let chatHistory = [];
-
-// ====== 主题 ======
-function toggleTheme(){
-  const html = document.documentElement;
-  const current = html.getAttribute('data-theme');
-  const next = current === 'light' ? 'dark' : 'light';
-  html.setAttribute('data-theme', next);
-  localStorage.setItem('wq_theme', next);
-}
-(function(){
-  const saved = localStorage.getItem('wq_theme') || 'dark';
-  document.documentElement.setAttribute('data-theme', saved);
-})();
-
-// ====== 导航 ======
-const NAV_DATA = {
-  history:[{name:"中国历史",url:"history/chinese-history.html",emoji:"🏛️"},{name:"世界历史",url:"history/world-history.html",emoji:"🌍"},{name:"成语故事",url:"culture/chengyu.html",emoji:"📖"},{name:"诗词鉴赏",url:"culture/poetry.html",emoji:"🪷"},{name:"历史人物",url:"history/figures.html",emoji:"👤"}],
-  science:[{name:"科技百科",url:"science/tech.html",emoji:"🔬"},{name:"编程开发",url:"science/programming.html",emoji:"💻"},{name:"AI工具",url:"ai/ai-tools.html",emoji:"🤖"},{name:"科普知识",url:"science/science.html",emoji:"🧪"}],
-  life:[{name:"生活百科",url:"life/daily.html",emoji:"🏠"},{name:"健康养生",url:"life/health.html",emoji:"🍵"},{name:"烹饪食谱",url:"life/cooking.html",emoji:"🍜"},{name:"法律常识",url:"life/law.html",emoji:"⚖️"}],
-  tools:[{name:"JSON格式化",url:"tools/json.html",emoji:"📄"},{name:"颜色转换器",url:"tools/color.html",emoji:"🎨"},{name:"密码生成器",url:"tools/password.html",emoji:"🔐"},{name:"Base64编码",url:"tools/base64.html",emoji:"🔤"},{name:"二维码生成",url:"tools/qrcode.html",emoji:"📱"},{name:"URL编码解码",url:"tools/url.html",emoji:"🔗"},{name:"正则测试",url:"tools/regex.html",emoji:"🔍"},{name:"单位换算",url:"tools/unit.html",emoji:"⚖️"},{name:"时间戳转换",url:"tools/timestamp.html",emoji:"⏰"},{name:"进制转换",url:"tools/base.html",emoji:"🔢"}],
-  finance:[{name:"股票行情",url:"finance/stocks.html",emoji:"📈"},{name:"基金筛选",url:"finance/funds.html",emoji:"💹"},{name:"汇率换算",url:"finance/forex.html",emoji:"💱"},{name:"房贷计算",url:"finance/loan.html",emoji:"🏦"},{name:"理财工具",url:"finance/wealth.html",emoji:"💰"}],
-  geo:[{name:"世界地图",url:"geo/map.html",emoji:"🗺️"},{name:"国家百科",url:"geo/countries.html",emoji:"🌐"},{name:"天气查询",url:"geo/weather.html",emoji:"🌤️"},{name:"时区转换",url:"geo/timezone.html",emoji:"🕐"}],
-  art:[{name:"音乐欣赏",url:"art/music.html",emoji:"🎵"},{name:"电影推荐",url:"art/movies.html",emoji:"🎬"},{name:"读书笔记",url:"art/books.html",emoji:"📚"},{name:"艺术鉴赏",url:"art/art.html",emoji:"🖼️"}],
-  ai:[{name:"AI智能助手",url:"ai.html",emoji:"🤖"},{name:"AI写作助手",url:"ai/writer.html",emoji:"✍️"},{name:"AI翻译",url:"ai/translator.html",emoji:"🌐"},{name:"AI代码助手",url:"ai/coder.html",emoji:"⚡"}]
-};
-(function initNav(){
-  for(const [section,items] of Object.entries(NAV_DATA)){
-    const el=document.getElementById('nav-'+section);
-    if(el){
-      items.forEach(item=>{
-        const a=document.createElement('a');
-        a.className='nav-item';
-        a.href=item.url;
-        a.innerHTML='<span class="emoji">'+item.emoji+'</span>'+item.name;
-        el.appendChild(a);
-      });
-    }
-  }
-  document.querySelectorAll('.nav-section-title').forEach(el=>{
-    el.addEventListener('click',()=>{
-      el.classList.toggle('open');
-      const items=el.nextElementSibling;
-      if(items) items.classList.toggle('open');
-    });
-  });
-})();
-
-// ====== 聊天 ======
-function ask(q){
-  document.getElementById('chatInput').value=q;
-  sendMessage();
-}
-async function sendMessage(){
-  const input=document.getElementById('chatInput');
-  const text=input.value.trim();
-  if(!text) return;
-  input.value='';
-  input.style.height='auto';
-  addMsg(text,'user');
-  showTyping();
-  try{
-    const res=await fetch(API+'/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:text,history:chatHistory})});
-    const data=await res.json();
-    removeTyping();
-    addMsg(data.answer||'抱歉，AI暂时无法回答','ai');
-  }catch(e){
-    removeTyping();
-    addMsg('网络错误，请检查网络连接','ai');
-  }
-}
-function addMsg(text,sender){
-  const area=document.getElementById('chatArea');
-  const welcome=area.querySelector('.welcome-box');
-  if(welcome) welcome.remove();
-  const div=document.createElement('div');
-  div.className='msg '+sender;
-  const time=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
-  div.innerHTML='<div class="msg-avatar">'+(sender==='user'?'🧑':'🤖')+'</div><div><div class="msg-bubble">'+escapeHtml(text).replace(/\n/g,'<br>')+'</div><div class="msg-time">'+time+'</div></div>';
-  area.appendChild(div);
-  area.scrollTop=area.scrollHeight;
-  chatHistory.push({role:sender==='user'?'user':'assistant',content:text});
-}
-function showTyping(){
-  const area=document.getElementById('chatArea');
-  const div=document.createElement('div');
-  div.className='msg ai';
-  div.id='typingMsg';
-  div.innerHTML='<div class="msg-avatar">🤖</div><div><div class="msg-bubble"><div class="typing-indicator"><span></span><span></span><span></span></div></div></div>';
-  area.appendChild(div);
-  area.scrollTop=area.scrollHeight;
-}
-function removeTyping(){const t=document.getElementById('typingMsg');if(t)t.remove();}
-function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}
-function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,140)+'px';}
-function escapeHtml(str){if(!str)return'';return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-
-// ====== 注册 ======
-function openRegModal(){
-  document.getElementById('regModal').classList.add('show');
-  if(localStorage.getItem('wq_user')){
-    switchToLogin();
-    const u=JSON.parse(localStorage.getItem('wq_user'));
-    document.getElementById('loginPhone').value=u.phone||'';
-  } else {switchToReg();}
-}
-function closeRegModal(){document.getElementById('regModal').classList.remove('show');}
-function switchToReg(){
-  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
-  document.getElementById('stepReg').classList.add('active');
-  document.getElementById('modalTitle').textContent='会员注册';
-  document.getElementById('modalSub').textContent='注册后自动获得API Key，免费使用问渠AI';
-  document.querySelectorAll('.progress-step').forEach((el,i)=>el.className='progress-step');
-}
-function switchToLogin(){
-  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
-  document.getElementById('stepLogin').classList.add('active');
-  document.getElementById('modalTitle').textContent='会员登录';
-  document.getElementById('modalSub').textContent='登录后查看您的专属记忆和API Key';
-  document.querySelectorAll('.progress-step').forEach((el,i)=>el.className='progress-step');
-}
-
-async function sendOtp(){
-  const phone=document.getElementById('regPhone').value.trim();
-  if(phone.length!==11){showErr('regErr','请输入正确的11位手机号');return;}
-  const btn=document.getElementById('otpBtn');
-  btn.disabled=true;btn.textContent='发送中…';
-  try{
-    const res=await fetch(API+'/api/send_otp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone})});
-    const data=await res.json();
-    if(data.success){
-      showInfo('regErr','验证码已发送（请查收短信）');
-      startCountdown(60);
-    } else {
-      showErr('regErr',data.message||'发送失败');
-      btn.disabled=false;btn.textContent='获取验证码';
-    }
-  } catch(e){
-    showErr('regErr','网络错误，请重试');btn.disabled=false;btn.textContent='获取验证码';
-  }
-}
-function startCountdown(seconds){
-  let remaining=seconds;
-  const btn=document.getElementById('otpBtn');
-  const timer=setInterval(()=>{
-    remaining--;
-    btn.textContent=remaining+'秒后重发';
-    if(remaining<=0){clearInterval(timer);btn.disabled=false;btn.textContent='获取验证码';}
-  },1000);
-}
-
-async function doRegister(){
-  const phone=document.getElementById('regPhone').value.trim();
-  const name=document.getElementById('regName').value.trim();
-  const pw=document.getElementById('regPw').value;
-  const otp=document.getElementById('regOtp').value.trim();
-  if(!phone||phone.length!==11){showErr('regErr','请输入正确的11位手机号');return;}
-  if(!pw||pw.length<6){showErr('regErr','密码至少6位');return;}
-  if(!otp||otp.length!==6){showErr('regErr','请输入6位验证码');return;}
-  const btn=document.getElementById('regSubmit');
-  btn.disabled=true;btn.textContent='注册中…';
-  try{
-    const v=await fetch(API+'/api/verify_otp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,code:otp})});
-    const vd=await v.json();
-    if(!vd.success){showErr('regErr','验证码错误: '+vd.message);btn.disabled=false;btn.textContent='立即注册';return;}
-    const res=await fetch(API+'/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,name,password:pw})});
-    const data=await res.json();
-    if(data.success){
-      document.getElementById('displayKey').textContent=data.user.api_key;
-      document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
-      document.getElementById('stepSuccess').classList.add('active');
-      localStorage.setItem('wq_user',JSON.stringify({phone,name,api_key:data.user.api_key}));
-      currentUser={phone,name,api_key:data.user.api_key};
-      updateMemberBtn();
-    } else {showErr('regErr',data.message||'注册失败');}
-  } catch(e){showErr('regErr','注册失败，请重试');}
-  btn.disabled=false;btn.textContent='立即注册';
-}
-
-async function doLogin(){
-  const phone=document.getElementById('loginPhone').value.trim();
-  const pw=document.getElementById('loginPw').value;
-  if(!phone||!pw){showErr('loginErr','请输入手机号和密码');return;}
-  const btn=document.getElementById('loginBtn');
-  btn.disabled=true;btn.textContent='登录中…';
-  try{
-    const res=await fetch(API+'/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,password:pw})});
-    const data=await res.json();
-    if(data.success){
-      localStorage.setItem('wq_user',JSON.stringify({phone,name:data.user.name,api_key:data.user.api_key}));
-      currentUser={phone,name:data.user.name,api_key:data.user.api_key};
-      updateMemberBtn();
-      closeRegModal();
-    } else {showErr('loginErr',data.message||'登录失败');}
-  } catch(e){showErr('loginErr','网络错误，请重试');}
-  btn.disabled=false;btn.textContent='登录';
-}
-
-function loadUser(){}
-function updateMemberBtn(){
-  if(currentUser){
-    document.getElementById('memberIcon').textContent='👤';
-    document.getElementById('memberName').textContent=currentUser.name||currentUser.phone;
-    document.getElementById('memberSub').textContent='已登录会员';
-  }
-}
-function copyKey(){
-  const key=document.getElementById('displayKey').textContent;
-  navigator.clipboard.writeText(key).then(()=>{
-    const btn=document.querySelector('.key-copy');
-    btn.textContent='已复制!';
-    setTimeout(()=>btn.textContent='复制',1500);
-  });
-}
-function showErr(id,msg){const el=document.getElementById(id);if(el){el.textContent=msg;el.className='alert error show';setTimeout(()=>el.classList.remove('show'),4000);}}
-function showInfo(id,msg){const el=document.getElementById(id);if(el){el.textContent=msg;el.className='alert info show';setTimeout(()=>el.classList.remove('show'),4000);}}
-
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeRegModal();});
-document.getElementById('regModal').addEventListener('click',function(e){if(e.target===this)closeRegModal();});
-(function loadLocalUser(){
-  const stored=localStorage.getItem('wq_user');
-  if(stored){try{currentUser=JSON.parse(stored);updateMemberBtn();}catch(e){}}
-})();
-</script>
-</body>
-</html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>问渠AI - wenquso.cn</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#f5f0e8;--sidebar:#2c1810;--accent:#c9a96e;--text:#3d2b1f;--chat-bg:#fff;--panel:#faf7f2;--border:#d4c5b0}
+body{font-family:'Microsoft YaHei',sans-serif;background:var(--bg);height:100vh;display:flex;overflow:hidden}
+
+/* 左侧边栏 */
+.sidebar{width:260px;background:var(--sidebar);color:#fff;display:flex;flex-direction:column;padding:20px 0;flex-shrink:0}
+.logo{text-align:center;padding:15px 0 5px}
+.logo-title{font-size:52px;font-family:'KaiTi','STKaiti','楷体',serif;color:var(--accent);text-shadow:2px 2px 8px rgba(0,0,0,0.5);line-height:1.2}
+.logo-poem{font-size:13px;color:#c9a96e99;font-style:italic;margin-top:8px;line-height:1.5;padding:0 15px}
+.divider{height:1px;background:linear-gradient(90deg,transparent,#c9a96e55,transparent);margin:12px 20px}
+
+.history-widget{margin:0 15px;background:#ffffff10;border-radius:8px;padding:10px 12px}
+.history-widget h4{font-size:11px;color:var(--accent);margin-bottom:6px}
+.history-widget p{font-size:12px;color:#ccc;line-height:1.4}
+
+.tools-section{flex:1;padding:0 15px;overflow-y:auto}
+.tools-section h3{font-size:12px;color:#c9a96e99;margin:8px 0 8px;text-transform:uppercase;letter-spacing:1px}
+.tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:15px}
+.tool-btn{background:#ffffff10;border:1px solid #ffffff15;border-radius:8px;padding:10px 6px;text-align:center;cursor:pointer;transition:all 0.2s;text-decoration:none;color:#fff}
+.tool-btn:hover{background:#c9a96e33;border-color:var(--accent);transform:translateY(-2px)}
+.tool-btn .icon{font-size:22px;display:block;margin-bottom:4px}
+.tool-btn .name{font-size:11px;color:#ccc}
+
+.auth-section{padding:0 15px}
+.auth-btn{width:100%;padding:10px;background:var(--accent);color:#2c1810;border:none;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer}
+.auth-btn:hover{background:#ddb87a}
+
+/* 右侧主区域 */
+.main-area{flex:1;display:flex;overflow:hidden}
+
+/* AI对话区 */
+.chat-section{flex:4;display:flex;flex-direction:column;border-right:1px solid var(--border)}
+.chat-header{background:var(--panel);padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.chat-header h2{font-size:16px;color:var(--text)}
+.status-dot{width:8px;height:8px;background:#4caf50;border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+.chat-messages{flex:1;overflow-y:auto;padding:20px;background:var(--chat-bg)}
+.msg{margin-bottom:15px;animation:fadeIn 0.3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.msg.user{text-align:right}
+.msg.user .bubble{background:var(--accent);color:#fff;display:inline-block;padding:10px 15px;border-radius:15px 15px 3px 15px;max-width:75%;text-align:left}
+.msg.ai .bubble{background:var(--panel);color:var(--text);display:inline-block;padding:10px 15px;border-radius:15px 15px 15px 3px;max-width:75%;border:1px solid var(--border)}
+.typing{color:#999;font-size:13px;padding:5px 0;display:none}
+.typing.active{display:block}
+
+.chat-input-area{padding:15px 20px;background:var(--panel);border-top:1px solid var(--border)}
+.input-row{display:flex;gap:10px;align-items:center}
+#userInput{flex:1;padding:12px 15px;border:1px solid var(--border);border-radius:25px;background:#fff;font-size:14px;outline:none}
+#userInput:focus{border-color:var(--accent)}
+.send-btn{width:44px;height:44px;background:var(--accent);border:none;border-radius:50%;cursor:pointer;font-size:18px;transition:transform 0.2s}
+.send-btn:hover{transform:scale(1.1)}
+
+/* 右侧1/5面板 */
+.side-panel{flex:1;min-width:180px;max-width:220px;background:var(--panel);display:flex;flex-direction:column;padding:15px}
+.panel-section{flex:1;background:#fff;border-radius:10px;border:1px solid var(--border);padding:12px;margin-bottom:10px;overflow:hidden}
+.panel-section h4{font-size:12px;color:var(--accent);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.panel-section .content{font-size:12px;color:#666;line-height:1.5;overflow-y:auto;max-height:120px}
+.panel-section .content p{margin-bottom:5px}
+
+.ad-placeholder{background:linear-gradient(135deg,#f0e6d3,#e8dcc8);border-radius:10px;border:2px dashed var(--border);padding:20px;text-align:center;flex-shrink:0}
+.ad-placeholder p{font-size:12px;color:#aaa}
+
+/* 历史上的今天 - 获取中 */
+.history-loading{font-size:11px;color:#999;text-align:center;padding:5px}
+
+/* 响应式 */
+@media(max-width:900px){
+  .side-panel{display:none}
+  .chat-section{flex:1}
+  .sidebar{width:200px}
+}
+@media(max-width:600px){
+  .sidebar{width:60px}
+  .logo-poem,.tools-section h3,.tool-btn .name,.history-widget{display:none}
+  .logo-title{font-size:28px}
+  .tools-grid{grid-template-columns:1fr}
+  .tool-btn .icon{font-size:28px}
+}
+</style>
+</head>
+<body>
+
+<!-- 左侧边栏 -->
+<div class="sidebar">
+  <div class="logo">
+    <div class="logo-title">问渠</div>
+    <div class="logo-poem">问渠那得清如许？<br>为有源头活水来。</div>
+  </div>
+  
+  <div class="divider"></div>
+  
+  <div class="history-widget">
+    <h4>历史上的今天</h4>
+    <div id="historyToday" class="history-loading">加载中...</div>
+  </div>
+  
+  <div class="divider"></div>
+  
+  <div class="tools-section">
+    <h3>工具导航</h3>
+    <div class="tools-grid">
+      <a href="/" class="tool-btn" onclick="jumpHome(event)"><span class="icon">🏠</span><span class="name">首页</span></a>
+      <a href="/" class="tool-btn" onclick="jumpTools(event)"><span class="icon">🛠️</span><span class="name">工具</span></a>
+      <a href="/" class="tool-btn" onclick="jumpSearch(event)"><span class="icon">🔍</span><span class="name">搜索</span></a>
+      <a href="/" class="tool-btn" onclick="jumpConvert(event)"><span class="icon">🔄</span><span class="name">转换</span></a>
+      <a href="/" class="tool-btn" onclick="jumpCode(event)"><span class="icon">💻</span><span class="name">代码</span></a>
+      <a href="/" class="tool-btn" onclick="jumpImage(event)"><span class="icon">🖼️</span><span class="name">图片</span></a>
+      <a href="/" class="tool-btn" onclick="jumpText(event)"><span class="icon">📝</span><span class="name">文本</span></a>
+      <a href="/" class="tool-btn" onclick="jumpAI(event)"><span class="icon">🤖</span><span class="name">AI助手</span></a>
+    </div>
+  </div>
+  
+  <div class="auth-section">
+    <button class="auth-btn" id="authBtn" onclick="toggleAuth()">登录 / 注册</button>
+  </div>
+</div>
+
+<!-- 主对话区 -->
+<div class="main-area">
+  <div class="chat-section">
+    <div class="chat-header">
+      <div class="status-dot"></div>
+      <h2>问渠AI助手</h2>
+    </div>
+    
+    <div class="chat-messages" id="chatMessages">
+      <div class="msg ai"><div class="bubble">👋 您好！我是问渠AI助手，有什么可以帮助您的吗？</div></div>
+    </div>
+    
+    <div class="typing" id="typingIndicator">AI正在思考中...</div>
+    
+    <div class="chat-input-area">
+      <div class="input-row">
+        <input type="text" id="userInput" placeholder="输入问题，按回车发送..." onkeydown="if(event.key==='Enter')sendMessage()">
+        <button class="send-btn" onclick="sendMessage()">➤</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 右侧1/5面板 -->
+  <div class="side-panel">
+    <div class="panel-section">
+      <h4>📋 重要纪要</h4>
+      <div class="content" id="memoryPanel">
+        <p>登录后查看重要纪要</p>
+      </div>
+    </div>
+    
+    <div class="ad-placeholder">
+      <p>📢 广告位招商<br><small>精准投放 · 效果付费</small></p>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'https://1423198240-0conai1m1r.ap-guangzhou.tencentscf.com';
+let chatHistory = [];
+let currentUser = null;
+
+// 历史上的今天
+async function loadHistory() {
+  const el = document.getElementById('historyToday');
+  try {
+    const today = new Date();
+    const m = String(today.getMonth()+1).padStart(2,'0');
+    const d = String(today.getDate()).padStart(2,'0');
+    const r = await fetch(`https://en.wikipedia.org/api/rest_v1/feed/onthisday/events/${m}/${d}?limit=3`);
+    const j = await r.json();
+    if(j.events && j.events.length>0) {
+      const ev = j.events[0];
+      const year = ev.year || '';
+      const text = (ev.text || '').substring(0,60);
+      el.innerHTML = `<p><b>${year}</b> ${text}</p>`;
+    } else {
+      el.innerHTML = '<p>暂无数据</p>';
+    }
+  } catch(e) {
+    el.innerHTML = '<p>加载失败</p>';
+  }
+}
+
+// 工具跳转
+function jumpHome(e){ e.preventDefault(); location.href='/'; }
+function jumpTools(e){ e.preventDefault(); location.href='/tools.html'; }
+function jumpSearch(e){ e.preventDefault(); location.href='/search.html'; }
+function jumpConvert(e){ e.preventDefault(); location.href='/convert.html'; }
+function jumpCode(e){ e.preventDefault(); location.href='/code.html'; }
+function jumpImage(e){ e.preventDefault(); location.href='/image.html'; }
+function jumpText(e){ e.preventDefault(); location.href='/text.html'; }
+function jumpAI(e){ e.preventDefault(); }
+
+// 发送消息
+async function sendMessage() {
+  const input = document.getElementById('userInput');
+  const text = input.value.trim();
+  if(!text) return;
+  input.value = '';
+  addMsg(text, 'user');
+  showTyping(true);
+  
+  try {
+    const r = await fetch(API+'/api/chat', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({prompt:text, history:chatHistory})
+    });
+    const d = await r.json();
+    showTyping(false);
+    if(d.answer) {
+      addMsg(d.answer, 'ai');
+      chatHistory.push({role:'user',content:text},{role:'assistant',content:d.answer});
+    } else {
+      addMsg('抱歉，AI暂时无法回复', 'ai');
+    }
+  } catch(e) {
+    showTyping(false);
+    addMsg('网络错误，请检查网络后重试', 'ai');
+  }
+}
+
+function addMsg(text, who) {
+  const box = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = `msg ${who}`;
+  div.innerHTML = `<div class="bubble">${escapeHtml(text)}</div>`;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+
+function showTyping(show) {
+  document.getElementById('typingIndicator').className = show?'typing active':'typing';
+}
+
+function escapeHtml(t) {
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function toggleAuth() {
+  const btn = document.getElementById('authBtn');
+  if(currentUser) {
+    currentUser = null;
+    btn.textContent = '登录 / 注册';
+    document.getElementById('memoryPanel').innerHTML = '<p>登录后查看重要纪要</p>';
+  } else {
+    alert('注册功能即将上线，请联系管理员获取API密钥');
+  }
+}
+
+// 初始化
+loadHistory();
+document.getElementById('userInput').focus();
+</script>
+</body>
+</html>
