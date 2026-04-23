@@ -31,19 +31,9 @@
             justify-content: space-between;
             align-items: center;
         }
-        .header-left h1 {
-            font-size: 24px;
-            margin-bottom: 5px;
-        }
-        .header-left p {
-            opacity: 0.8;
-            font-size: 13px;
-        }
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .header-left h1 { font-size: 24px; margin-bottom: 5px; }
+        .header-left p { opacity: 0.8; font-size: 13px; }
+        .header-right { display: flex; align-items: center; gap: 10px; }
         .model-select {
             padding: 8px 15px;
             border-radius: 20px;
@@ -54,16 +44,17 @@
             cursor: pointer;
         }
         .model-select option { color: #333; background: white; }
-        .model-status {
+        .model-status { font-size: 11px; opacity: 0.7; }
+        .search-status {
             font-size: 11px;
-            opacity: 0.7;
+            padding: 3px 10px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.15);
+            display: none;
         }
-        .chat-area {
-            height: 450px;
-            overflow-y: auto;
-            padding: 20px;
-            background: #f8f9fa;
-        }
+        .search-status.active { display: inline-block; background: #27ae60; }
+        .search-status.searching { background: #f39c12; }
+        .chat-area { height: 450px; overflow-y: auto; padding: 20px; background: #f8f9fa; }
         .message { margin-bottom: 15px; display: flex; flex-direction: column; }
         .message.user { align-items: flex-end; }
         .message.assistant { align-items: flex-start; }
@@ -87,15 +78,8 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.08);
             border-bottom-left-radius: 5px;
         }
-        .model-tag {
-            font-size: 11px;
-            color: #888;
-            margin-top: 5px;
-            padding: 0 5px;
-        }
-        .loading {
-            display: flex; gap: 5px; padding: 15px 20px;
-        }
+        .model-tag { font-size: 11px; color: #888; margin-top: 5px; padding: 0 5px; }
+        .loading { display: flex; gap: 5px; padding: 15px 20px; }
         .loading span {
             width: 8px; height: 8px; background: #0f3460;
             border-radius: 50%;
@@ -170,20 +154,20 @@
         <div class="header">
             <div class="header-left">
                 <h1>问渠AI助手</h1>
-                <p>阿里云FC + 硅基流动 · 免费模型聚合</p>
+                <p>硅基流动 · 免费模型 · 联网搜索</p>
             </div>
             <div class="header-right">
                 <select class="model-select" id="modelSelect">
-                    <option value="auto">自动选择 (免费)</option>
                     <option value="Qwen/Qwen2.5-7B-Instruct">Qwen2.5-7B</option>
                     <option value="Qwen/Qwen3-8B">Qwen3-8B</option>
                     <option value="THUDM/GLM-4-9B-0414">GLM-4-9B</option>
                     <option value="deepseek-ai/DeepSeek-V3">DeepSeek-V3</option>
                 </select>
                 <span class="model-status" id="modelStatus">就绪</span>
+                <span class="search-status" id="searchStatus"></span>
             </div>
         </div>
-        
+
         <div class="chat-area" id="chatArea">
             <div class="message assistant">
                 <div class="bubble">👋 您好！我是问渠AI助手。
@@ -192,19 +176,20 @@
 • 天然气/LNG相关问题
 • 生活常识、科学知识
 • 新闻资讯、技术问题
+• 实时热点查询（联网获取最新信息）
 
 请选择模型后开始提问！</div>
             </div>
         </div>
-        
+
         <div class="examples">
             <span class="examples-title">试试：</span>
             <button class="example-btn" onclick="askExample('今天成都天气怎么样？')">成都天气</button>
-            <button class="example-btn" onclick="askExample('2026年有什么重要新闻？')">2026年新闻</button>
-            <button class="example-btn" onclick="askExample('LNG天然气安全储存规范')">LNG储存规范</button>
-            <button class="example-btn" onclick="askExample('天然气和液化气有什么区别？')">天然气区别</button>
+            <button class="example-btn" onclick="askExample('今天LNG天然气价格最新行情')">LNG价格</button>
+            <button class="example-btn" onclick="askExample('2026年4月有什么重要新闻？')">4月新闻</button>
+            <button class="example-btn" onclick="askExample('LNG天然气安全储存规范')">LNG储存</button>
         </div>
-        
+
         <div class="input-area">
             <input type="text" id="userInput" placeholder="输入你的问题，按Enter发送..." onkeypress="handleKeyPress(event)">
             <button id="sendBtn" onclick="sendMessage()">发送</button>
@@ -217,9 +202,23 @@
         const sendBtn = document.getElementById('sendBtn');
         const modelSelect = document.getElementById('modelSelect');
         const modelStatus = document.getElementById('modelStatus');
+        const searchStatus = document.getElementById('searchStatus');
 
-        // 阿里云FC后端API地址
-        const API_BASE_URL = "https://wenqu-api-razomopwsq.cn-hangzhou.fcapp.run";
+        // 硅基流动 API Key（免费）
+        const API_KEY = "sk-bpbwbmbqkcjqjbrjiijkmkmpypwitkkypifldowwhghecruc";
+        const API_BASE = "https://api.siliconflow.cn/v1";
+
+        // 实时关键词（检测到这些词时先联网搜索）
+        const REALTIME_KEYWORDS = [
+            '今天','昨天','明天','本周','本月','今年','近期',
+            '新闻','热点','最新','现在','此刻','实时',
+            '天气','气温','下雨','晴天','暴雨','地震',
+            '股票','股价','行情','涨跌','大盘','指数',
+            'lng价格','天然气价格','油价','期货',
+            '特朗普','习近平','美国','中国','俄罗斯','国际',
+            '疫情','流感','病毒','疫苗',
+            '比赛','直播','上映','发布','开幕','闭幕'
+        ];
 
         function addMessage(role, content, modelInfo) {
             const msg = document.createElement('div');
@@ -230,13 +229,20 @@
             chatArea.scrollTop = chatArea.scrollHeight;
         }
 
-        function addLoading() {
+        function addLoading(text) {
+            removeLoading();
             const msg = document.createElement('div');
             msg.className = 'message assistant';
             msg.id = 'loadingMsg';
-            msg.innerHTML = `<div class="loading"><span></span><span></span><span></span></div>`;
+            msg.innerHTML = `<div class="loading"><span></span><span></span><span></span></div>
+                <div class="model-tag" id="loadingText">${text || '思考中...'}</div>`;
             chatArea.appendChild(msg);
             chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        function updateLoadingText(text) {
+            const el = document.getElementById('loadingText');
+            if (el) el.textContent = text;
         }
 
         function removeLoading() {
@@ -263,31 +269,87 @@
             modelStatus.textContent = text;
         }
 
-        async function callBackend(message, model) {
-            setStatus('请求中...');
-            const response = await fetch(API_BASE_URL + "/api/chat", {
-                method: "POST",
+        function setSearchStatus(text, type) {
+            searchStatus.textContent = text;
+            searchStatus.className = 'search-status active' + (type ? ' ' + type : '');
+        }
+
+        function clearSearchStatus() {
+            searchStatus.className = 'search-status';
+            searchStatus.textContent = '';
+        }
+
+        // 检测是否需要联网搜索
+        function needsRealtime(question) {
+            const q = question.toLowerCase();
+            return REALTIME_KEYWORDS.some(kw => q.includes(kw));
+        }
+
+        // 联网搜索（使用DuckDuckGo API）
+        async function webSearch(query) {
+            setSearchStatus('🔍 联网搜索...', 'searching');
+            try {
+                // 使用 DuckDuckGo Instant Answer API
+                const url = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&skip_disambig=1`;
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('搜索请求失败');
+                const data = await response.json();
+
+                let results = [];
+                // 提取Abstract（摘要）
+                if (data.AbstractText) {
+                    results.push(`【摘要】${data.AbstractText}`);
+                }
+                // 提取Related Topics（相关内容）
+                if (data.RelatedTopics && data.RelatedTopics.length > 0) {
+                    const topics = data.RelatedTopics.slice(0, 3)
+                        .filter(t => t.Text)
+                        .map(t => `• ${t.Text}`);
+                    if (topics.length > 0) {
+                        results.push(`【相关信息】\n${topics.join('\n')}`);
+                    }
+                }
+                // 提取答案卡片
+                if (data.Answer) {
+                    results.unshift(`【答案】${data.Answer}`);
+                }
+
+                const searchResult = results.length > 0
+                    ? results.join('\n\n')
+                    : '（未找到相关信息，将基于已有知识回答）';
+
+                clearSearchStatus();
+                return searchResult;
+            } catch (e) {
+                clearSearchStatus();
+                return '（联网搜索失败，将基于已有知识回答）';
+            }
+        }
+
+        // 调用硅基流动AI
+        async function callAI(prompt, model) {
+            setStatus('AI思考中...');
+            const response = await fetch(API_BASE + '/chat/completions', {
+                method: 'POST',
                 headers: {
-                    "Content-Type": "application/json"
+                    'Authorization': 'Bearer ' + API_KEY,
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    message: message,
-                    model: model || "Qwen/Qwen2.5-7B-Instruct"
+                    model: model,
+                    messages: [{ role: 'user', content: prompt }],
+                    stream: false
                 })
             });
             if (!response.ok) {
                 const errText = await response.text();
-                throw new Error("Backend HTTP " + response.status + ": " + errText);
+                throw new Error('AI请求失败 HTTP ' + response.status + ': ' + errText);
             }
             const data = await response.json();
-            if (!data.success) {
-                throw new Error(data.reply || "后端返回错误");
+            if (data.error) {
+                throw new Error('AI错误: ' + (data.error.message || JSON.stringify(data.error)));
             }
-            return {
-                content: data.reply,
-                model: data.model || "unknown",
-                provider: "硅基流动"
-            };
+            return data.choices[0].message.content;
         }
 
         async function sendMessage() {
@@ -297,19 +359,33 @@
             addMessage('user', question);
             userInput.value = '';
             sendBtn.disabled = true;
-            addLoading();
 
-            const model = modelSelect.value === 'auto' ? null : modelSelect.value;
+            const model = modelSelect.value;
 
             try {
-                const result = await callBackend(question, model);
+                // 检测是否需要联网
+                const isRealtime = needsRealtime(question);
+                let prompt = question;
+
+                if (isRealtime) {
+                    addLoading('联网搜索中...');
+                    const searchResults = await webSearch(question);
+                    updateLoadingText('AI思考中...');
+                    prompt = `你是一个知识渊博的助手。请根据以下搜索结果回答用户问题。如果搜索结果中有相关信息，请优先使用。如果搜索结果不够完整，请结合你的知识补充。\n\n搜索结果：\n${searchResults}\n\n用户问题：${question}`;
+                } else {
+                    addLoading('AI思考中...');
+                }
+
+                const answer = await callAI(prompt, model);
                 removeLoading();
-                addMessage('assistant', result.content, `由 ${result.provider} · ${result.model} 生成`);
+                addMessage('assistant', answer, `由硅基流动 · ${model.split('/').pop()} 生成`);
                 setStatus('就绪');
+                clearSearchStatus();
             } catch (e) {
                 removeLoading();
-                addMessage('assistant', '抱歉，服务暂时不可用。请稍后刷新重试。\n错误: ' + e.message, '');
+                addMessage('assistant', '抱歉，服务暂时不可用。\n错误: ' + e.message, '');
                 setStatus('出错');
+                clearSearchStatus();
             }
 
             sendBtn.disabled = false;
