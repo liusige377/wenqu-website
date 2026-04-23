@@ -737,24 +737,25 @@
 
                 if (isRealtime) {
 
-                    addLoading('联网搜索中...');
-                    const searchResults = await webSearch(question);
-                    
-                    // 纯日期/时间问题直接前端回答，不调用AI
+                    // 纯日期/时间问题直接前端回答，不调用AI也不联网
                     const q = question.toLowerCase();
                     const isPureDateTime = (
                         q.includes('今天') || q.includes('日期') || q.includes('几号') || 
-                        q.includes('星期') || q.includes('礼拜')
+                        q.includes('星期') || q.includes('礼拜') || q.includes('现在几点') ||
+                        q.includes('今年') || q.includes('本月') || q.includes('此刻')
                     );
                     
-                    if (isPureDateTime && searchResults.startsWith('【当前日期】')) {
+                    if (isPureDateTime) {
                         removeLoading();
-                        addMessage('assistant', searchResults, '由前端实时获取');
+                        addMessage('assistant', getDateTimeInfo(), '由前端实时获取');
                         setStatus('就绪');
                         sendBtn.disabled = false;
                         userInput.focus();
                         return;
                     }
+                    
+                    addLoading('联网搜索中...');
+                    const searchResults = await webSearch(question);
                     
                     updateLoadingText('AI思考中...');
                     prompt = `你是问渠AI助手。以下搜索结果包含准确信息，请直接回答用户问题，不要说你无法访问实时数据。
