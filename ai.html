@@ -738,15 +738,34 @@
                 if (isRealtime) {
 
                     addLoading('联网搜索中...');
-
                     const searchResults = await webSearch(question);
-
+                    
+                    // 纯日期/时间问题直接前端回答，不调用AI
+                    const q = question.toLowerCase();
+                    const isPureDateTime = (
+                        q.includes('今天') || q.includes('日期') || q.includes('几号') || 
+                        q.includes('星期') || q.includes('礼拜')
+                    );
+                    
+                    if (isPureDateTime && searchResults.startsWith('【当前日期】')) {
+                        removeLoading();
+                        addMessage('assistant', searchResults, '由前端实时获取');
+                        setStatus('就绪');
+                        sendBtn.disabled = false;
+                        userInput.focus();
+                        return;
+                    }
+                    
                     updateLoadingText('AI思考中...');
+                    prompt = `你是问渠AI助手。以下搜索结果包含准确信息，请直接回答用户问题，不要说你无法访问实时数据。
 
-                    prompt = `你是问渠AI助手，拥有实时信息获取能力。以下搜索结果包含准确信息，请直接回答用户问题，不要说你无法访问实时数据。\n\n重要：如果搜索结果中包含今天的日期、时间或实时信息，请直接使用这些信息回答，不要说你不知道。\n\n搜索结果：\n${searchResults}\n\n用户问题：${question}\n\n请直接回答，不要提及你无法访问实时数据。`;
+搜索结果：
+${searchResults}
 
+用户问题：${question}
+
+请直接回答，不要提及你无法访问实时数据。`;
                 } else {
-
                     addLoading('AI思考中...');
 
                 }
