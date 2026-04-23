@@ -275,17 +275,17 @@ function calcPyth(){
   if(isNaN(a)&&isNaN(b)&&isNaN(c)){show(el,'请输入至少两边');return;}
   if(!isNaN(a)&&!isNaN(b)){
     var r=Math.sqrt(a*a+b*b);
-    show(el,'<div class="item"><span class=label>已知a='+a+', b='+b+'</span></div><div class="item"><span class=label>斜边c = √(a²+b²)</span><span class=highlight>'+fmt(r)+'</span></div>');
+    show(el,'<div class="item"><span class="label">已知a='+a+', b='+b+'</span></div><div class="item"><span class="label">斜边c = √(a²+b²)</span><span class="highlight">'+fmt(r)+'</span></div>');
     return;
   }
   if(!isNaN(c)&&!isNaN(a)&&a<c){
     var r2=Math.sqrt(c*c-a*a);
-    show(el,'<div class="item"><span class=label>已知a='+a+', c='+c+'</span></div><div class="item"><span class=label>另一边b = √(c²-a²)</span><span class=highlight>'+fmt(r2)+'</span></div>');
+    show(el,'<div class="item"><span class="label">已知a='+a+', c='+c+'</span></div><div class="item"><span class="label">另一边b = √(c²-a²)</span><span class="highlight">'+fmt(r2)+'</span></div>');
     return;
   }
   if(!isNaN(c)&&!isNaN(b)&&b<c){
     var r3=Math.sqrt(c*c-b*b);
-    show(el,'<div class="item"><span class=label>已知b='+b+', c='+c+'</span></div><div class="item"><span class=label>另一边a = √(c²-b²)</span><span class=highlight>'+fmt(r3)+'</span></div>');
+    show(el,'<div class="item"><span class="label">已知b='+b+', c='+c+'</span></div><div class="item"><span class="label">另一边a = √(c²-b²)</span><span class="highlight">'+fmt(r3)+'</span></div>');
     return;
   }
   show(el,'请输入至少两边（勾股定理：a²+b²=c²）');
@@ -298,7 +298,7 @@ function calcRate(){
   var el=document.getElementById('fp1-r');
   if(!p||!r||!y){show(el,'请填写全部字段');return;}
   var interest=p*r*y,total=p+interest;
-  show(el,'<div class="item"><span class=label>本金</span><span class=value>'+p.toLocaleString()+' 元</span></div><div class="item"><span class=label>利息</span><span class=highlight>'+interest.toLocaleString()+' 元</span></div><div class="item"><span class=label>本息合计</span><span class=highlight>'+total.toLocaleString()+' 元</span></div><div class="item"><span class=label>年利率</span><span class=value>'+(r*100).toFixed(2)+'% × '+y+'年</span></div>');
+  show(el,'<div class="item"><span class="label">本金</span><span class="value">'+p.toLocaleString()+' 元</span></div><div class="item"><span class="label">利息</span><span class="highlight">'+interest.toLocaleString()+' 元</span></div><div class="item"><span class="label">本息合计</span><span class="highlight">'+total.toLocaleString()+' 元</span></div><div class="item"><span class="label">年利率</span><span class="value">'+(r*100).toFixed(2)+'% × '+y+'年</span></div>');
 }
 
 function calcPerm(){
@@ -308,7 +308,7 @@ function calcPerm(){
   if(!n||!r||r>n){show(el,'请输入 n≥r 的整数');return;}
   var fact=function(x){for(var s=1,i=2;i<=x;i++)s*=i;return s;};
   var A=fact(n)/fact(n-r),C=fact(n)/(fact(r)*fact(n-r));
-  show(el,'<div class="item"><span class=label>排列 A(n,r)=n!/(n-r)!</span><span class=highlight>'+A+'</span></div><div class="item"><span class=label>组合 C(n,r)=n!/[r!(n-r)!]</span><span class=highlight>'+C+'</span></div><div class="item"><span class=label>n='+n+', r='+r+'</span></div>');
+  show(el,'<div class="item"><span class="label">排列 A(n,r)=n!/(n-r)!</span><span class="highlight">'+A+'</span></div><div class="item"><span class="label">组合 C(n,r)=n!/[r!(n-r)!]</span><span class="highlight">'+C+'</span></div><div class="item"><span class="label">n='+n+', r='+r+'</span></div>');
 }
 
 function calcAP(){
@@ -318,7 +318,7 @@ function calcAP(){
   var el=document.getElementById('fp3-r');
   if(!a1||!d||!n){show(el,'请填写全部字段');return;}
   var an=a1+(n-1)*d,sum=n*a1+(n-1)*n*d/2;
-  show(el,'<div class="item"><span class=label>首项 a₁</span><span class=value>'+a1+'</span></div><div class="item"><span class=label>公差 d</span><span class=value>'+d+'</span></div><div class="item"><span class=label>项数 n</span><span class=value>'+n+'</span></div><div class="item"><span class=label>末项 aₙ = a₁+(n-1)d</span><span class=highlight>'+fmt(an)+'</span></div><div class="item"><span class=label>总和 Sₙ = n·a₁+n(n-1)d/2</span><span class=highlight>'+fmt(sum)+'</span></div>');
+  show(el,'<div class="item"><span class="label">首项 a₁</span><span class="value">'+a1+'</span></div><div class="item"><span class="label">公差 d</span><span class="value">'+d+'</span></div><div class="item"><span class="label">项数 n</span><span class="value">'+n+'</span></div><div class="item"><span class="label">末项 aₙ = a₁+(n-1)d</span><span class="highlight">'+fmt(an)+'</span></div><div class="item"><span class="label">总和 Sₙ = n·a₁+n(n-1)d/2</span><span class="highlight">'+fmt(sum)+'</span></div>');
 }
 
 function calcGP(){
@@ -328,7 +328,7 @@ function calcGP(){
   var el=document.getElementById('fp4-r');
   if(!a1||!q||!n||q===1){show(el,'请填写全部字段（公比q不能为1）');return;}
   var an=a1*Math.pow(q,n-1),sum=a1*(Math.pow(q,n)-1)/(q-1);
-  show(el,'<div class="item"><span class=label>首项 a₁</span><span class=value>'+a1+'</span></div><div class="item"><span class=label>公比 q</span><span class=value>'+q+'</span></div><div class="item"><span class=label>项数 n</span><span class=value>'+n+'</span></div><div class="item"><span class=label>末项 aₙ = a₁·q^(n-1)</span><span class=highlight>'+fmt(an)+'</span></div><div class="item"><span class=label>总和 Sₙ = a₁(q^n-1)/(q-1)</span><span class=highlight>'+fmt(sum)+'</span></div>');
+  show(el,'<div class="item"><span class="label">首项 a₁</span><span class="value">'+a1+'</span></div><div class="item"><span class="label">公比 q</span><span class="value">'+q+'</span></div><div class="item"><span class="label">项数 n</span><span class="value">'+n+'</span></div><div class="item"><span class="label">末项 aₙ = a₁·q^(n-1)</span><span class="highlight">'+fmt(an)+'</span></div><div class="item"><span class="label">总和 Sₙ = a₁(q^n-1)/(q-1)</span><span class="highlight">'+fmt(sum)+'</span></div>');
 }
 
 // ========== 几何计算 ==========
@@ -338,7 +338,7 @@ function calcRect(){
   var el=document.getElementById('gp0-r');
   if(!l||!w){show(el,'请输入长和宽');return;}
   var area=l*w,peri=2*(l+w);
-  show(el,'<div class="item"><span class=label>长×宽</span><span class=highlight>'+area.toFixed(2)+'</span></div><div class="item"><span class=label>周长 2(长+宽)</span><span class=value>'+peri.toFixed(2)+'</span></div>');
+  show(el,'<div class="item"><span class="label">长×宽</span><span class="highlight">'+area.toFixed(2)+'</span></div><div class="item"><span class="label">周长 2(长+宽)</span><span class="value">'+peri.toFixed(2)+'</span></div>');
 }
 
 function calcTri(){
@@ -349,13 +349,13 @@ function calcTri(){
   var c2=parseFloat(document.getElementById('gp1-c2').value);
   var el=document.getElementById('gp1-r');
   if(!isNaN(a)&&!isNaN(h)){
-    show(el,'<div class="item"><span class=label>底×高÷2</span><span class=highlight>'+(a*h/2).toFixed(4)+'</span></div>');
+    show(el,'<div class="item"><span class="label">底×高÷2</span><span class="highlight">'+(a*h/2).toFixed(4)+'</span></div>');
     return;
   }
   if(!isNaN(a2)&&!isNaN(b2)&&!isNaN(c2)){
     var s=(a2+b2+c2)/2,area=Math.sqrt(s*(s-a2)*(s-b2)*(s-c2));
     if(isNaN(area)){show(el,'<span style="color:#f88">三边无法构成三角形</span>');return;}
-    show(el,'<div class="item"><span class=label>海伦公式 √[s(s-a)(s-b)(s-c)]</span><span class=highlight>'+area.toFixed(4)+'</span></div>');
+    show(el,'<div class="item"><span class="label">海伦公式 √[s(s-a)(s-b)(s-c)]</span><span class="highlight">'+area.toFixed(4)+'</span></div>');
     return;
   }
   show(el,'请输入底和高，或输入三边');
@@ -365,7 +365,7 @@ function calcCircle(){
   var r=parseFloat(document.getElementById('gp2-r').value);
   var el=document.getElementById('gp2-r');
   if(!r){show(el,'请输入半径');return;}
-  show(el,'<div class="item"><span class=label>圆面积 πr²</span><span class=highlight>'+(Math.PI*r*r).toFixed(4)+'</span></div><div class="item"><span class=label>圆周长 2πr</span><span class=value>'+(2*Math.PI*r).toFixed(4)+'</span></div><div class="item"><span class=label>球表面积 4πr²</span><span class=highlight>'+(4*Math.PI*r*r).toFixed(4)+'</span></div><div class="item"><span class=label>球体积 ⁴⁄₃πr³</span><span class=highlight>'+(4/3*Math.PI*r*r*r).toFixed(4)+'</span></div>');
+  show(el,'<div class="item"><span class="label">圆面积 πr²</span><span class="highlight">'+(Math.PI*r*r).toFixed(4)+'</span></div><div class="item"><span class="label">圆周长 2πr</span><span class="value">'+(2*Math.PI*r).toFixed(4)+'</span></div><div class="item"><span class="label">球表面积 4πr²</span><span class="highlight">'+(4*Math.PI*r*r).toFixed(4)+'</span></div><div class="item"><span class="label">球体积 ⁴⁄₃πr³</span><span class="highlight">'+(4/3*Math.PI*r*r*r).toFixed(4)+'</span></div>');
 }
 
 function calcCyl(){
@@ -374,7 +374,7 @@ function calcCyl(){
   var el=document.getElementById('gp3-r');
   if(!r||!h){show(el,'请输入半径和高');return;}
   var side=2*Math.PI*r*h,area=2*Math.PI*r*r+side,vol=Math.PI*r*r*h;
-  show(el,'<div class="item"><span class=label>圆柱侧面积 2πrh</span><span class=value>'+side.toFixed(4)+'</span></div><div class="item"><span class=label>圆柱表面积</span><span class=value>'+area.toFixed(4)+'</span></div><div class="item"><span class=label>圆柱体积 πr²h</span><span class=highlight>'+vol.toFixed(4)+'</span></div><div class="item"><span class=label>圆锥体积 ⅓πr²h</span><span class=highlight>'+(vol/3).toFixed(4)+'</span></div>');
+  show(el,'<div class="item"><span class="label">圆柱侧面积 2πrh</span><span class="value">'+side.toFixed(4)+'</span></div><div class="item"><span class="label">圆柱表面积</span><span class="value">'+area.toFixed(4)+'</span></div><div class="item"><span class="label">圆柱体积 πr²h</span><span class="highlight">'+vol.toFixed(4)+'</span></div><div class="item"><span class="label">圆锥体积 ⅓πr²h</span><span class="highlight">'+(vol/3).toFixed(4)+'</span></div>');
 }
 
 function calcTrapezoid(){
@@ -384,7 +384,7 @@ function calcTrapezoid(){
   var el=document.getElementById('gp4-r');
   if(!a||!b||!h){show(el,'请输入上底、下底和高');return;}
   var area=(a+b)*h/2;
-  show(el,'<div class="item"><span class=label>梯形面积 (上底+下底)×高÷2</span><span class=highlight>'+area.toFixed(4)+'</span></div>');
+  show(el,'<div class="item"><span class="label">梯形面积 (上底+下底)×高÷2</span><span class="highlight">'+area.toFixed(4)+'</span></div>');
 }
 
 // ========== 药量计算 ==========
@@ -395,7 +395,7 @@ function calcDose(){
   var el=document.getElementById('dose-result');
   if(!w||!p||!n){show(el,'请填写全部字段');return;}
   var single=w*p,daily=single*n,weekly=daily*7;
-  show(el,'<div class="item"><span class=label>单次剂量</span><span class=highlight>'+single.toFixed(1)+' mg</span></div><div class="item"><span class=label>每日总剂量</span><span class=highlight>'+daily.toFixed(1)+' mg</span></div><div class="item"><span class=label>每周总剂量</span><span class=highlight>'+weekly.toFixed(1)+' mg</span></div><div class="item"><span class=label>体重 '+w+'kg × '+p+'mg/kg × '+n+'次/天</span></div>');
+  show(el,'<div class="item"><span class="label">单次剂量</span><span class="highlight">'+single.toFixed(1)+' mg</span></div><div class="item"><span class="label">每日总剂量</span><span class="highlight">'+daily.toFixed(1)+' mg</span></div><div class="item"><span class="label">每周总剂量</span><span class="highlight">'+weekly.toFixed(1)+' mg</span></div><div class="item"><span class="label">体重 '+w+'kg × '+p+'mg/kg × '+n+'次/天</span></div>');
 }
 
 // ========== BMI计算 ==========
@@ -407,7 +407,7 @@ function calcBMI(){
   var bmi=w/(h*h);
   var cat=bmi<18.5?'体重过低':(bmi<24?'正常':(bmi<28?'超重':'肥胖'));
   var ideal=(h*100-105),min=ideal*0.9,max=ideal*1.1;
-  show(el,'<div class="item"><span class=label>BMI值</span><span class=highlight style="font-size:1.5em">'+bmi.toFixed(1)+'</span></div><div class="item"><span class=label>体质判定</span><span class=highlight>'+cat+'</span></div><div class="item"><span class=label>理想体重</span><span class=value>'+ideal.toFixed(0)+'kg (±10%: '+min.toFixed(0)+'~'+max.toFixed(0)+'kg)</span></div>');
+  show(el,'<div class="item"><span class="label">BMI值</span><span class="highlight" style="font-size:1.5em">'+bmi.toFixed(1)+'</span></div><div class="item"><span class="label">体质判定</span><span class="highlight">'+cat+'</span></div><div class="item"><span class="label">理想体重</span><span class="value">'+ideal.toFixed(0)+'kg (±10%: '+min.toFixed(0)+'~'+max.toFixed(0)+'kg)</span></div>');
 }
 
 // ========== 中医体质测试 ==========
@@ -447,7 +447,7 @@ function calcTizhi(){
   tizhiScores.forEach(function(s){if(s){total+=s;answered++}});
   if(answered<10){show(el,'<span style="color:#f88">请回答全部10道题目（还差'+(10-answered)+'题）</span>');return;}
   var cat=total<=20?'平和质（健康体质，继续保持）':(total<=25?'气虚质（气力不足，容易疲劳）':(total<=30?'阳虚质（畏寒怕冷，手足不温）':(total<=35?'阴虚质（手足心热，口燥咽干）':'湿热质（面垢油光，易生痤疮）')));
-  show(el,'<div class="item"><span class=label>总分（'+answered+'题）</span><span class=highlight>'+total+'分</span></div><div class="item"><span class=label>体质判定</span><span class=highlight style="font-size:1.2em">'+cat+'</span></div>');
+  show(el,'<div class="item"><span class="label">总分（'+answered+'题）</span><span class="highlight">'+total+'分</span></div><div class="item"><span class="label">体质判定</span><span class="highlight" style="font-size:1.2em">'+cat+'</span></div>');
 }
 
 function resetTizhi(){
@@ -468,7 +468,7 @@ function calcSci(){
   var mantissa=num/Math.pow(10,exp);
   var engExp=Math.floor(exp/3)*3;
   var engMantissa=num/Math.pow(10,engExp);
-  var prefixes={-24:'y',-21:'z',-18:'a',-15:'f',-12:'p',-9:'n',-6:'μ',-3:'m',0:'',3:'k',6:'M',9:'G',12:'T',15:'P',18:'E',21:'Z',24:'Y'};
+  var prefixes={'-24':'y','-21':'z','-18':'a','-15':'f','-12':'p','-9':'n','-6':'μ','-3':'m',0:'',3:'k',6:'M',9:'G',12:'T',15:'P',18:'E',21:'Z',24:'Y'};
   var prefix=prefixes[engExp]||'';
   var html='<div class="item"><span class="label">原数值</span><span class="value">'+num.toLocaleString()+'</span></div>';
   html+='<div class="item"><span class="label">科学计数法</span><span class="highlight">'+mantissa.toFixed(4)+' × 10<sup>'+exp+'</sup></span></div>';
