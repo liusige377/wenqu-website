@@ -265,6 +265,10 @@ body{font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif;background
       <div class="nav-section-title" data-section="art"><span>🎨</span> 艺术娱乐<span class="arr">▸</span></div>
       <div class="nav-items" id="nav-art"></div>
     </div>
+    <div class="nav-section">
+      <div class="nav-section-title" data-section="metaphysics"><span>🔮</span> 玄学民俗<span class="arr">▸</span></div>
+      <div class="nav-items" id="nav-metaphysics"></div>
+    </div>
   </nav>
   <div class="member-zone">
     <button class="member-btn" id="memberBtn" onclick="openRegModal()">
@@ -440,7 +444,8 @@ const NAV_DATA = {
   tools:[{name:"JSON格式化",url:"tools/json.html",emoji:"📄"},{name:"颜色转换器",url:"tools/color.html",emoji:"🎨"},{name:"密码生成器",url:"tools/password.html",emoji:"🔐"},{name:"Base64编码",url:"tools/base64.html",emoji:"🔤"},{name:"二维码生成",url:"tools/qrcode.html",emoji:"📱"},{name:"URL编码解码",url:"tools/url.html",emoji:"🔗"},{name:"正则测试",url:"tools/regex.html",emoji:"🔍"},{name:"单位换算",url:"tools/unit.html",emoji:"⚖️"},{name:"时间戳转换",url:"tools/timestamp.html",emoji:"⏰"},{name:"进制转换",url:"tools/base.html",emoji:"🔢"}],
   finance:[{name:"股票行情",url:"finance/stocks.html",emoji:"📈"},{name:"基金筛选",url:"finance/funds.html",emoji:"💹"},{name:"汇率换算",url:"finance/forex.html",emoji:"💱"},{name:"房贷计算",url:"finance/loan.html",emoji:"🏦"},{name:"理财工具",url:"finance/wealth.html",emoji:"💰"}],
   geo:[{name:"世界地图",url:"geo/map.html",emoji:"🗺️"},{name:"国家百科",url:"geo/countries.html",emoji:"🌐"},{name:"天气查询",url:"geo/weather.html",emoji:"🌤️"},{name:"时区转换",url:"geo/timezone.html",emoji:"🕐"}],
-  art:[{name:"音乐欣赏",url:"art/music.html",emoji:"🎵"},{name:"电影推荐",url:"art/movies.html",emoji:"🎬"},{name:"读书笔记",url:"art/books.html",emoji:"📚"},{name:"艺术鉴赏",url:"art/art.html",emoji:"🖼️"}]
+  art:[{name:"音乐欣赏",url:"art/music.html",emoji:"🎵"},{name:"电影推荐",url:"art/movies.html",emoji:"🎬"},{name:"读书笔记",url:"art/books.html",emoji:"📚"},{name:"艺术鉴赏",url:"art/art.html",emoji:"🖼️"}],
+  metaphysics:[{name:"竹筒抽签",url:"metaphysics.html",emoji:"🎋"},{name:"八卦占卜",url:"metaphysics.html",emoji:"☯️"},{name:"八字天干地支",url:"metaphysics.html",emoji:"📆"},{name:"黄历宜忌",url:"metaphysics.html",emoji:"📅"},{name:"生肖五行",url:"metaphysics.html",emoji:"🎎"}]
 };
 (function initNav(){
   for(const [section,items] of Object.entries(NAV_DATA)){
