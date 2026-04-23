@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -104,14 +104,14 @@ body{font-family:'Microsoft YaHei',sans-serif;background:var(--bg);height:100vh;
   <div class="tools-section">
     <h3>工具导航</h3>
     <div class="tools-grid">
-      <a href="/" class="tool-btn"><span class="icon">&#127968;</span><span class="name">首页</span></a>
-      <a href="/math.html" class="tool-btn"><span class="icon">&#128290;</span><span class="name">数学工具</span></a>
-      <a href="/history.html" class="tool-btn"><span class="icon">&#128220;</span><span class="name">历史百科</span></a>
-      <a href="/tech.html" class="tool-btn"><span class="icon">&#128187;</span><span class="name">技术工具</span></a>
-      <a href="/geography.html" class="tool-btn"><span class="icon">&#127758;</span><span class="name">地理知识</span></a>
-      <a href="/units.html" class="tool-btn"><span class="icon">&#8635;</span><span class="name">单位转换</span></a>
-      <a href="/agriculture.html" class="tool-btn"><span class="icon">&#127806;</span><span class="name">农业工具</span></a>
-      <a href="/ai.html" class="tool-btn"><span class="icon">&#129302;</span><span class="name">AI助手</span></a>
+      <a href="/math.html" class="tool-btn"><span class="icon">&#128290;</span><span class="name">数理医学</span></a>
+      <a href="/history.html" class="tool-btn"><span class="icon">&#128220;</span><span class="name">历史文化</span></a>
+      <a href="/tech.html" class="tool-btn"><span class="icon">&#128187;</span><span class="name">现代科技</span></a>
+      <a href="/geography.html" class="tool-btn"><span class="icon">&#127758;</span><span class="name">天文地理</span></a>
+      <a href="/units.html" class="tool-btn"><span class="icon">&#8635;</span><span class="name">计量单位</span></a>
+      <a href="/agriculture.html" class="tool-btn"><span class="icon">&#127806;</span><span class="name">农业百科</span></a>
+      <a href="/metaphysics.html" class="tool-btn"><span class="icon">&#128172;</span><span class="name">玄学民俗</span></a>
+      <a href="/life.html" class="tool-btn"><span class="icon">&#127968;</span><span class="name">生活综合</span></a>
     </div>
   </div>
   
@@ -163,24 +163,25 @@ const SILICONFLOW_KEY = 'sk-bpbwbmbqkcjqjbrjiijkmkmpypwitkkypifldowwhghecruc';
 const SILICONFLOW_URL = 'https://api.siliconflow.cn/v1/chat/completions';
 let chatHistory = [];
 
-// 历史上的今天
-async function loadHistory() {
-  const el = document.getElementById('historyToday');
-  try {
-    const today = new Date();
-    const m = String(today.getMonth()+1).padStart(2,'0');
-    const d = String(today.getDate()).padStart(2,'0');
-    const r = await fetch('https://en.wikipedia.org/api/rest_v1/feed/onthisday/events/'+m+'/'+d+'?limit=3');
-    const j = await r.json();
-    if(j.events && j.events.length > 0) {
-      const ev = j.events[0];
-      el.innerHTML = '<p><b>'+(ev.year||'')+'</b> '+(ev.text||'').substring(0,60)+'</p>';
-    } else {
-      el.innerHTML = '<p>暂无数据</p>';
-    }
-  } catch(e) {
-    el.innerHTML = '<p>加载失败</p>';
+// 历史上的今天（本地数据）
+function loadHistory() {
+  var el = document.getElementById('historyToday');
+  var now = new Date();
+  var key = (now.getMonth()+1).toString().padStart(2,'0') + '-' + now.getDate().toString().padStart(2,'0');
+  var data = {
+'04-23':[{y:1564,e:'莎士比亚诞生'},{y:1616,e:'莎士比亚逝世'}],
+'04-24':[{y:1915,e:'亚美尼亚大屠杀开始'},{y:1990,e:'哈勃望远镜发射'}],
+'04-25':[{y:1945,e:'联合国成立大会'}],
+'04-26':[{y:1986,e:'切尔诺贝利核事故'}]
+  };
+  // 默认数据
+  var def = [{y:'??',e:'暂无数据'}];
+  var events = data[key] || def;
+  var html = '';
+  for(var i=0; i<events.length && i<3; i++) {
+    html += '<p style="margin:3px 0"><b>'+events[i].y+'</b> '+events[i].e+'</p>';
   }
+  el.innerHTML = html || '<p>暂无数据</p>';
 }
 
 // 发送消息
