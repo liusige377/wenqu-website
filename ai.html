@@ -346,10 +346,11 @@
                 const isDateTime = (
                     q.includes('今天') || q.includes('日期') || q.includes('几号') || 
                     q.includes('星期') || q.includes('礼拜') || q.includes('几点') ||
-                    q.includes('现在') && q.includes('时间')
+                    q.includes('某年') || q.includes('某月') || q.includes('某日') ||
+                    (q.includes('现在') && q.includes('时间'))
                 );
                 
-                if (isDateTime && (q.includes('几号') || q.includes('星期') || q.includes('几点') || q.includes('日期'))) {
+                if (isDateTime) {
                     removeLoading();
                     addMessage('assistant', getDateTimeInfo(), '系统实时获取');
                     setStatus('就绪');
