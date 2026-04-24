@@ -912,43 +912,12 @@
 
 
 
-        const REALTIME_KEYWORDS = [
-
-
-
-            '今天','昨天','明天','本周','本月','今年','近期',
-
-
-
-            '新闻','热点','最新','现在','此刻','实时',
-
-
-
-            '天气','气温','下雨','晴天','暴雨','地震',
-
-
-
-            '股票','股价','行情','涨跌','大盘','指数',
-
-
-
-            'lng价格','天然气价格','油价','期货',
-
-
-
-            '特朗普','习近平','美国','中国','俄罗斯','国际',
-
-
-
-            '疫情','流感','病毒','疫苗',
-
-
-
-            '比赛','直播','上映','发布','开幕','闭幕'
-
-
-
-        ];
+        const REALTIME_KEYWORDS = [
+        'today', 'tomorrow', 'yesterday', 'now', 'latest', 'news',
+        'weather', 'stock', 'price', 'market', 'trump', 'biden',
+        'weather', '成都', 'LNG', 'gas', '今日', '现在', '最新',
+        '新闻', '特朗普', '拜登', '今天', '明天', '昨天'
+    ];
 
 
 
@@ -1570,15 +1539,13 @@
 
                     const q = question.toLowerCase();
 
-                    const isPureDateTime = (
-
-                        q.includes('今天') || q.includes('日期') || q.includes('几号') || 
-
-                        q.includes('星期') || q.includes('礼拜') || q.includes('现在几点') ||
-
-                        q.includes('今年') || q.includes('本月') || q.includes('此刻')
-
-                    );
+                    const isPureDateTime = (
+        q.includes('today') || q.includes('today') || q.includes('今天') ||
+        q.includes('日期') || q.includes('几号') || q.includes('星期') ||
+        q.includes('礼拜') || q.includes('现在几点') || q.includes('今年') ||
+        q.includes('本月') || q.includes('此刻') || q.includes('号') ||
+        q.includes('号') || q.includes('日')
+    );
 
                     
 
@@ -1608,7 +1575,10 @@
 
                     updateLoadingText('AI思考中...');
 
-                    prompt = `你是问渠AI助手。以下搜索结果包含准确信息，请直接回答用户问题，不要说你无法访问实时数据。
+                    prompt = `You are Wenqu AI Assistant. Below are search results with accurate information.
+IMPORTANT: Answer the user's question directly using the search results below.
+Do NOT say you cannot access real-time data. Do NOT say you are an AI with limitations.
+Just answer the question based on the search results provided.
 
 
 
