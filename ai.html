@@ -648,7 +648,7 @@
 
                     <optgroup label="🤖 Qwen系列">
 
-                        <option value="Qwen/Qwen2.5-7B-Instruct">Qwen2.5-7B</option>
+                        <option value='Qwen/Qwen2.5-7B-Instruct' selected>Qwen2.5-7B</option>
 
                         <option value="Qwen/Qwen3-8B">Qwen3-8B</option>
 
@@ -889,11 +889,7 @@
                     // 对话模型
 
                     
-                    'Qwen/Qwen3-8B',
-
-                    'Qwen/Qwen3.5-4B',
-
-                    'Qwen/Qwen2.5-7B-Instruct',
+                    'Qwen/Qwen3-8B''Qwen/Qwen2.5-7B-Instruct',
 
                     
                     'THUDM/GLM-4-9B-0414',
@@ -909,24 +905,7 @@
 
                     'tencent/Hunyuan-MT-7B',
 
-                    // Embedding模型
-
-                    'BAAI/bge-large-zh-v1.5',
-
-                    'BAAI/bge-large-en-v1.5',
-
-                    'BAAI/bge-m3',
-
-                                        
-'netease-youdao/bce-embedding-base_v1',
-
-                    // Reranker模型
-
-                    'BAAI/bge-reranker-v2-m3',
-
-                    'netease-youdao/bce-reranker-base_v1',
-
-                    // 图像/语音模型
+                    // Embedding模型// Reranker模型// 图像/语音模型
 
                     
                                     ]
@@ -1478,7 +1457,7 @@
 
                     messages: [{ role: 'user', content: prompt }],
 
-                    stream: false
+                    stream: true
 
                 })
 
