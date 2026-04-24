@@ -1224,45 +1224,41 @@
 
 
 
-                // DuckDuckGo HTML搜索（通过allorigins代理解决CORS）
+                // 联网搜索（DuckDuckGo Lite + 维基百科双保险）
 
-                let ddgResults = '';
+                let webResults = '';
 
                 try {
 
-                    const ddgUrl = 'https://www.so.com/s?q=' + encodeURIComponent(query);
+                    const ddgLiteUrl = 'https://lite.duckduckgo.com/lite/?q=' + encodeURIComponent(query);
 
-                    const ddgResp = await fetch(ddgUrl);
+                    const ddgResp = await fetch(ddgLiteUrl);
 
-                    const ddgData = await ddgResp.json();
+                    if (ddgResp.ok) {
 
-                    if (ddgData.contents) {
+                        const ddgText = await ddgResp.text();
 
-                        const matches = ddgData.contents.match(/<a class="result__a"[^>]*>([^<]+)<\/a>[\s\S]{0,200}?<a class="result__snippet"[^>]*>([^<]+)<\/a>/g);
+                        const links = ddgText.match(/<a[^>]*class="result-link"[^>]*>([\s\S]*?)<\/a>/gi);
 
-                        if (matches && matches.length > 0) {
+                        const snippets = ddgText.match(/<td class="result-snippet">([\s\S]*?)<\/td>/gi);
 
-                            const topResults = matches.slice(0,2).map(m => {
+                        if (links && links.length > 0) {
 
-                                const title = m.match(/>([^<]+)<\/a>/);
+                            for (let i = 0; i < Math.min(links.length, 3); i++) {
 
-                                const snippet = m.match(/class="result__snippet"[^>]*>([^<]+)<\/a>/);
+                                const title = links[i].replace(/<[^>]+/g,'').trim();
 
-                                return '• ' + (title ? title[1] : '') + '：' + (snippet ? snippet[1].replace(/<[^>]*>/g,'') : '');
+                                const snip = snippets && snippets[i] ? snippets[i].replace(/<[^>]+/g,'').trim() : '';
 
-                            });
+                                webResults += title + (snip ? ' - ' + snip : '') + '\n';
 
-                            ddgResults = topResults.join('\n');
+                            }
 
                         }
 
                     }
 
-                } catch(e) {}
-
-
-
-                // 组合结果
+                } catch(e) { console.log('DDG err:', e.message); }// 组合结果
 
                 let parts = [];
 
@@ -1272,9 +1268,9 @@
 
                 }
 
-                if (ddgResults) {
+                if (webResults) {
 
-                    parts.push('【网络搜索】\n' + ddgResults);
+                    parts.push('【网络搜索】\n' + webResults);
 
                 }
 
