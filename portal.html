@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>问渠 API 平台</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f0f1a; color: #e0e0e0; min-height: 100vh; }
+        
+        .nav { background: #1a1a2e; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #2a2a4a; }
+        .nav h1 { font-size: 20px; color: #7c5cfc; }
+        .nav h1 span { color: #ff6b6b; }
+        .nav-btn { background: none; border: 1px solid #7c5cfc; color: #7c5cfc; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; }
+        .nav-btn:hover { background: #7c5cfc; color: #fff; }
+        
+        .container { max-width: 900px; margin: 0 auto; padding: 24px 16px; }
+        
+        .card { background: #1a1a2e; border: 1px solid #2a2a4a; border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+        .card h2 { color: #7c5cfc; margin-bottom: 16px; font-size: 18px; }
+        
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; margin-bottom: 6px; color: #a0a0c0; font-size: 14px; }
+        .form-group input { width: 100%; padding: 10px 14px; background: #0f0f1a; border: 1px solid #2a2a4a; border-radius: 8px; color: #e0e0e0; font-size: 15px; outline: none; }
+        .form-group input:focus { border-color: #7c5cfc; }
+        
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 600; transition: all .2s; }
+        .btn-primary { background: #7c5cfc; color: #fff; }
+        .btn-primary:hover { background: #6a4ae8; }
+        .btn-danger { background: #ff4757; color: #fff; }
+        .btn-danger:hover { background: #e03040; }
+        .btn-sm { padding: 6px 12px; font-size: 13px; }
+        
+        .key-box { background: #0f0f1a; border: 1px solid #2a2a4a; border-radius: 8px; padding: 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .key-text { font-family: 'Courier New', monospace; font-size: 13px; color: #7c5cfc; word-break: break-all; }
+        .key-meta { font-size: 12px; color: #666; margin-top: 4px; }
+        
+        .models-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+        .model-card { background: #0f0f1a; border: 1px solid #2a2a4a; border-radius: 8px; padding: 12px; }
+        .model-name { font-weight: 600; color: #e0e0e0; font-size: 14px; }
+        .model-type { font-size: 12px; color: #7c5cfc; margin-top: 4px; }
+        .model-provider { font-size: 11px; color: #666; margin-top: 2px; }
+        
+        .usage-table { width: 100%; border-collapse: collapse; }
+        .usage-table th, .usage-table td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #2a2a4a; font-size: 14px; }
+        .usage-table th { color: #7c5cfc; }
+        
+        .tab-bar { display: flex; gap: 4px; margin-bottom: 20px; }
+        .tab { padding: 8px 16px; background: transparent; border: none; color: #666; cursor: pointer; border-radius: 6px; font-size: 14px; }
+        .tab.active { background: #7c5cfc; color: #fff; }
+        
+        .toast { position: fixed; top: 20px; right: 20px; padding: 12px 20px; border-radius: 8px; color: #fff; font-size: 14px; z-index: 999; display: none; }
+        .toast.success { background: #2ed573; }
+        .toast.error { background: #ff4757; }
+        
+        .hero { text-align: center; padding: 60px 20px; }
+        .hero h1 { font-size: 36px; color: #fff; margin-bottom: 16px; }
+        .hero h1 span { color: #7c5cfc; }
+        .hero p { color: #a0a0c0; font-size: 16px; max-width: 600px; margin: 0 auto 30px; line-height: 1.6; }
+        
+        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-top: 30px; }
+        .feature-item { background: #1a1a2e; border: 1px solid #2a2a4a; border-radius: 10px; padding: 20px; text-align: center; }
+        .feature-item .icon { font-size: 32px; margin-bottom: 10px; }
+        .feature-item h3 { color: #7c5cfc; font-size: 15px; margin-bottom: 6px; }
+        .feature-item p { color: #888; font-size: 13px; }
+        
+        .code-block { background: #0a0a14; border: 1px solid #2a2a4a; border-radius: 8px; padding: 16px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.6; color: #a0ffa0; margin-top: 12px; }
+        
+        .hidden { display: none !important; }
+        
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 26px; }
+            .models-grid { grid-template-columns: 1fr; }
+            .features { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <h1>问渠 <span>API</span></h1>
+        <div>
+            <button class="nav-btn" id="navLogin" onclick="showLogin()">登录</button>
+            <button class="nav-btn" id="navRegister" onclick="showRegister()">注册</button>
+            <button class="nav-btn hidden" id="navDashboard" onclick="showDashboard()">控制台</button>
+            <button class="nav-btn hidden" id="navLogout" onclick="doLogout()">退出</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- 首页 -->
+        <div id="pageHome">
+            <div class="hero">
+                <h1>免费 AI <span>模型聚合</span>平台</h1>
+                <p>聚合 12 个免费大模型，支持并行叠加、智能路由、互相纠错。注册即可获取 API Key，完全免费。</p>
+                <button class="btn btn-primary" onclick="showRegister()">立即注册</button>
+            </div>
+            <div class="features">
+                <div class="feature-item"><div class="icon">🚀</div><h3>并行叠加</h3><p>多模型同时回答，取最优结果</p></div>
+                <div class="feature-item"><div class="icon">🧠</div><h3>智能路由</h3><p>自动识别问题类型，选最佳模型</p></div>
+                <div class="feature-item"><div class="icon">🔍</div><h3>互相纠错</h3><p>初稿→审查→修订，三阶段提质</p></div>
+                <div class="feature-item"><div class="icon">💰</div><h3>完全免费</h3><p>12个模型永久免费，无需绑卡</p></div>
+            </div>
+        </div>
+        
+        <!-- 注册页 -->
+        <div id="pageRegister" class="hidden">
+            <div class="card">
+                <h2>📝 注册账号</h2>
+                <div class="form-group">
+                    <label>邮箱</label>
+                    <input type="email" id="regEmail" placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label>密码</label>
+                    <input type="password" id="regPassword" placeholder="至少6位">
+                </div>
+                <div class="form-group">
+                    <label>昵称（可选）</label>
+                    <input type="text" id="regName" placeholder="你的昵称">
+                </div>
+                <button class="btn btn-primary" onclick="doRegister()">注册并获取 API Key</button>
+            </div>
+        </div>
+        
+        <!-- 登录页 -->
+        <div id="pageLogin" class="hidden">
+            <div class="card">
+                <h2>🔑 登录</h2>
+                <div class="form-group">
+                    <label>邮箱</label>
+                    <input type="email" id="loginEmail" placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label>密码</label>
+                    <input type="password" id="loginPassword" placeholder="密码">
+                </div>
+                <button class="btn btn-primary" onclick="doLogin()">登录</button>
+            </div>
+        </div>
+        
+        <!-- 控制台 -->
+        <div id="pageDashboard" class="hidden">
+            <div class="tab-bar">
+                <button class="tab active" onclick="switchTab('keys')">API Key</button>
+                <button class="tab" onclick="switchTab('models')">模型</button>
+                <button class="tab" onclick="switchTab('usage')">用量</button>
+                <button class="tab" onclick="switchTab('docs')">文档</button>
+            </div>
+            
+            <!-- API Key -->
+            <div id="tabKeys">
+                <div class="card">
+                    <h2>🔑 我的 API Key</h2>
+                    <div id="keysList"></div>
+                    <button class="btn btn-primary btn-sm" onclick="createKey()" style="margin-top:12px;">+ 新建 Key</button>
+                </div>
+                <div class="card">
+                    <h2>⚡ 快速测试</h2>
+                    <div class="form-group">
+                        <label>输入问题</label>
+                        <input type="text" id="testQuestion" placeholder="你好，请介绍一下你自己">
+                    </div>
+                    <button class="btn btn-primary btn-sm" onclick="testChat()">发送</button>
+                    <div id="testResult" style="margin-top:12px; white-space:pre-wrap; font-size:14px; color:#a0ffa0; display:none;"></div>
+                </div>
+            </div>
+            
+            <!-- 模型列表 -->
+            <div id="tabModels" class="hidden">
+                <div class="card">
+                    <h2>🤖 可用模型（12个）</h2>
+                    <div class="models-grid" id="modelsGrid"></div>
+                </div>
+            </div>
+            
+            <!-- 用量 -->
+            <div id="tabUsage" class="hidden">
+                <div class="card">
+                    <h2>📊 用量统计</h2>
+                    <div id="usageTotal" style="margin-bottom:16px;"></div>
+                    <table class="usage-table">
+                        <thead><tr><th>日期</th><th>请求数</th><th>Token</th></tr></thead>
+                        <tbody id="usageBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- 文档 -->
+            <div id="tabDocs" class="hidden">
+                <div class="card">
+                    <h2>📖 API 文档</h2>
+                    <p style="color:#a0a0c0; margin-bottom:12px;">Base URL: <code style="color:#7c5cfc;">http://101.133.136.55:3000/v1</code></p>
+                    
+                    <h3 style="color:#ff6b6b; margin:16px 0 8px;">聊天补全</h3>
+                    <div class="code-block">POST /v1/chat/completions
+Authorization: Bearer wq-your-api-key
+Content-Type: application/json
+
+{
+  "model": "qwen2.5-7b",
+  "messages": [
+    {"role": "user", "content": "你好"}
+  ]
+}</div>
+                    
+                    <h3 style="color:#ff6b6b; margin:16px 0 8px;">并行叠加</h3>
+                    <div class="code-block">POST /v1/chat/stack
+Authorization: Bearer wq-your-api-key
+
+{
+  "models": ["qwen2.5-7b", "glm-4-flash", "deepseek-r1-7b"],
+  "messages": [{"role": "user", "content": "解释量子力学"}]
+}</div>
+                    
+                    <h3 style="color:#ff6b6b; margin:16px 0 8px;">智能路由</h3>
+                    <div class="code-block">POST /v1/chat/smart
+Authorization: Bearer wq-your-api-key
+
+{
+  "messages": [{"role": "user", "content": "帮我写一首诗"}]
+}</div>
+                    
+                    <h3 style="color:#ff6b6b; margin:16px 0 8px;">互相纠错</h3>
+                    <div class="code-block">POST /v1/chat/review
+Authorization: Bearer wq-your-api-key
+
+{
+  "messages": [{"role": "user", "content": "地球到月球距离"}]
+}</div>
+                    
+                    <h3 style="color:#ff6b6b; margin:16px 0 8px;">模型列表</h3>
+                    <div class="code-block">GET /v1/models
+Authorization: Bearer wq-your-api-key</div>
+                    
+                    <h3 style="color:#ff6b6b; margin:16px 0 8px;">用量查询</h3>
+                    <div class="code-block">GET /v1/usage
+Authorization: Bearer wq-your-api-key</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="toast" id="toast"></div>
+    
+    <script>
+        const API_BASE = 'http://101.133.136.55:3000';
+        let currentUser = null;
+        let currentKey = null;
+        
+        // Check saved session
+        const saved = localStorage.getItem('wenqu_user');
+        if (saved) {
+            currentUser = JSON.parse(saved);
+            currentKey = currentUser.apiKeys?.[0]?.key;
+            showDashboard();
+        }
+        
+        function toast(msg, type = 'success') {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.className = 'toast ' + type;
+            t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 3000);
+        }
+        
+        function showPage(id) {
+            ['pageHome','pageRegister','pageLogin','pageDashboard'].forEach(p => 
+                document.getElementById(p).classList.add('hidden')
+            );
+            document.getElementById(id).classList.remove('hidden');
+        }
+        
+        function updateNav(loggedIn) {
+            document.getElementById('navLogin').classList.toggle('hidden', loggedIn);
+            document.getElementById('navRegister').classList.toggle('hidden', loggedIn);
+            document.getElementById('navDashboard').classList.toggle('hidden', !loggedIn);
+            document.getElementById('navLogout').classList.toggle('hidden', !loggedIn);
+        }
+        
+        function showHome() { showPage('pageHome'); updateNav(!!currentUser); }
+        function showRegister() { showPage('pageRegister'); updateNav(!!currentUser); }
+        function showLogin() { showPage('pageLogin'); updateNav(!!currentUser); }
+        
+        function showDashboard() {
+            showPage('pageDashboard');
+            updateNav(true);
+            loadKeys();
+            loadModels();
+            loadUsage();
+        }
+        
+        function switchTab(tab) {
+            ['keys','models','usage','docs'].forEach(t => {
+                document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('hidden', t !== tab);
+            });
+            document.querySelectorAll('.tab').forEach((el, i) => {
+                el.classList.toggle('active', ['keys','models','usage','docs'][i] === tab);
+            });
+        }
+        
+        async function doRegister() {
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const name = document.getElementById('regName').value.trim();
+            
+            if (!email || !password) return toast('请填写邮箱和密码', 'error');
+            if (password.length < 6) return toast('密码至少6位', 'error');
+            
+            try {
+                const r = await fetch(API_BASE + '/v1/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, name })
+                });
+                const data = await r.json();
+                if (data.error) return toast(data.error, 'error');
+                
+                currentUser = { userId: data.userId, email, name: name || email.split('@')[0], apiKeys: [{ key: data.apiKey, name: 'Default Key', active: true }] };
+                currentKey = data.apiKey;
+                localStorage.setItem('wenqu_user', JSON.stringify(currentUser));
+                toast('注册成功！API Key 已生成');
+                showDashboard();
+            } catch (e) {
+                toast('网络错误: ' + e.message, 'error');
+            }
+        }
+        
+        async function doLogin() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) return toast('请填写邮箱和密码', 'error');
+            
+            try {
+                const r = await fetch(API_BASE + '/v1/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await r.json();
+                if (data.error) return toast(data.error, 'error');
+                
+                currentUser = data;
+                currentKey = data.apiKeys?.[0]?.key;
+                localStorage.setItem('wenqu_user', JSON.stringify(currentUser));
+                toast('登录成功');
+                showDashboard();
+            } catch (e) {
+                toast('网络错误: ' + e.message, 'error');
+            }
+        }
+        
+        function doLogout() {
+            currentUser = null;
+            currentKey = null;
+            localStorage.removeItem('wenqu_user');
+            showHome();
+            toast('已退出');
+        }
+        
+        async function loadKeys() {
+            if (!currentKey) return;
+            try {
+                const r = await fetch(API_BASE + '/v1/keys/list', {
+                    headers: { 'Authorization': 'Bearer ' + currentKey }
+                });
+                const data = await r.json();
+                if (data.keys) {
+                    const html = data.keys.map(k => `
+                        <div class="key-box">
+                            <div>
+                                <div class="key-text" id="key-${k.key.slice(0,10)}">${k.key}</div>
+                                <div class="key-meta">${k.name} · ${k.active ? '✅ 活跃' : '❌ 停用'} · ${new Date(k.createdAt).toLocaleDateString()}</div>
+                            </div>
+                            <button class="btn btn-sm btn-primary" onclick="copyKey('${k.key}')">复制</button>
+                        </div>
+                    `).join('');
+                    document.getElementById('keysList').innerHTML = html;
+                }
+            } catch (e) {}
+        }
+        
+        function copyKey(key) {
+            navigator.clipboard.writeText(key);
+            toast('已复制到剪贴板');
+        }
+        
+        async function createKey() {
+            if (!currentKey) return;
+            try {
+                const r = await fetch(API_BASE + '/v1/keys/create', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + currentKey, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: 'Key ' + new Date().toLocaleDateString() })
+                });
+                const data = await r.json();
+                if (data.error) return toast(data.error, 'error');
+                toast('新 Key 已创建');
+                loadKeys();
+            } catch (e) { toast('创建失败', 'error'); }
+        }
+        
+        async function loadModels() {
+            try {
+                const r = await fetch(API_BASE + '/v1/models');
+                const data = await r.json();
+                if (data.data) {
+                    const typeNames = { chat: '💬 聊天', vision: '👁️ 视觉', embedding: '📐 向量', other: '🔧 其他' };
+                    const providerNames = { siliconflow: '硅基流动', zhipu: '智谱AI' };
+                    document.getElementById('modelsGrid').innerHTML = data.data.map(m => `
+                        <div class="model-card">
+                            <div class="model-name">${m.id}</div>
+                            <div class="model-type">${typeNames[m.type] || m.type}</div>
+                            <div class="model-provider">${providerNames[m.owned_by] || m.owned_by}</div>
+                        </div>
+                    `).join('');
+                }
+            } catch (e) {}
+        }
+        
+        async function loadUsage() {
+            if (!currentKey) return;
+            try {
+                const r = await fetch(API_BASE + '/v1/usage', {
+                    headers: { 'Authorization': 'Bearer ' + currentKey }
+                });
+                const data = await r.json();
+                if (data.total) {
+                    document.getElementById('usageTotal').innerHTML = 
+                        `<span style="font-size:24px;color:#7c5cfc;">${data.total.requests}</span> 次请求 · <span style="font-size:24px;color:#ff6b6b;">${data.total.tokens}</span> tokens`;
+                    document.getElementById('usageBody').innerHTML = (data.daily || []).map(d => 
+                        `<tr><td>${d.date}</td><td>${d.requests}</td><td>${d.tokens}</td></tr>`
+                    ).join('');
+                }
+            } catch (e) {}
+        }
+        
+        async function testChat() {
+            if (!currentKey) return toast('请先登录', 'error');
+            const q = document.getElementById('testQuestion').value.trim();
+            if (!q) return toast('请输入问题', 'error');
+            
+            const result = document.getElementById('testResult');
+            result.style.display = 'block';
+            result.textContent = '思考中...';
+            
+            try {
+                const r = await fetch(API_BASE + '/v1/chat/completions', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + currentKey, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ model: 'qwen2.5-7b', messages: [{ role: 'user', content: q }] })
+                });
+                const data = await r.json();
+                if (data.error) {
+                    result.textContent = '错误: ' + data.error.message;
+                    result.style.color = '#ff4757';
+                } else {
+                    result.textContent = data.choices?.[0]?.message?.content || JSON.stringify(data);
+                    result.style.color = '#a0ffa0';
+                }
+            } catch (e) {
+                result.textContent = '网络错误: ' + e.message;
+                result.style.color = '#ff4757';
+            }
+        }
+    </script>
+</body>
+</html>
