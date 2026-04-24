@@ -91,14 +91,14 @@
         <div id="pageHome">
             <div class="hero">
                 <h1>免费 AI <span>模型聚合</span>平台</h1>
-                <p>聚合 12 个免费大模型，支持并行叠加、智能路由、互相纠错。注册即可获取 API Key，完全免费。</p>
+                <p>聚合 10 个免费大模型，每天10次免费体验，超出¥1/天不限次。注册即可获取 API Key。</p>
                 <button class="btn btn-primary" onclick="showRegister()">立即注册</button>
             </div>
             <div class="features">
                 <div class="feature-item"><div class="icon">🚀</div><h3>并行叠加</h3><p>多模型同时回答，取最优结果</p></div>
                 <div class="feature-item"><div class="icon">🧠</div><h3>智能路由</h3><p>自动识别问题类型，选最佳模型</p></div>
                 <div class="feature-item"><div class="icon">🔍</div><h3>互相纠错</h3><p>初稿→审查→修订，三阶段提质</p></div>
-                <div class="feature-item"><div class="icon">💰</div><h3>完全免费</h3><p>12个模型永久免费，无需绑卡</p></div>
+                <div class="feature-item"><div class="icon">💰</div><h3>完全免费</h3><p>每天10次免费，超出¥1/天不限</p></div>
             </div>
         </div>
         
@@ -140,6 +140,33 @@
         
         <!-- 控制台 -->
         <div id="pageDashboard" class="hidden">
+
+            <div id="balanceCard" style="display:none;">
+                <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:12px; margin-bottom:20px;">
+                    <div class="card" style="padding:16px; text-align:center;">
+                        <div style="font-size:24px; font-weight:bold; color:#7c5cfc;" id="dashBalance">--</div>
+                        <div style="font-size:12px; color:#888; margin-top:4px;">💰 余额(元)</div>
+                    </div>
+                    <div class="card" style="padding:16px; text-align:center;">
+                        <div style="font-size:24px; font-weight:bold; color:#ff6b6b;" id="dashQuotaUsed">--</div>
+                        <div style="font-size:12px; color:#888; margin-top:4px;">📊 今日已用</div>
+                    </div>
+                    <div class="card" style="padding:16px; text-align:center;">
+                        <div style="font-size:24px; font-weight:bold; color:#2ed573;" id="dashQuotaFree">--</div>
+                        <div style="font-size:12px; color:#888; margin-top:4px;">🎁 今日免费</div>
+                    </div>
+                    <div class="card" style="padding:16px; text-align:center;">
+                        <div style="font-size:14px; font-weight:bold; color:#f39c12;" id="dashStatus">--</div>
+                        <div style="font-size:12px; color:#888; margin-top:4px;">📌 今日状态</div>
+                    </div>
+                </div>
+                <div style="display:flex; gap:10px; align-items:center; margin-bottom:4px;">
+                    <button class="btn btn-primary btn-sm" onclick="showRecharge()" style="background:#ff6b6b;">💰 充值余额</button>
+                    <button class="btn btn-sm" onclick="refreshDash()" style="background:#2a2a4a; color:#aaa; border:1px solid #2a2a4a;">🔄 刷新</button>
+                    <span style="font-size:12px; color:#666; margin-left:auto;">每天10次免费，超出¥1/天不限次</span>
+                </div>
+            </div>
+
             <div class="tab-bar">
                 <button class="tab active" onclick="switchTab('keys')">API Key</button>
                 <button class="tab" onclick="switchTab('models')">模型</button>
@@ -179,7 +206,7 @@
                     <h2>📊 用量统计</h2>
                     <div id="usageTotal" style="margin-bottom:16px;"></div>
                     <table class="usage-table">
-                        <thead><tr><th>日期</th><th>请求数</th><th>Token</th></tr></thead>
+                        <thead><tr><th>日期</th><th>请求数</th><th>状态</th></tr></thead>
                         <tbody id="usageBody"></tbody>
                     </table>
                 </div>
@@ -233,7 +260,7 @@ Authorization: Bearer wq-your-api-key
 Authorization: Bearer wq-your-api-key</div>
                     
                     <h3 style="color:#ff6b6b; margin:16px 0 8px;">用量查询</h3>
-                    <div class="code-block">GET /v1/usage
+                    <div class="code-block">GET /v1/billing
 Authorization: Bearer wq-your-api-key</div>
                 </div>
             </div>
@@ -287,6 +314,7 @@ Authorization: Bearer wq-your-api-key</div>
             loadKeys();
             loadModels();
             loadUsage();
+            loadBalance();
         }
         
         function switchTab(tab) {
@@ -320,6 +348,7 @@ Authorization: Bearer wq-your-api-key</div>
                 localStorage.setItem('wenqu_user', JSON.stringify(currentUser));
                 toast('注册成功！API Key 已生成');
                 showDashboard();
+                loadBalance();
             } catch (e) {
                 toast('网络错误: ' + e.message, 'error');
             }
@@ -345,6 +374,7 @@ Authorization: Bearer wq-your-api-key</div>
                 localStorage.setItem('wenqu_user', JSON.stringify(currentUser));
                 toast('登录成功');
                 showDashboard();
+                loadBalance();
             } catch (e) {
                 toast('网络错误: ' + e.message, 'error');
             }
@@ -463,6 +493,138 @@ Authorization: Bearer wq-your-api-key</div>
                 result.style.color = '#ff4757';
             }
         }
+    
+
+        // ===== v5.1 新增：余额+充值 =====
+
+        async function loadBalance() {
+            const card = document.getElementById('balanceCard');
+            if (!currentKey || !currentUser) { card.style.display = 'none'; return; }
+            card.style.display = 'block';
+            try {
+                const r = await fetch(API_BASE + '/v1/balance?userId=' + currentUser.userId, {
+                    headers: { 'Authorization': 'Bearer ' + currentKey }
+                });
+                const d = await r.json();
+                if (d.error) { console.warn('余额查询失败:', d.error.message); return; }
+                document.getElementById('dashBalance').textContent = d.totalBalance.toFixed(2);
+                document.getElementById('dashQuotaUsed').textContent = d.todayUsed;
+                document.getElementById('dashQuotaFree').textContent = d.freeRemaining;
+                let statusText = d.todayStatus === 'paid' ? '✅ 已付费' : (d.todayStatus === 'quota_exceeded' ? '⏳ 超额待扣' : '🎁 免费中');
+                document.getElementById('dashStatus').textContent = statusText;
+            } catch(e) { console.warn('余额加载失败:', e); }
+        }
+
+        function refreshDash() { loadBalance(); loadUsage(); toast('已刷新'); }
+
+        // 充值弹窗HTML
+        const rechargeHTML = \`
+            <div id="rechargeOverlay" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:1000;display:flex;align-items:center;justify-content:center;" onclick="if(event.target===this)closeRecharge()">
+                <div style="background:#1a1a2e;border:1px solid #2a2a4a;border-radius:16px;padding:28px;max-width:440px;width:90%;">
+                    <h2 style="color:#ff6b6b;margin-bottom:6px;">💰 充值余额</h2>
+                    <p style="color:#888;font-size:13px;margin-bottom:20px;">余额用于抵扣超出免费额度后的费用，<strong style="color:#f39c12;">每天10次免费，超出¥1/天不限次</strong></p>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+                        <div class="recharge-option" onclick="selectPkg('basic')" id="pkg-basic" style="background:#0f0f1a;border:2px solid #2a2a4a;border-radius:10px;padding:14px;cursor:pointer;text-align:center;">
+                            <div style="font-size:20px;font-weight:bold;color:#fff;">¥10</div>
+                            <div style="font-size:12px;color:#888;">基础包</div>
+                        </div>
+                        <div class="recharge-option" onclick="selectPkg('standard')" id="pkg-standard" style="background:#0f0f1a;border:2px solid #2a2a4a;border-radius:10px;padding:14px;cursor:pointer;text-align:center;">
+                            <div style="font-size:20px;font-weight:bold;color:#fff;">¥50</div>
+                            <div style="font-size:12px;color:#2ed573;">+¥5 赠送</div>
+                            <div style="font-size:11px;color:#666;">到账¥55</div>
+                        </div>
+                        <div class="recharge-option" onclick="selectPkg('premium')" id="pkg-premium" style="background:#0f0f1a;border:2px solid #7c5cfc;border-radius:10px;padding:14px;cursor:pointer;text-align:center;">
+                            <div style="font-size:20px;font-weight:bold;color:#7c5cfc;">¥100</div>
+                            <div style="font-size:12px;color:#2ed573;">+¥20 赠送</div>
+                            <div style="font-size:11px;color:#666;">到账¥120</div>
+                        </div>
+                        <div class="recharge-option" onclick="selectPkg('ultimate')" id="pkg-ultimate" style="background:#0f0f1a;border:2px solid #f39c12;border-radius:10px;padding:14px;cursor:pointer;text-align:center;">
+                            <div style="font-size:20px;font-weight:bold;color:#f39c12;">¥200</div>
+                            <div style="font-size:12px;color:#2ed573;">+¥50 赠送</div>
+                            <div style="font-size:11px;color:#666;">到账¥250</div>
+                        </div>
+                    </div>
+                    <div style="background:#0f0f1a;border-radius:8px;padding:12px;margin-bottom:16px;font-size:13px;color:#888;line-height:1.8;">
+                        <strong style="color:#fff;">充值说明：</strong><br>
+                        • 余额长期有效，不清零<br>
+                        • 赠送余额优先扣除<br>
+                        • 联系客服获取收款码转账
+                    </div>
+                    <div style="display:flex;gap:10px;">
+                        <button class="btn" onclick="closeRecharge()" style="flex:1;background:#2a2a4a;color:#aaa;border:1px solid #2a2a4a;">取消</button>
+                        <button class="btn btn-primary" id="rechargeBtn" onclick="doRecharge()" style="flex:2;background:#ff6b6b;">联系客服充值</button>
+                    </div>
+                    <div style="margin-top:12px;text-align:center;">
+                        <span style="font-size:12px;color:#666;">客服微信：</span>
+                        <span style="font-size:13px;color:#7c5cfc;font-weight:bold;">四哥</span>
+                        <button onclick="copyText('四哥')" style="background:none;border:none;color:#7c5cfc;cursor:pointer;font-size:12px;margin-left:6px;">复制</button>
+                    </div>
+                </div>
+            </div>
+        \`;
+
+        let selectedPkg = null;
+
+        function showRecharge() {
+            const overlay = document.getElementById('rechargeOverlay');
+            if (overlay) { overlay.remove(); }
+            document.body.insertAdjacentHTML('beforeend', rechargeHTML);
+        }
+
+        function closeRecharge() {
+            const o = document.getElementById('rechargeOverlay');
+            if (o) o.remove();
+            selectedPkg = null;
+            document.querySelectorAll('.recharge-option').forEach(el => el.style.borderColor = '#2a2a4a');
+        }
+
+        function selectPkg(pkg) {
+            selectedPkg = pkg;
+            document.querySelectorAll('.recharge-option').forEach(el => el.style.borderColor = '#2a2a4a');
+            const el = document.getElementById('pkg-' + pkg);
+            if (el) el.style.borderColor = '#7c5cfc';
+        }
+
+        function copyText(text) {
+            navigator.clipboard.writeText(text);
+            toast('已复制: ' + text);
+        }
+
+        async function doRecharge() {
+            if (!selectedPkg) {
+                toast('请先选择一个充值档位', 'error');
+                return;
+            }
+            // 弹出客服微信提示（实际是人工转账，这里模拟）
+            toast('请联系客服微信「四哥」转账，转账后客服手动充值');
+            closeRecharge();
+        }
+
+        // 更新用量表格，加状态列
+        async function loadUsage() {
+            if (!currentKey || !currentUser) return;
+            try {
+                const r = await fetch(API_BASE + '/v1/billing?userId=' + currentUser.userId, {
+                    headers: { 'Authorization': 'Bearer ' + currentKey }
+                });
+                const d = await r.json();
+                if (d.error) return;
+                const today = d.today;
+                document.getElementById('usageTotal').innerHTML =
+                    '<div style="display:flex;gap:20px;flex-wrap:wrap;">' +
+                    '<div><span style="color:#888;">今日已用：</span><span style="color:#ff6b6b;font-weight:bold;">' + today.requests + '</span> 次</div>' +
+                    '<div><span style="color:#888;">免费剩余：</span><span style="color:#2ed573;font-weight:bold;">' + today.freeRemaining + '</span> 次</div>' +
+                    '<div><span style="color:#888;">今日状态：</span><span style="color:' + (today.chargedToday ? '#7c5cfc' : '#2ed573') + ';font-weight:bold;">' + (today.chargedToday ? '✅ 已付费（不限次）' : '🎁 免费中') + '</span></div>' +
+                    '<div><span style="color:#888;">本月累计：</span><span style="color:#f39c12;font-weight:bold;">¥' + d.monthly.totalCharge + '</span></div>' +
+                    '</div>';
+                const rows = d.history.map(h => {
+                    const status = h.chargedToday ? '<span style="color:#7c5cfc;">✅付费</span>' : '<span style="color:#2ed573;">免费</span>';
+                    return '<tr><td>' + h.date + '</td><td>' + h.requests + '</td><td>' + status + '</td></tr>';
+                }).join('');
+                document.getElementById('usageBody').innerHTML = rows || '<tr><td colspan="3" style="text-align:center;color:#666;">暂无数据</td></tr>';
+            } catch(e) { console.warn('用量加载失败:', e); }
+        }
+
     </script>
 </body>
 </html>
