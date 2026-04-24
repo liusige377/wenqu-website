@@ -1230,7 +1230,24 @@
 
                 try {
 
-                    const ddgLiteUrl = 'https://lite.duckduckgo.com/lite/?q=' + encodeURIComponent(query);
+                    
+                // Wikipedia search (CORS-friendly)
+                const wikiUrl = 'https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=' 
+                    + encodeURIComponent(query) + '&format=json&origin=*';
+                try {
+                    const wikiResp = await fetch(wikiUrl);
+                    if (wikiResp.ok) {
+                        const wikiData = await wikiResp.json();
+                        if (wikiData.query && wikiData.query.search) {
+                            const wikiResults = wikiData.query.search.slice(0, 2).map(r => ({
+                                title: r.title,
+                                snippet: r.snippet.replace(/<[^>]+>/g, '')
+                            }));
+                            webResults = webResults.concat(wikiResults);
+                        }
+                    }
+                } catch(e) {}
+                const ddgLiteUrl = 'https://lite.duckduckgo.com/lite/?q=' + encodeURIComponent(query);
 
                     const ddgResp = await fetch(ddgLiteUrl);
 
@@ -1352,7 +1369,7 @@
 
 
 
-                    stream: false
+                    stream: true
 
 
 
