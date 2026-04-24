@@ -265,11 +265,12 @@
     <button class="key-toggle" id="keyToggle" onclick="toggleKeyPanel()">🔑 API Key</button>
     <div class="key-panel" id="keyPanel">
         <h3>⚙️ API Key 设置</h3>
-        <input type="text" id="wenquKeyInput" placeholder="输入问渠 API Key (wq-xxxxx)">
+        <input type="text" id="wenquKeyInput" placeholder="输入问渠 API Key (wq-xxxxx) — 免费注册获取">
         <div class="hint">在 <a href="/portal.html" target="_blank" style="color:#0f3460;">问渠平台</a> 注册后获取，或联系客服</div>
         <div class="btn-row">
             <button class="btn-use" onclick="useWenquKey()">✅ 使用此Key</button>
-            <button class="btn-guest" onclick="useGuestKey()">👤 游客模式</button>
+            <div style="margin-top:8px;font-size:12px;color:#888;">还没有Key？<a href="http://101.133.136.55:3000/portal.html" target="_blank" style="color:#4CAF50;font-weight:bold;">免费注册获取 →</a>（每天10次免费）</div>
+            
         </div>
         <div class="key-info" id="keyInfo"></div>
     </div>
@@ -284,12 +285,12 @@
         const searchStatus = document.getElementById('searchStatus');
 
         // 配置
-        const SILICON_API = 'sk-bpbwbmbqkcqjbrjiijkmkmpypwitkkypifldowwhghecruc';
+        // SiliconFlow直连已禁用，所有请求必须通过问渠后端(wq-Key)
         const WENQU_BASE = 'http://101.133.136.55:3000';
 
         // 当前模式
         let wenquKey = localStorage.getItem('wenqu_api_key') || '';
-        let useWenqu = !!wenquKey;
+        let useWenqu = true;  // 强制走问渠后端，不再允许直连硅基流动
         let quotaInfo = { freeRemaining: 10, status: 'free', balance: 0 };
         let isCharged = false;  // 今天是否已扣费
 
@@ -528,6 +529,10 @@
         }
 
         async function sendMessage() {
+            if (!wenquKey) {
+                addMessage('assistant', '⚠️ 请先设置 API Key 才能使用！\n\n点击右上角 🔑 按钮输入您的问渠Key。\n还没有Key？前往 http://101.133.136.55:3000/portal.html 免费注册！每天10次免费使用。');
+                return;
+            }
             const question = userInput.value.trim();
             if (!question) return;
 
