@@ -1192,6 +1192,20 @@
 
 
 
+        // 获取当前日期时间信息
+        function getDateTimeInfo() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth() + 1;
+            const day = now.getDate();
+            const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
+            const weekDay = weekDays[now.getDay()];
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            
+            return `今天是${year}年${month}月${day}日，星期${weekDay}，现在时间是${hours}:${minutes}。`;
+        }
+
         // 检测是否需要联网搜索
 
 
