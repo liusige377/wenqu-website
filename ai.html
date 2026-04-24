@@ -1214,73 +1214,40 @@
 
 
 
-                // 联网搜索（DuckDuckGo Lite + 维基百科双保险）
-
-                let webResults = '';
-
+                // 网络搜索（维基百科，完全支持CORS）
+                let webResults = [];
+                
+                // 1. 维基百科搜索（CORS: origin=*）
                 try {
-
-                    
-                // Wikipedia search (CORS-friendly)
-                const wikiUrl = 'https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=' 
-                    + encodeURIComponent(query) + '&format=json&origin=*';
-                try {
+                    const wikiUrl = 'https://zh.wikipedia.org/w/api.php?action=query&list=search&srsearch=' 
+                        + encodeURIComponent(query) + '&format=json&origin=*&limit=3';
                     const wikiResp = await fetch(wikiUrl);
                     if (wikiResp.ok) {
                         const wikiData = await wikiResp.json();
                         if (wikiData.query && wikiData.query.search) {
-                            const wikiResults = wikiData.query.search.slice(0, 2).map(r => ({
-                                title: r.title,
-                                snippet: r.snippet.replace(/<[^>]+>/g, '')
-                            }));
-                            webResults = webResults.concat(wikiResults);
+                            wikiData.query.search.forEach(r => {
+                                webResults.push(r.title + '：' + r.snippet.replace(/<[^>]+>/g, '').replace(/&quot;/g, '"'));
+                            });
                         }
                     }
-                } catch(e) {}
+                } catch(e) { console.log('Wiki err:', e.message); }
                 
-                // Wikipedia search (CORS-friendly)
+                // 2. 英文维基百科补充
                 try {
-                    const wikiUrl = 'https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=' 
-                        + encodeURIComponent(query) + '&format=json&origin=*';
-                    const wikiResp = await fetch(wikiUrl);
-                    if (wikiResp.ok) {
-                        const wikiData = await wikiResp.json();
-                        if (wikiData.query && wikiData.query.search) {
-                            wikiData.query.search.slice(0, 2).forEach(r => {
-                                webResults.push({ title: r.title, snippet: r.snippet.replace(/<[^>]+>/g, '') });
+                    const wikiUrl2 = 'https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=' 
+                        + encodeURIComponent(query) + '&format=json&origin=*&limit=2';
+                    const wikiResp2 = await fetch(wikiUrl2);
+                    if (wikiResp2.ok) {
+                        const wikiData2 = await wikiResp2.json();
+                        if (wikiData2.query && wikiData2.query.search) {
+                            wikiData2.query.search.forEach(r => {
+                                webResults.push(r.title + '：' + r.snippet.replace(/<[^>]+>/g, ''));
                             });
                         }
                     }
                 } catch(e) {}
-                const ddgLiteUrl = 'https://lite.duckduckgo.com/lite/?q=' + encodeURIComponent(query);
 
-                    const ddgResp = await fetch(ddgLiteUrl);
-
-                    if (ddgResp.ok) {
-
-                        const ddgText = await ddgResp.text();
-
-                        const links = ddgText.match(/<a[^>]*class="result-link"[^>]*>([\s\S]*?)<\/a>/gi);
-
-                        const snippets = ddgText.match(/<td class="result-snippet">([\s\S]*?)<\/td>/gi);
-
-                        if (links && links.length > 0) {
-
-                            for (let i = 0; i < Math.min(links.length, 3); i++) {
-
-                                const title = links[i].replace(/<[^>]+/g,'').trim();
-
-                                const snip = snippets && snippets[i] ? snippets[i].replace(/<[^>]+/g,'').trim() : '';
-
-                                webResults += title + (snip ? ' - ' + snip : '') + '\n';
-
-                            }
-
-                        }
-
-                    }
-
-                } catch(e) { console.log('DDG err:', e.message); }// 组合结果
+                // 组合结果// 组合结果
 
                 let parts = [];
 
@@ -1366,35 +1333,17 @@
 
 
 
-                    model: model || defaultModel || "Qwen/Qwen2.5-7B-Instruct",
-
-
-
-                    messages: [{ role: 'user', content: prompt }],
-
-
-
-                    stream: true
-
-
-
-                })
-
-
-
-            });
-
-
-
-            if (!response.ok) {
-
-
-
-                const errText = await response.text();
-
-
-
-                throw new Error('AI请求失败 HTTP ' + response.status + ': ' + errText);
+                    model: molet parts = [];
+                if (wikiResults.length > 0) {
+                    parts.push('【维基百科】
+' + wikiResults.join('
+'));
+                }
+                if (webResults.length > 0) {
+                    parts.push('【网络搜索】
+' + webResults.join('
+'));
+                }ponse.status + ': ' + errText);
 
 
 
