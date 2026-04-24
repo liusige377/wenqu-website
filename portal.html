@@ -118,7 +118,7 @@
                     <label>昵称（可选）</label>
                     <input type="text" id="regName" placeholder="你的昵称">
                 </div>
-                <button class="btn btn-primary" onclick="doRegister()">注册并获取 API Key</button>
+                <button class="btn btn-primary" onclick="doRegister()">注册（自动生成 API Key）</button>
             </div>
         </div>
         
@@ -277,8 +277,7 @@ Authorization: Bearer wq-your-api-key</div>
         // Check saved session
         const saved = localStorage.getItem('wenqu_user');
         if (saved) {
-            currentUser = JSON.parse(saved);
-            currentKey = currentUser.apiKeys?.[0]?.key;
+            try { currentUser = JSON.parse(saved); currentKey = currentUser.apiKeys?.[0]?.key; if (!currentUser.userId) throw 'err'; } catch(e) { currentUser = null; currentKey = null; localStorage.removeItem('wenqu_user'); }
             showDashboard();
         }
         
@@ -332,6 +331,8 @@ Authorization: Bearer wq-your-api-key</div>
             const name = document.getElementById('regName').value.trim();
             
             if (!email || !password) return toast('请填写邮箱和密码', 'error');
+            const emailReg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailReg.test(email)) return toast('请输入有效的邮箱地址', 'error');
             if (password.length < 6) return toast('密码至少6位', 'error');
             
             try {
@@ -343,10 +344,10 @@ Authorization: Bearer wq-your-api-key</div>
                 const data = await r.json();
                 if (data.error) return toast(data.error, 'error');
                 
-                currentUser = { userId: data.userId, email, name: name || email.split('@')[0], apiKeys: [{ key: data.apiKey, name: 'Default Key', active: true }] };
-                currentKey = data.apiKey;
+                currentUser = { userId: data.userId, email, name: name || email.split('@')[0], hasApikey: true, apiKeys: data.apiKey ? [{ key: data.apiKey, name: 'Default Key', active: true }] : [] };
+                currentKey = data.apiKey || null;
                 localStorage.setItem('wenqu_user', JSON.stringify(currentUser));
-                toast('注册成功！API Key 已生成');
+                if (data.apiKey) { toast('注册成功！API Key: ' + data.apiKey.slice(0,12) + '...'); } else { toast('注册成功！请登录后创建 API Key'); }
                 showDashboard();
                 loadBalance();
             } catch (e) {
