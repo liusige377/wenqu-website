@@ -1,1166 +1,3575 @@
-<!DOCTYPE html>
-
-
-
-<html lang="zh-CN">
-
-
-
-<head>
-
-
-
-    <meta charset="UTF-8">
-
-
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-
-
-    <title>问渠AI助手 - 多模型免费聚合</title>
-
-
-
-    <style>
-
-
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-
-
-        body {
-
-
-
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-
-
-
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-
-
-
-            min-height: 100vh;
-
-
-
-            display: flex;
-
-
-
-            justify-content: center;
-
-
-
-            align-items: center;
-
-
-
-            padding: 20px;
-
-
-
-        }
-
-
-
-        .container {
-
-
-
-            background: white;
-
-
-
-            border-radius: 20px;
-
-
-
-            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-
-
-
-            width: 100%;
-
-
-
-            max-width: 900px;
-
-
-
-            overflow: hidden;
-
-
-
-        }
-
-
-
-        .header {
-
-
-
-            background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
-
-
-
-            color: white;
-
-
-
-            padding: 25px 30px;
-
-
-
-            display: flex;
-
-
-
-            justify-content: space-between;
-
-
-
-            align-items: center;
-
-
-
-        }
-
-
-
-        .header-left h1 { font-size: 24px; margin-bottom: 5px; }
-
-
-
-        .header-left p { opacity: 0.8; font-size: 13px; }
-
-
-
-        .header-right { display: flex; align-items: center; gap: 10px; }
-
-
-
-        .model-select {
-
-
-
-            padding: 8px 15px;
-
-
-
-            border-radius: 20px;
-
-
-
-            border: 2px solid rgba(255,255,255,0.3);
-
-
-
-            background: rgba(255,255,255,0.1);
-
-
-
-            color: white;
-
-
-
-            font-size: 13px;
-
-
-
-            cursor: pointer;
-
-
-
-        }
-
-
-
-        .model-select option { color: #333; background: white; }
-
-
-
-        .model-status { font-size: 11px; opacity: 0.7; }
-
-
-
-        .search-status {
-
-
-
-            font-size: 11px;
-
-
-
-            padding: 3px 10px;
-
-
-
-            border-radius: 10px;
-
-
-
-            background: rgba(255,255,255,0.15);
-
-
-
-            display: none;
-
-
-
-        }
-
-
-
-        .search-status.active { display: inline-block; background: #27ae60; }
-
-
-
-        .search-status.searching { background: #f39c12; }
-
-
-
-        .chat-area { height: 450px; overflow-y: auto; padding: 20px; background: #f8f9fa; }
-
-
-
-        .message { margin-bottom: 15px; display: flex; flex-direction: column; }
-
-
-
-        .message.user { align-items: flex-end; }
-
-
-
-        .message.assistant { align-items: flex-start; }
-
-
-
-        .bubble {
-
-
-
-            max-width: 80%;
-
-
-
-            padding: 15px 20px;
-
-
-
-            border-radius: 18px;
-
-
-
-            font-size: 15px;
-
-
-
-            line-height: 1.7;
-
-
-
-            white-space: pre-wrap;
-
-
-
-            word-break: break-word;
-
-
-
-        }
-
-
-
-        .message.user .bubble {
-
-
-
-            background: linear-gradient(135deg, #0f3460, #16213e);
-
-
-
-            color: white;
-
-
-
-            border-bottom-right-radius: 5px;
-
-
-
-        }
-
-
-
-        .message.assistant .bubble {
-
-
-
-            background: white;
-
-
-
-            color: #333;
-
-
-
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-
-
-
-            border-bottom-left-radius: 5px;
-
-
-
-        }
-
-
-
-        .model-tag { font-size: 11px; color: #888; margin-top: 5px; padding: 0 5px; }
-
-
-
-        .loading { display: flex; gap: 5px; padding: 15px 20px; }
-
-
-
-        .loading span {
-
-
-
-            width: 8px; height: 8px; background: #0f3460;
-
-
-
-            border-radius: 50%;
-
-
-
-            animation: bounce 1.4s infinite ease-in-out both;
-
-
-
-        }
-
-
-
-        .loading span:nth-child(1) { animation-delay: -0.32s; }
-
-
-
-        .loading span:nth-child(2) { animation-delay: -0.16s; }
-
-
-
-        @keyframes bounce {
-
-
-
-            0%, 80%, 100% { transform: scale(0); }
-
-
-
-            40% { transform: scale(1); }
-
-
-
-        }
-
-
-
-        .examples {
-
-
-
-            padding: 12px 20px;
-
-
-
-            background: #f0f4f8;
-
-
-
-            border-top: 1px solid #e0e0e0;
-
-
-
-            display: flex;
-
-
-
-            gap: 8px;
-
-
-
-            flex-wrap: wrap;
-
-
-
-            align-items: center;
-
-
-
-        }
-
-
-
-        .examples-title { font-size: 12px; color: #666; margin-right: 5px; }
-
-
-
-        .example-btn {
-
-
-
-            padding: 6px 14px;
-
-
-
-            background: white;
-
-
-
-            border: 1px solid #ddd;
-
-
-
-            border-radius: 15px;
-
-
-
-            font-size: 12px;
-
-
-
-            cursor: pointer;
-
-
-
-            transition: all 0.2s;
-
-
-
-        }
-
-
-
-        .example-btn:hover {
-
-
-
-            background: #0f3460;
-
-
-
-            color: white;
-
-
-
-            border-color: #0f3460;
-
-
-
-        }
-
-
-
-        .input-area {
-
-
-
-            padding: 15px 20px;
-
-
-
-            border-top: 1px solid #eee;
-
-
-
-            display: flex;
-
-
-
-            gap: 10px;
-
-
-
-        }
-
-
-
-        .input-area input {
-
-
-
-            flex: 1;
-
-
-
-            padding: 14px 20px;
-
-
-
-            border: 2px solid #e0e0e0;
-
-
-
-            border-radius: 25px;
-
-
-
-            font-size: 15px;
-
-
-
-            outline: none;
-
-
-
-            transition: border-color 0.3s;
-
-
-
-        }
-
-
-
-        .input-area input:focus { border-color: #0f3460; }
-
-
-
-        .input-area button {
-
-
-
-            padding: 14px 28px;
-
-
-
-            background: linear-gradient(135deg, #0f3460, #16213e);
-
-
-
-            color: white;
-
-
-
-            border: none;
-
-
-
-            border-radius: 25px;
-
-
-
-            font-size: 15px;
-
-
-
-            cursor: pointer;
-
-
-
-            transition: all 0.2s;
-
-
-
-        }
-
-
-
-        .input-area button:hover {
-
-
-
-            transform: translateY(-2px);
-
-
-
-            box-shadow: 0 5px 20px rgba(15, 52, 96, 0.4);
-
-
-
-        }
-
-
-
-        .input-area button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-
-
-
-        .error-msg { color: #e74c3c; font-size: 13px; padding: 10px 20px; }
-
-
-
-    </style>
-
-
-
-</head>
-
-
-
-<body>
-
-
-
-    <div class="container">
-
-
-
-        <div class="header">
-
-
-
-            <div class="header-left">
-
-
-
-                <h1>问渠AI助手</h1>
-
-
-
-                <p>硅基流动+智谱AI · 多源聚合 · 联网搜索</p>
-
-
-
-            </div>
-
-
-
-            <div class="header-right">
-
-
-
-                <select class="model-select" id="modelSelect">
-
-                    <optgroup label="🔥 推荐模型">
-
-                        <option value="Qwen/Qwen3-8B">Qwen3-8B</option>
-
-                        <option value="THUDM/GLM-4-9B-0414">GLM-4-9B</option>
-
-                    </optgroup>
-
-                    <optgroup label="🤖 Qwen系列">
-
-                        <option value='Qwen/Qwen2.5-7B-Instruct' selected >Qwen2.5-7B</option>
-
-                        <option value="Qwen/Qwen3-8B">Qwen3-8B</option>
-
-                        </optgroup>
-
-                    <optgroup label="🧠 GLM系列">
-
-                        <option value="THUDM/GLM-4-9B-0414">GLM-4-9B</option>
-
-                        <option value="THUDM/GLM-Z1-9B-0414">GLM-Z1-9B</option>
-
-                        <option value="THUDM/GLM-4.1V-9B-Thinking">GLM-4.1V-9B</option>
-
-                    </optgroup>
-
-                    <optgroup label="⚡ DeepSeek系列">
-
-                        <option value="deepseek-ai/DeepSeek-R1-Distill-Qwen-7B">DeepSeek-R1-7B</option>
-
-                    </optgroup>
-
-                    <optgroup label="🔧 其他对话模型">
-
-                        <option value="internlm/internlm2_5-7b-chat">InternLM2.5-7B</option>
-
-                        <option value="tencent/Hunyuan-MT-7B">Hunyuan-MT-7B</option>
-
-                    </optgroup>
-
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+<html lang="zh-CN">
+
+
+
+
+
+
+
+
+
+
+
+<head>
+
+
+
+
+
+
+
+
+
+
+
+    <meta charset="UTF-8">
+
+
+
+
+
+
+
+
+
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+
+
+
+
+
+
+
+
+    <title>问渠AI助手 - 多模型免费聚合</title>
+
+
+
+
+
+
+
+
+
+
+
+    <style>
+
+
+
+
+
+
+
+
+
+
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+
+
+
+
+
+
+
+
+
+
+        body {
+
+
+
+
+
+
+
+
+
+
+
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+
+
+
+
+
+
+
+
+
+
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+
+
+
+
+
+
+
+
+
+
+
+            min-height: 100vh;
+
+
+
+
+
+
+
+
+
+
+
+            display: flex;
+
+
+
+
+
+
+
+
+
+
+
+            justify-content: center;
+
+
+
+
+
+
+
+
+
+
+
+            align-items: center;
+
+
+
+
+
+
+
+
+
+
+
+            padding: 20px;
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+        .container {
+
+
+
+
+
+
+
+
+
+
+
+            background: white;
+
+
+
+
+
+
+
+
+
+
+
+            border-radius: 20px;
+
+
+
+
+
+
+
+
+
+
+
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+
+
+
+
+
+
+
+
+
+
+
+            width: 100%;
+
+
+
+
+
+
+
+
+
+
+
+            max-width: 900px;
+
+
+
+
+
+
+
+
+
+
+
+            overflow: hidden;
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+        .header {
+
+
+
+
+
+
+
+
+
+
+
+            background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+
+
+
+
+
+
+
+
+
+
+
+            color: white;
+
+
+
+
+
+
+
+
+
+
+
+            padding: 25px 30px;
+
+
+
+
+
+
+
+
+
+
+
+            display: flex;
+
+
+
+
+
+
+
+
+
+
+
+            justify-content: space-between;
+
+
+
+
+
+
+
+
+
+
+
+            align-items: center;
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+        .header-left h1 { font-size: 24px; margin-bottom: 5px; }
+
+
+
+
+
+
+
+
+
+
+
+        .header-left p { opacity: 0.8; font-size: 13px; }
+
+
+
+
+
+
+
+
+
+
+
+        .header-right { display: flex; align-items: center; gap: 10px; }
+
+
+
+
+
+
+
+
+
+
+
+        .model-select {
+
+
+
+
+
+
+
+
+
+
+
+            padding: 8px 15px;
+
+
+
+
+
+
+
+
+
+
+
+            border-radius: 20px;
+
+
+
+
+
+
+
+
+
+
+
+            border: 2px solid rgba(255,255,255,0.3);
+
+
+
+
+
+
+
+
+
+
+
+            background: rgba(255,255,255,0.1);
+
+
+
+
+
+
+
+
+
+
+
+            color: white;
+
+
+
+
+
+
+
+
+
+
+
+            font-size: 13px;
+
+
+
+
+
+
+
+
+
+
+
+            cursor: pointer;
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+        .model-select option { color: #333; background: white; }
+
+
+
+
+
+
+
+
+
+
+
+        .model-status { font-size: 11px; opacity: 0.7; }
+
+
+
+
+
+
+
+
+
+
+
+        .search-status {
+
+
+
+
+
+
+
+
+
+
+
+            font-size: 11px;
+
+
+
+
+
+
+
+
+
+
+
+            padding: 3px 10px;
+
+
+
+
+
+
+
+
+
+
+
+            border-radius: 10px;
+
+
+
+
+
+
+
+
+
+
+
+            background: rgba(255,255,255,0.15);
+
+
+
+
+
+
+
+
+
+
+
+            display: none;
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+        .search-status.active { display: inline-block; background: #27ae60; }
+
+
+
+
+
+
+
+
+
+
+
+        .search-status.searching { background: #f39c12; }
+
+
+
+
+
+
+
+
+
+
+
+        .chat-area { height: 450px; overflow-y: auto; padding: 20px; background: #f8f9fa; }
+
+
+
+
+
+
+
+
+
+
+
+        .message { margin-bottom: 15px; display: flex; flex-direction: column; }
+
+
+
+
+
+
+
+
+
+
+
+        .message.user { align-items: flex-end; }
+
+
+
+
+
+
+
+
+
+
+
+        .message.assistant { align-items: flex-start; }
+
+
+
+
+
+
+
+
+
+
+
+        .bubble {
+
+
+
+
+
+
+
+
+
+
+
+            max-width: 80%;
+
+
+
+
+
+
+
+
+
+
+
+            padding: 15px 20px;
+
+
+
+
+
+
+
+
+
+
+
+            border-radius: 18px;
+
+
+
+
+
+
+
+
+
+
+
+            font-size: 15px;
+
+
+
+
+
+
+
+
+
+
+
+            line-height: 1.7;
+
+
+
+
+
+
+
+
+
+
+
+            white-space: pre-wrap;
+
+
+
+
+
+
+
+
+
+
+
+            word-break: break-word;
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+        .message.user .bubble {
+
+
+
+
+
+
+
+
+
+
+
+            background: linear-gradient(135deg, #0f3460, #16213e);
+
+
+
+
+
+
+
+
+
+
+
+            color: white;
+
+
+
+
+
+
+
+
+
+
+
+            border-bottom-right-radius: 5px;
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+        .message.assistant .bubble {
+
+
+
+
+
+
+
+
+
+
+
+            background: white;
+
+
+
+
+
+
+
+
+
+
+
+            color: #333;
+
+
+
+
+
+
+
+
+
+
+
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+
+
+
+
+
+
+
+
+
+
+
+            border-bottom-left-radius: 5px;
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+        .model-tag { font-size: 11px; color: #888; margin-top: 5px; padding: 0 5px; }
+
+
+
+
+
+
+
+
+
+
+
+        .loading { display: flex; gap: 5px; padding: 15px 20px; }
+
+
+
+
+
+
+
+
+
+
+
+        .loading span {
+
+
+
+
+
+
+
+
+
+
+
+            width: 8px; height: 8px; background: #0f3460;
+
+
+
+
+
+
+
+
+
+
+
+            border-radius: 50%;
+
+
+
+
+
+
+
+
+
+
+
+            animation: bounce 1.4s infinite ease-in-out both;
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+        .loading span:nth-child(1) { animation-delay: -0.32s; }
+
+
+
+
+
+
+
+
+
+
+
+        .loading span:nth-child(2) { animation-delay: -0.16s; }
+
+
+
+
+
+
+
+
+
+
+
+        @keyframes bounce {
+
+
+
+
+
+
+
+
+
+
+
+            0%, 80%, 100% { transform: scale(0); }
+
+
+
+
+
+
+
+
+
+
+
+            40% { transform: scale(1); }
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+        .examples {
+
+
+
+
+
+
+
+
+
+
+
+            padding: 12px 20px;
+
+
+
+
+
+
+
+
+
+
+
+            background: #f0f4f8;
+
+
+
+
+
+
+
+
+
+
+
+            border-top: 1px solid #e0e0e0;
+
+
+
+
+
+
+
+
+
+
+
+            display: flex;
+
+
+
+
+
+
+
+
+
+
+
+            gap: 8px;
+
+
+
+
+
+
+
+
+
+
+
+            flex-wrap: wrap;
+
+
+
+
+
+
+
+
+
+
+
+            align-items: center;
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+        .examples-title { font-size: 12px; color: #666; margin-right: 5px; }
+
+
+
+
+
+
+
+
+
+
+
+        .example-btn {
+
+
+
+
+
+
+
+
+
+
+
+            padding: 6px 14px;
+
+
+
+
+
+
+
+
+
+
+
+            background: white;
+
+
+
+
+
+
+
+
+
+
+
+            border: 1px solid #ddd;
+
+
+
+
+
+
+
+
+
+
+
+            border-radius: 15px;
+
+
+
+
+
+
+
+
+
+
+
+            font-size: 12px;
+
+
+
+
+
+
+
+
+
+
+
+            cursor: pointer;
+
+
+
+
+
+
+
+
+
+
+
+            transition: all 0.2s;
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+        .example-btn:hover {
+
+
+
+
+
+
+
+
+
+
+
+            background: #0f3460;
+
+
+
+
+
+
+
+
+
+
+
+            color: white;
+
+
+
+
+
+
+
+
+
+
+
+            border-color: #0f3460;
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+        .input-area {
+
+
+
+
+
+
+
+
+
+
+
+            padding: 15px 20px;
+
+
+
+
+
+
+
+
+
+
+
+            border-top: 1px solid #eee;
+
+
+
+
+
+
+
+
+
+
+
+            display: flex;
+
+
+
+
+
+
+
+
+
+
+
+            gap: 10px;
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+        .input-area input {
+
+
+
+
+
+
+
+
+
+
+
+            flex: 1;
+
+
+
+
+
+
+
+
+
+
+
+            padding: 14px 20px;
+
+
+
+
+
+
+
+
+
+
+
+            border: 2px solid #e0e0e0;
+
+
+
+
+
+
+
+
+
+
+
+            border-radius: 25px;
+
+
+
+
+
+
+
+
+
+
+
+            font-size: 15px;
+
+
+
+
+
+
+
+
+
+
+
+            outline: none;
+
+
+
+
+
+
+
+
+
+
+
+            transition: border-color 0.3s;
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+        .input-area input:focus { border-color: #0f3460; }
+
+
+
+
+
+
+
+
+
+
+
+        .input-area button {
+
+
+
+
+
+
+
+
+
+
+
+            padding: 14px 28px;
+
+
+
+
+
+
+
+
+
+
+
+            background: linear-gradient(135deg, #0f3460, #16213e);
+
+
+
+
+
+
+
+
+
+
+
+            color: white;
+
+
+
+
+
+
+
+
+
+
+
+            border: none;
+
+
+
+
+
+
+
+
+
+
+
+            border-radius: 25px;
+
+
+
+
+
+
+
+
+
+
+
+            font-size: 15px;
+
+
+
+
+
+
+
+
+
+
+
+            cursor: pointer;
+
+
+
+
+
+
+
+
+
+
+
+            transition: all 0.2s;
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+        .input-area button:hover {
+
+
+
+
+
+
+
+
+
+
+
+            transform: translateY(-2px);
+
+
+
+
+
+
+
+
+
+
+
+            box-shadow: 0 5px 20px rgba(15, 52, 96, 0.4);
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+        .input-area button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+
+
+
+
+
+
+
+
+
+
+        .error-msg { color: #e74c3c; font-size: 13px; padding: 10px 20px; }
+
+
+
+
+
+
+
+
+
+
+
+    </style>
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+
+
+
+
+
+
+
+
+
+
+<body>
+
+
+
+
+
+
+
+
+
+
+
+    <div class="container">
+
+
+
+
+
+
+
+
+
+
+
+        <div class="header">
+
+
+
+
+
+
+
+
+
+
+
+            <div class="header-left">
+
+
+
+
+
+
+
+
+
+
+
+                <h1>问渠AI助手</h1>
+
+
+
+
+
+
+
+
+
+
+
+                <p>硅基流动+智谱AI · 多源聚合 · 联网搜索</p>
+
+
+
+
+
+
+
+
+
+
+
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+            <div class="header-right">
+
+
+
+
+
+
+
+
+
+
+
+                <select class="model-select" id="modelSelect">
+
+
+
+
+
+                    <optgroup label="🔥 推荐模型">
+
+
+
+
+
+                        <option value="Qwen/Qwen3-8B">Qwen3-8B</option>
+
+
+
+
+
+                        <option value="THUDM/GLM-4-9B-0414">GLM-4-9B</option>
+
+
+
+
+
+                    </optgroup>
+
+
+
+
+
+                    <optgroup label="🤖 Qwen系列">
+
+
+
+
+
+                        <option value='Qwen/Qwen2.5-7B-Instruct' selected >Qwen2.5-7B</option>
+
+
+
+
+
+                        <option value="Qwen/Qwen3-8B">Qwen3-8B</option>
+
+
+
+
+
+                        </optgroup>
+
+
+
+
+
+                    <optgroup label="🧠 GLM系列">
+
+
+
+
+
+                        <option value="THUDM/GLM-4-9B-0414">GLM-4-9B</option>
+
+
+
+
+
+                        <option value="THUDM/GLM-Z1-9B-0414">GLM-Z1-9B</option>
+
+
+
+
+
+                        <option value="THUDM/GLM-4.1V-9B-Thinking">GLM-4.1V-9B</option>
+
+
+
+
+
+                    </optgroup>
+
+
+
+
+
+                    <optgroup label="⚡ DeepSeek系列">
+
+
+
+
+
+                        <option value="deepseek-ai/DeepSeek-R1-Distill-Qwen-7B">DeepSeek-R1-7B</option>
+
+
+
+
+
+                    </optgroup>
+
+
+
+
+
+                    <optgroup label="🔧 其他对话模型">
+
+
+
+
+
+                        <option value="internlm/internlm2_5-7b-chat">InternLM2.5-7B</option>
+
+
+
+
+
+                        <option value="tencent/Hunyuan-MT-7B">Hunyuan-MT-7B</option>
+
+
+
+
+
+                    </optgroup>
+
+
+
+
+
                     <optgroup label="✨ 智谱AI">
                         <option value="glm-4-flash">GLM-4-Flash (免费)</option>
                         <option value="glm-z1-flash">GLM-Z1-Flash (推理)</option>
                     </optgroup>
-                    
-
-                    
-
-                    
-
-                </select>
-
-
-
-                <span class="model-status" id="modelStatus">就绪</span>
-
-
-
-                <span class="search-status" id="searchStatus"></span>
-
-
-
-            </div>
-
-
-
-        </div>
-
-
-
-
-
-
-
-        <div class="chat-area" id="chatArea">
-
-
-
-            <div class="message assistant">
-
-
-
-                <div class="bubble">👋 您好！我是问渠AI助手。
-
-
-
-
-
-
-
-我可以回答各种问题，包括：
-
-
-
-• 天然气/LNG相关问题
-
-
-
-• 生活常识、科学知识
-
-
-
-• 新闻资讯、技术问题
-
-
-
-• 实时热点查询（联网获取最新信息）
-
-
-
-
-
-
-
-请选择模型后开始提问！</div>
-
-
-
-            </div>
-
-
-
-        </div>
-
-
-
-
-
-
-
-        <div class="examples">
-
-
-
-            <span class="examples-title">试试：</span>
-
-
-
-            <button class="example-btn" onclick="askExample('今天成都天气怎么样？')">成都天气</button>
-
-
-
-            <button class="example-btn" onclick="askExample('今天LNG天然气价格最新行情')">LNG价格</button>
-
-
-
-            <button class="example-btn" onclick="askExample('2026年4月有什么重要新闻？')">4月新闻</button>
-
-
-
-            <button class="example-btn" onclick="askExample('LNG天然气安全储存规范')">LNG储存</button>
-
-
-
-        </div>
-
-
-
-
-
-
-
-        <div class="input-area">
-
-
-
-            <input type="text" id="userInput" placeholder="输入你的问题，按Enter发送..." onkeypress="handleKeyPress(event)">
-
-
-
-            <button id="sendBtn" onclick="sendMessage()">发送</button>
-
-
-
-        </div>
-
-
-
-    </div>
-
-
-
-
-
-
-
-    <script>
-
-
-
-        const chatArea = document.getElementById('chatArea');
-
-
-
-        const userInput = document.getElementById('userInput');
-
-
-
-        const sendBtn = document.getElementById('sendBtn');
-
-
-
-        const modelSelect = document.getElementById('modelSelect');
-
-
-
-        const modelStatus = document.getElementById('modelStatus');
-
-
-
-        const searchStatus = document.getElementById('searchStatus');
-
-
-
-
-
-
-
-        // API配置 - 多源聚合
-
-        const API_CONFIG = {
-
-            siliconflow: {
-
-                name: '硅基流动',
-
-                baseUrl: 'https://api.siliconflow.cn/v1',
-
-                apiKey: 'sk-bpbwbmbqkcjqjbrjiijkmkmpypwitkkypifldowwhghecruc',
-
-                models: [
-
-                    // 对话模型
-
-                    
+                    
+
+
+
+
+
+                    
+
+
+
+
+
+                    
+
+
+
+
+
+                </select>
+
+
+
+
+
+
+
+
+
+
+
+                <span class="model-status" id="modelStatus">就绪</span>
+
+
+
+
+
+
+
+
+
+
+
+                <span class="search-status" id="searchStatus"></span>
+
+
+
+
+
+
+
+
+
+
+
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="chat-area" id="chatArea">
+
+
+
+
+
+
+
+
+
+
+
+            <div class="message assistant">
+
+
+
+
+
+
+
+
+
+
+
+                <div class="bubble">👋 您好！我是问渠AI助手。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+我可以回答各种问题，包括：
+
+
+
+
+
+
+
+
+
+
+
+• 天然气/LNG相关问题
+
+
+
+
+
+
+
+
+
+
+
+• 生活常识、科学知识
+
+
+
+
+
+
+
+
+
+
+
+• 新闻资讯、技术问题
+
+
+
+
+
+
+
+
+
+
+
+• 实时热点查询（联网获取最新信息）
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+请选择模型后开始提问！</div>
+
+
+
+
+
+
+
+
+
+
+
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="examples">
+
+
+
+
+
+
+
+
+
+
+
+            <span class="examples-title">试试：</span>
+
+
+
+
+
+
+
+
+
+
+
+            <button class="example-btn" onclick="askExample('今天成都天气怎么样？')">成都天气</button>
+
+
+
+
+
+
+
+
+
+
+
+            <button class="example-btn" onclick="askExample('今天LNG天然气价格最新行情')">LNG价格</button>
+
+
+
+
+
+
+
+
+
+
+
+            <button class="example-btn" onclick="askExample('2026年4月有什么重要新闻？')">4月新闻</button>
+
+
+
+
+
+
+
+
+
+
+
+            <button class="example-btn" onclick="askExample('LNG天然气安全储存规范')">LNG储存</button>
+
+
+
+
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="input-area">
+
+
+
+
+
+
+
+
+
+
+
+            <input type="text" id="userInput" placeholder="输入你的问题，按Enter发送..." onkeypress="handleKeyPress(event)">
+
+
+
+
+
+
+
+
+
+
+
+            <button id="sendBtn" onclick="sendMessage()">发送</button>
+
+
+
+
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+
+
+
+
+
+
+
+
+
+
+
+        const chatArea = document.getElementById('chatArea');
+
+
+
+
+
+
+
+
+
+
+
+        const userInput = document.getElementById('userInput');
+
+
+
+
+
+
+
+
+
+
+
+        const sendBtn = document.getElementById('sendBtn');
+
+
+
+
+
+
+
+
+
+
+
+        const modelSelect = document.getElementById('modelSelect');
+
+
+
+
+
+
+
+
+
+
+
+        const modelStatus = document.getElementById('modelStatus');
+
+
+
+
+
+
+
+
+
+
+
+        const searchStatus = document.getElementById('searchStatus');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // API配置 - 多源聚合
+
+
+
+
+
+        const API_CONFIG = {
+
+
+
+
+
+            siliconflow: {
+
+
+
+
+
+                name: '硅基流动',
+
+
+
+
+
+                baseUrl: 'https://api.siliconflow.cn/v1',
+
+
+
+
+
+                apiKey: 'sk-bpbwbmbqkcjqjbrjiijkmkmpypwitkkypifldowwhghecruc',
+
+
+
+
+
+                models: [
+
+
+
+
+
+                    // 对话模型
+
+
+
+
+
+                    
+
+
                     'Qwen/Qwen3-8B',
-                    'Qwen/Qwen2.5-7B-Instruct',
-
-                    
-                    'THUDM/GLM-4-9B-0414',
-
-                    'THUDM/GLM-Z1-9B-0414',
-
-                    'THUDM/GLM-4.1V-9B-Thinking',
-
-                    'deepseek-ai/DeepSeek-R1-Distill-Qwen-7B',
-
-                    
-                    'internlm/internlm2_5-7b-chat',
-
-                    'tencent/Hunyuan-MT-7B',
-
-                    // Embedding模型// Reranker模型// 图像/语音模型
-
-                    
-                                    ]
-
-            }
-
-        },
-        zhipuai: {
-            name: "智谱AI",
-            baseUrl: "https://open.bigmodel.cn/api/paas/v4",
-            apiKey: "61df839b60cf46f7ae86b3f017a0de32.V3Ir5M1gcUzyrub5",
-            models: ["glm-4-flash","glm-z1-flash"]
-        }
-    };
-
-
-
-
-
-        // 实时关键词（检测到这些词时先联网搜索）
-
-
-
+                    'Qwen/Qwen2.5-7B-Instruct',
+
+
+
+
+
+                    
+
+
+                    'THUDM/GLM-4-9B-0414',
+
+
+
+
+
+                    'THUDM/GLM-Z1-9B-0414',
+
+
+
+
+
+                    'THUDM/GLM-4.1V-9B-Thinking',
+
+
+
+
+
+                    'deepseek-ai/DeepSeek-R1-Distill-Qwen-7B',
+
+
+
+
+
+                    
+
+
+                    'internlm/internlm2_5-7b-chat',
+
+
+
+
+
+                    'tencent/Hunyuan-MT-7B',
+
+
+
+
+
+                    // Embedding模型// Reranker模型// 图像/语音模型
+
+
+
+
+
+                    
+
+
+                                    ]
+
+
+
+
+
+            }
+
+
+
+
+
+        },
+
+
+        zhipuai: {
+
+
+            name: "智谱AI",
+
+
+            baseUrl: "https://open.bigmodel.cn/api/paas/v4",
+
+
+            apiKey: "61df839b60cf46f7ae86b3f017a0de32.V3Ir5M1gcUzyrub5",
+
+
+            models: ["glm-4-flash","glm-z1-flash"]
+
+
+        }
+
+
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // 实时关键词（检测到这些词时先联网搜索）
+
+
+
+
+
+
+
+
+
+
+
         const REALTIME_KEYWORDS = [
-        'today', 'tomorrow', 'yesterday', 'now', 'latest', 'news',
-        'weather', 'stock', 'price', 'market', 'trump', 'biden',
-        'weather', '成都', 'LNG', 'gas', '今日', '现在', '最新',
-        '新闻', '特朗普', '拜登', '今天', '明天', '昨天'
-    ];
-
-
-
-
-
-
-
-        function addMessage(role, content, modelInfo) {
-
-
-
-            const msg = document.createElement('div');
-
-
-
-            msg.className = `message ${role}`;
-
-
-
-            msg.innerHTML = `<div class="bubble">${escapeHtml(content)}</div>` +
-
-
-
-                (modelInfo ? `<div class="model-tag">${modelInfo}</div>` : '');
-
-
-
-            chatArea.appendChild(msg);
-
-
-
-            chatArea.scrollTop = chatArea.scrollHeight;
-
-
-
-        }
-
-
-
-
-
-
-
-        function addLoading(text) {
-
-
-
-            removeLoading();
-
-
-
-            const msg = document.createElement('div');
-
-
-
-            msg.className = 'message assistant';
-
-
-
-            msg.id = 'loadingMsg';
-
-
-
-            msg.innerHTML = `<div class="loading"><span></span><span></span><span></span></div>
-
-
-
-                <div class="model-tag" id="loadingText">${text || '思考中...'}</div>`;
-
-
-
-            chatArea.appendChild(msg);
-
-
-
-            chatArea.scrollTop = chatArea.scrollHeight;
-
-
-
-        }
-
-
-
-
-
-
-
-        function updateLoadingText(text) {
-
-
-
-            const el = document.getElementById('loadingText');
-
-
-
-            if (el) el.textContent = text;
-
-
-
-        }
-
-
-
-
-
-
-
-        function removeLoading() {
-
-
-
-            const loading = document.getElementById('loadingMsg');
-
-
-
-            if (loading) loading.remove();
-
-
-
-        }
-
-
-
-
-
-
-
-        function escapeHtml(text) {
-
-
-
-            const div = document.createElement('div');
-
-
-
-            div.textContent = text;
-
-
-
-            return div.innerHTML;
-
-
-
-        }
-
-
-
-
-
-
-
-        function handleKeyPress(e) {
-
-
-
-            if (e.key === 'Enter') sendMessage();
-
-
-
-        }
-
-
-
-
-
-
-
-        function askExample(q) {
-
-
-
-            userInput.value = q;
-
-
-
-            sendMessage();
-
-
-
-        }
-
-
-
-
-
-
-
-        function setStatus(text) {
-
-
-
-            modelStatus.textContent = text;
-
-
-
-        }
-
-
-
-
-
-
-
-        function setSearchStatus(text, type) {
-
-
-
-            searchStatus.textContent = text;
-
-
-
-            searchStatus.className = 'search-status active' + (type ? ' ' + type : '');
-
-
-
-        }
-
-
-
-
-
-
-
-        function clearSearchStatus() {
-
-
-
-            searchStatus.className = 'search-status';
-
-
-
-            searchStatus.textContent = '';
-
-
-
-        }
-
-
-
-
-
-
-
+
+
+
+
+
+
+
+
+
+
+
+            '今天','昨天','明天','本周','本月','今年','近期',
+
+
+
+
+
+
+
+
+
+
+
+            '新闻','热点','最新','现在','此刻','实时',
+
+
+
+
+
+
+
+
+
+
+
+            '天气','气温','下雨','晴天','暴雨','地震',
+
+
+
+
+
+
+
+
+
+
+
+            '股票','股价','行情','涨跌','大盘','指数',
+
+
+
+
+
+
+
+
+
+
+
+            'lng价格','天然气价格','油价','期货',
+
+
+
+
+
+
+
+
+
+
+
+            '特朗普','习近平','美国','中国','俄罗斯','国际',
+
+
+
+
+
+
+
+
+
+
+
+            '疫情','流感','病毒','疫苗',
+
+
+
+
+
+
+
+
+
+
+
+            '比赛','直播','上映','发布','开幕','闭幕'
+
+
+
+
+
+
+
+
+
+
+
+        ];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        function addMessage(role, content, modelInfo) {
+
+
+
+
+
+
+
+
+
+
+
+            const msg = document.createElement('div');
+
+
+
+
+
+
+
+
+
+
+
+            msg.className = `message ${role}`;
+
+
+
+
+
+
+
+
+
+
+
+            msg.innerHTML = `<div class="bubble">${escapeHtml(content)}</div>` +
+
+
+
+
+
+
+
+
+
+
+
+                (modelInfo ? `<div class="model-tag">${modelInfo}</div>` : '');
+
+
+
+
+
+
+
+
+
+
+
+            chatArea.appendChild(msg);
+
+
+
+
+
+
+
+
+
+
+
+            chatArea.scrollTop = chatArea.scrollHeight;
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        function addLoading(text) {
+
+
+
+
+
+
+
+
+
+
+
+            removeLoading();
+
+
+
+
+
+
+
+
+
+
+
+            const msg = document.createElement('div');
+
+
+
+
+
+
+
+
+
+
+
+            msg.className = 'message assistant';
+
+
+
+
+
+
+
+
+
+
+
+            msg.id = 'loadingMsg';
+
+
+
+
+
+
+
+
+
+
+
+            msg.innerHTML = `<div class="loading"><span></span><span></span><span></span></div>
+
+
+
+
+
+
+
+
+
+
+
+                <div class="model-tag" id="loadingText">${text || '思考中...'}</div>`;
+
+
+
+
+
+
+
+
+
+
+
+            chatArea.appendChild(msg);
+
+
+
+
+
+
+
+
+
+
+
+            chatArea.scrollTop = chatArea.scrollHeight;
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        function updateLoadingText(text) {
+
+
+
+
+
+
+
+
+
+
+
+            const el = document.getElementById('loadingText');
+
+
+
+
+
+
+
+
+
+
+
+            if (el) el.textContent = text;
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        function removeLoading() {
+
+
+
+
+
+
+
+
+
+
+
+            const loading = document.getElementById('loadingMsg');
+
+
+
+
+
+
+
+
+
+
+
+            if (loading) loading.remove();
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        function escapeHtml(text) {
+
+
+
+
+
+
+
+
+
+
+
+            const div = document.createElement('div');
+
+
+
+
+
+
+
+
+
+
+
+            div.textContent = text;
+
+
+
+
+
+
+
+
+
+
+
+            return div.innerHTML;
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        function handleKeyPress(e) {
+
+
+
+
+
+
+
+
+
+
+
+            if (e.key === 'Enter') sendMessage();
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        function askExample(q) {
+
+
+
+
+
+
+
+
+
+
+
+            userInput.value = q;
+
+
+
+
+
+
+
+
+
+
+
+            sendMessage();
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        function setStatus(text) {
+
+
+
+
+
+
+
+
+
+
+
+            modelStatus.textContent = text;
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        function setSearchStatus(text, type) {
+
+
+
+
+
+
+
+
+
+
+
+            searchStatus.textContent = text;
+
+
+
+
+
+
+
+
+
+
+
+            searchStatus.className = 'search-status active' + (type ? ' ' + type : '');
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        function clearSearchStatus() {
+
+
+
+
+
+
+
+
+
+
+
+            searchStatus.className = 'search-status';
+
+
+
+
+
+
+
+
+
+
+
+            searchStatus.textContent = '';
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         // 获取当前日期时间信息
         function getDateTimeInfo() {
             const now = new Date();
@@ -1171,512 +3580,1518 @@
             const weekDay = weekDays[now.getDay()];
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
-            
             return `今天是${year}年${month}月${day}日，星期${weekDay}，现在时间是${hours}:${minutes}。`;
         }
 
-        // 检测是否需要联网搜索
-
-
-
-        function needsRealtime(question) {
-
-
-
-            const q = question.toLowerCase();
-
-
-
-            return REALTIME_KEYWORDS.some(kw => q.includes(kw));
-
-
-
-        }
-
-
-
-
-
-
-
-        // 联网搜索（CORS友好API合集）
-
-        async function webSearch(query) {
-
-            setSearchStatus('联网搜索...', 'searching');
-
-            try {
-
-                const now = new Date();
-
-                const dateStr = now.getFullYear() + '年' + (now.getMonth()+1) + '月' + now.getDate() + '日';
-
-                const weekDays = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
-
-                const weekDay = weekDays[now.getDay()];
-
-                const q = query.toLowerCase();
-
-
-
-                // 内置日期/时间处理（最快最准）
-
-                if (q.includes('今天') || q.includes('日期') || q.includes('几号') || q.includes('星期') || q.includes('礼拜')) {
-
-                    clearSearchStatus();
-
-                    return '【当前日期】' + dateStr + ' ' + weekDay + '（系统实时获取，准确无误）';
-
-                }
-
-                if (q.includes('现在') && (q.includes('几点') || q.includes('时间') || q.includes('点'))) {
-
-                    const h = now.getHours().toString().padStart(2,'0');
-
-                    const m = now.getMinutes().toString().padStart(2,'0');
-
-                    clearSearchStatus();
-
-                    return '【当前时间】' + h + ':' + m + '（系统实时获取）';
-
-                }
-
-                // 天气查询
-
-                if (q.includes('天气')) {
-
-                    clearSearchStatus();
-
-                    return '【天气查询】请访问 https://wttr.in 或使用专业天气APP获取实时天气。当前日期：' + dateStr;
-
-                }
-
-
-
-                // 维基百科搜索（完全支持CORS）
-
-                const wikiUrl = 'https://zh.wikipedia.org/w/api.php?action=query&list=search&srsearch=' + encodeURIComponent(query.replace(/今天|昨天|明天/g,'').trim()) + '&format=json&origin=*&limit=3';
-
-                const wikiResp = await fetch(wikiUrl);
-
-                const wikiData = await wikiResp.json();
-
-                let wikiResults = [];
-
-                if (wikiData.query && wikiData.query.search) {
-
-                    wikiData.query.search.forEach(item => {
-
-                        const snippet = item.snippet.replace(/<[^>]*>/g,'').replace(/&quot;/g,'"');
-
-                        wikiResults.push('• ' + item.title + '：' + snippet);
-
-                    });
-
-                }
-
-
-
-                // DuckDuckGo HTML搜索（通过allorigins代理解决CORS）
-
-                let ddgResults = '';
-
-                try {
-
-                    const ddgUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://html.duckduckgo.com/html/?q=' + encodeURIComponent(query));
-
-                    const ddgResp = await fetch(ddgUrl);
-
-                    const ddgData = await ddgResp.json();
-
-                    if (ddgData.contents) {
-
-                        const matches = ddgData.contents.match(/<a class="result__a"[^>]*>([^<]+)<\/a>[\s\S]{0,200}?<a class="result__snippet"[^>]*>([^<]+)<\/a>/g);
-
-                        if (matches && matches.length > 0) {
-
-                            const topResults = matches.slice(0,2).map(m => {
-
-                                const title = m.match(/>([^<]+)<\/a>/);
-
-                                const snippet = m.match(/class="result__snippet"[^>]*>([^<]+)<\/a>/);
-
-                                return '• ' + (title ? title[1] : '') + '：' + (snippet ? snippet[1].replace(/<[^>]*>/g,'') : '');
-
-                            });
-
-                            ddgResults = topResults.join('\n');
-
-                        }
-
-                    }
-
-                } catch(e) {}
-
-
-
-                // 组合结果
-
-                let parts = [];
-
-                if (wikiResults.length > 0) {
-
-                    parts.push('【维基百科】\n' + wikiResults.join('\n'));
-
-                }
-
-                if (ddgResults) {
-
-                    parts.push('【网络搜索】\n' + ddgResults);
-
-                }
-
-                if (parts.length > 0) {
-
-                    clearSearchStatus();
-
-                    return parts.join('\n\n');
-
-                } else {
-
-                    clearSearchStatus();
-
-                    return '（未找到相关信息，将基于已有知识回答）';
-
-                }
-
-            } catch (e) {
-
-                clearSearchStatus();
-
-                return '（联网搜索失败：' + e.message + '）';
-
-            }
-
-        }
-
-
-
-
-
-
-
-        // 获取模型对应的API配置
-
-        function getApiConfig(model) {
-
-            for (const [key, config] of Object.entries(API_CONFIG)) {
-
-                if (config.models.includes(model)) {
-
-                    return { provider: key, ...config };
-
-                }
-
-            }
-
-            // 默认使用硅基流动
-
-            return { provider: 'siliconflow', ...API_CONFIG.siliconflow };
-
-        }
-
-
-
-        // 调用AI（支持多源聚合）
-
-        async function callAI(prompt, model) {
-
-            setStatus('AI思考中...');
-
-            
-
-            const api = getApiConfig(model);
-
-            
-
-            // 检查API Key是否配置
-
-            if (!api.apiKey) {
-
-                throw new Error(`${api.name} 的API Key未配置，请在代码中填写`);
-
-            }
-
-            
-
-            const response = await fetch(api.baseUrl + '/chat/completions', {
-
-                method: 'POST',
-
-                headers: {
-
-                    'Authorization': 'Bearer ' + api.apiKey,
-
-                    'Content-Type': 'application/json'
-
-                },
-
-                body: JSON.stringify({
-
-                    model: model,
-
-                    messages: [{ role: 'user', content: prompt }],
-
-                    stream: true
-
-                })
-
-            });
-
-            
-
-            if (!response.ok) {
-
-                const errText = await response.text();
-
-                throw new Error(`${api.name} 请求失败 HTTP ${response.status}: ${errText}`);
-
-            }
-
-            
-
-            const data = await response.json();
-
-            
-
-            if (data.error) {
-
-                throw new Error(`${api.name} 错误: ${data.error.message || JSON.stringify(data.error)}`);
-
-            }
-
-            
-
-            return {
-
-                content: data.choices[0].message.content,
-
-                provider: api.name,
-
-                model: model
-
-            };
-
-        }
-
-
-
-
-
-
-
-        async function sendMessage() {
-
-
-
-            const question = userInput.value.trim();
-
-
-
-            if (!question) return;
-
-
-
-
-
-
-
-            addMessage('user', question);
-
-
-
-            userInput.value = '';
-
-
-
-            sendBtn.disabled = true;
-
-
-
-
-
-
-
-            const model = modelSelect.value;
-
-
-
-
-
-
-
-            try {
-
-
-
-                // 检测是否需要联网
-
-
-
-                const isRealtime = needsRealtime(question);
-
-
-
-                let prompt = question;
-
-
-
-
-
-
-
-                if (isRealtime) {
-
-
-
-                    // 纯日期/时间问题直接前端回答，不调用AI也不联网
-
-                    const q = question.toLowerCase();
-
+        // 检测是否需要联网搜索
+
+
+
+
+
+
+
+
+
+
+
+        function needsRealtime(question) {
+
+
+
+
+
+
+
+
+
+
+
+            const q = question.toLowerCase();
+
+
+
+
+
+
+
+
+
+
+
+            return REALTIME_KEYWORDS.some(kw => q.includes(kw));
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // 联网搜索（CORS友好API合集）
+
+
+
+
+
+        async function webSearch(query) {
+
+
+
+
+
+            setSearchStatus('联网搜索...', 'searching');
+
+
+
+
+
+            try {
+
+
+
+
+
+                const now = new Date();
+
+
+
+
+
+                const dateStr = now.getFullYear() + '年' + (now.getMonth()+1) + '月' + now.getDate() + '日';
+
+
+
+
+
+                const weekDays = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+
+
+
+
+
+                const weekDay = weekDays[now.getDay()];
+
+
+
+
+
+                const q = query.toLowerCase();
+
+
+
+
+
+
+
+
+
+
+
+                // 内置日期/时间处理（最快最准）
+
+
+
+
+
+                if (q.includes('今天') || q.includes('日期') || q.includes('几号') || q.includes('星期') || q.includes('礼拜')) {
+
+
+
+
+
+                    clearSearchStatus();
+
+
+
+
+
+                    return '【当前日期】' + dateStr + ' ' + weekDay + '（系统实时获取，准确无误）';
+
+
+
+
+
+                }
+
+
+
+
+
+                if (q.includes('现在') && (q.includes('几点') || q.includes('时间') || q.includes('点'))) {
+
+
+
+
+
+                    const h = now.getHours().toString().padStart(2,'0');
+
+
+
+
+
+                    const m = now.getMinutes().toString().padStart(2,'0');
+
+
+
+
+
+                    clearSearchStatus();
+
+
+
+
+
+                    return '【当前时间】' + h + ':' + m + '（系统实时获取）';
+
+
+
+
+
+                }
+
+
+
+
+
+                // 天气查询
+
+
+
+
+
+                if (q.includes('天气')) {
+
+
+
+
+
+                    clearSearchStatus();
+
+
+
+
+
+                    return '【天气查询】请访问 https://wttr.in 或使用专业天气APP获取实时天气。当前日期：' + dateStr;
+
+
+
+
+
+                }
+
+
+
+
+
+
+
+
+
+
+
+                // 维基百科搜索（完全支持CORS）
+
+
+
+
+
+                const wikiUrl = 'https://zh.wikipedia.org/w/api.php?action=query&list=search&srsearch=' + encodeURIComponent(query.replace(/今天|昨天|明天/g,'').trim()) + '&format=json&origin=*&limit=3';
+
+
+
+
+
+                const wikiResp = await fetch(wikiUrl);
+
+
+
+
+
+                const wikiData = await wikiResp.json();
+
+
+
+
+
+                let wikiResults = [];
+
+
+
+
+
+                if (wikiData.query && wikiData.query.search) {
+
+
+
+
+
+                    wikiData.query.search.forEach(item => {
+
+
+
+
+
+                        const snippet = item.snippet.replace(/<[^>]*>/g,'').replace(/&quot;/g,'"');
+
+
+
+
+
+                        wikiResults.push('• ' + item.title + '：' + snippet);
+
+
+
+
+
+                    });
+
+
+
+
+
+                }
+
+
+
+
+
+
+
+
+
+
+
+                // DuckDuckGo HTML搜索（通过allorigins代理解决CORS）
+
+
+
+
+
+                let ddgResults = '';
+
+
+
+
+
+                try {
+
+
+
+
+
+                    const ddgUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://html.duckduckgo.com/html/?q=' + encodeURIComponent(query));
+
+
+
+
+
+                    const ddgResp = await fetch(ddgUrl);
+
+
+
+
+
+                    const ddgData = await ddgResp.json();
+
+
+
+
+
+                    if (ddgData.contents) {
+
+
+
+
+
+                        const matches = ddgData.contents.match(/<a class="result__a"[^>]*>([^<]+)<\/a>[\s\S]{0,200}?<a class="result__snippet"[^>]*>([^<]+)<\/a>/g);
+
+
+
+
+
+                        if (matches && matches.length > 0) {
+
+
+
+
+
+                            const topResults = matches.slice(0,2).map(m => {
+
+
+
+
+
+                                const title = m.match(/>([^<]+)<\/a>/);
+
+
+
+
+
+                                const snippet = m.match(/class="result__snippet"[^>]*>([^<]+)<\/a>/);
+
+
+
+
+
+                                return '• ' + (title ? title[1] : '') + '：' + (snippet ? snippet[1].replace(/<[^>]*>/g,'') : '');
+
+
+
+
+
+                            });
+
+
+
+
+
+                            ddgResults = topResults.join('\n');
+
+
+
+
+
+                        }
+
+
+
+
+
+                    }
+
+
+
+
+
+                } catch(e) {}
+
+
+
+
+
+
+
+
+
+
+
+                // 组合结果
+
+
+
+
+
+                let parts = [];
+
+
+
+
+
+                if (wikiResults.length > 0) {
+
+
+
+
+
+                    parts.push('【维基百科】\n' + wikiResults.join('\n'));
+
+
+
+
+
+                }
+
+
+
+
+
+                if (ddgResults) {
+
+
+
+
+
+                    parts.push('【网络搜索】\n' + ddgResults);
+
+
+
+
+
+                }
+
+
+
+
+
+                if (parts.length > 0) {
+
+
+
+
+
+                    clearSearchStatus();
+
+
+
+
+
+                    return parts.join('\n\n');
+
+
+
+
+
+                } else {
+
+
+
+
+
+                    clearSearchStatus();
+
+
+
+
+
+                    return '（未找到相关信息，将基于已有知识回答）';
+
+
+
+
+
+                }
+
+
+
+
+
+            } catch (e) {
+
+
+
+
+
+                clearSearchStatus();
+
+
+
+
+
+                return '（联网搜索失败：' + e.message + '）';
+
+
+
+
+
+            }
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // 获取模型对应的API配置
+
+
+
+
+
+        function getApiConfig(model) {
+
+
+
+
+
+            for (const [key, config] of Object.entries(API_CONFIG)) {
+
+
+
+
+
+                if (config.models.includes(model)) {
+
+
+
+
+
+                    return { provider: key, ...config };
+
+
+
+
+
+                }
+
+
+
+
+
+            }
+
+
+
+
+
+            // 默认使用硅基流动
+
+
+
+
+
+            return { provider: 'siliconflow', ...API_CONFIG.siliconflow };
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+        // 调用AI（支持多源聚合）
+
+
+
+
+
+        async function callAI(prompt, model) {
+
+
+
+
+
+            setStatus('AI思考中...');
+
+
+
+
+
+            
+
+
+
+
+
+            const api = getApiConfig(model);
+
+
+
+
+
+            
+
+
+
+
+
+            // 检查API Key是否配置
+
+
+
+
+
+            if (!api.apiKey) {
+
+
+
+
+
+                throw new Error(`${api.name} 的API Key未配置，请在代码中填写`);
+
+
+
+
+
+            }
+
+
+
+
+
+            
+
+
+
+
+
+            const response = await fetch(api.baseUrl + '/chat/completions', {
+
+
+
+
+
+                method: 'POST',
+
+
+
+
+
+                headers: {
+
+
+
+
+
+                    'Authorization': 'Bearer ' + api.apiKey,
+
+
+
+
+
+                    'Content-Type': 'application/json'
+
+
+
+
+
+                },
+
+
+
+
+
+                body: JSON.stringify({
+
+
+
+
+
+                    model: model,
+
+
+
+
+
+                    messages: [{ role: 'user', content: prompt }],
+
+
+
+
+
+                    stream: false
+
+
+
+
+
+                })
+
+
+
+
+
+            });
+
+
+
+
+
+            
+
+
+
+
+
+            if (!response.ok) {
+
+
+
+
+
+                const errText = await response.text();
+
+
+
+
+
+                throw new Error(`${api.name} 请求失败 HTTP ${response.status}: ${errText}`);
+
+
+
+
+
+            }
+
+
+
+
+
+            
+
+
+
+
+
+            const data = await response.json();
+
+
+
+
+
+            
+
+
+
+
+
+            if (data.error) {
+
+
+
+
+
+                throw new Error(`${api.name} 错误: ${data.error.message || JSON.stringify(data.error)}`);
+
+
+
+
+
+            }
+
+
+
+
+
+            
+
+
+
+
+
+            return {
+
+
+
+
+
+                content: data.choices[0].message.content,
+
+
+
+
+
+                provider: api.name,
+
+
+
+
+
+                model: model
+
+
+
+
+
+            };
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        async function sendMessage() {
+
+
+
+
+
+
+
+
+
+
+
+            const question = userInput.value.trim();
+
+
+
+
+
+
+
+
+
+
+
+            if (!question) return;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            addMessage('user', question);
+
+
+
+
+
+
+
+
+
+
+
+            userInput.value = '';
+
+
+
+
+
+
+
+
+
+
+
+            sendBtn.disabled = true;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            const model = modelSelect.value;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            try {
+
+
+
+
+
+
+
+
+
+
+
+                // 检测是否需要联网
+
+
+
+
+
+
+
+
+
+
+
+                const isRealtime = needsRealtime(question);
+
+
+
+
+
+
+
+
+
+
+
+                let prompt = question;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                if (isRealtime) {
+
+
+
+
+
+
+
+
+
+
+
+                    // 纯日期/时间问题直接前端回答，不调用AI也不联网
+
+
+
+
+
+                    const q = question.toLowerCase();
+
+
+
+
+
                     const isPureDateTime = (
-        q.includes('today') || q.includes('today') || q.includes('今天') ||
-        q.includes('日期') || q.includes('几号') || q.includes('星期') ||
-        q.includes('礼拜') || q.includes('现在几点') || q.includes('今年') ||
-        q.includes('本月') || q.includes('此刻') || q.includes('号') ||
-        q.includes('号') || q.includes('日')
-    );
-
-                    
-
-                    if (isPureDateTime) {
-
-                        removeLoading();
-
-                        addMessage('assistant', getDateTimeInfo(), '由前端实时获取');
-
-                        setStatus('就绪');
-
-                        sendBtn.disabled = false;
-
-                        userInput.focus();
-
-                        return;
-
-                    }
-
-                    
-
-                    addLoading('联网搜索中...');
-
-                    const searchResults = await webSearch(question);
-
-                    
-
-                    updateLoadingText('AI思考中...');
-
-                    prompt = `You are Wenqu AI Assistant. Below are search results with accurate information.
-IMPORTANT: Answer the user's question directly using the search results below.
-Do NOT say you cannot access real-time data. Do NOT say you are an AI with limitations.
-Just answer the question based on the search results provided.
-
-
-
-搜索结果：
-
-${searchResults}
-
-
-
-用户问题：${question}
-
-
-
-请直接回答，不要提及你无法访问实时数据。`;
-
-                } else {
-
-                    addLoading('AI思考中...');
-
-
-
-                }
-
-
-
-
-
-
-
-                const result = await callAI(prompt, model);
-
-
-
-                removeLoading();
-
-
-
-                addMessage('assistant', result.content, `由 ${result.provider} · ${result.model.split('/').pop()} 生成`);
-
-
-
-                setStatus('就绪');
-
-
-
-                clearSearchStatus();
-
-
-
-            } catch (e) {
-
-
-
-                removeLoading();
-
-
-
-                addMessage('assistant', '抱歉，服务暂时不可用。\n错误: ' + e.message, '');
-
-
-
-                setStatus('出错');
-
-
-
-                clearSearchStatus();
-
-
-
-            }
-
-
-
-
-
-
-
-            sendBtn.disabled = false;
-
-
-
-            userInput.focus();
-
-
-
-        }
-
-
-
-    </script>
-
-
-
-</body>
-
-
-
-</html>
-
-
-
+
+
+
+
+
+                        q.includes('今天') || q.includes('日期') || q.includes('几号') || 
+
+
+
+
+
+                        q.includes('星期') || q.includes('礼拜') || q.includes('现在几点') ||
+
+
+
+
+
+                        q.includes('今年') || q.includes('本月') || q.includes('此刻')
+
+
+
+
+
+                    );
+
+
+
+
+
+                    
+
+
+
+
+
+                    if (isPureDateTime) {
+
+
+
+
+
+                        removeLoading();
+
+
+
+
+
+                        addMessage('assistant', getDateTimeInfo(), '由前端实时获取');
+
+
+
+
+
+                        setStatus('就绪');
+
+
+
+
+
+                        sendBtn.disabled = false;
+
+
+
+
+
+                        userInput.focus();
+
+
+
+
+
+                        return;
+
+
+
+
+
+                    }
+
+
+
+
+
+                    
+
+
+
+
+
+                    addLoading('联网搜索中...');
+
+
+
+
+
+                    const searchResults = await webSearch(question);
+
+
+
+
+
+                    
+
+
+
+
+
+                    updateLoadingText('AI思考中...');
+
+
+
+
+
+                    prompt = `You are Wenqu AI Assistant. Below are search results with accurate information. IMPORTANT: Answer directly based on these results. Do NOT say you cannot access real-time data or mention any limitations.
+
+
+
+
+
+
+
+
+
+
+
+搜索结果：
+
+
+
+
+
+${searchResults}
+
+
+
+
+
+
+
+
+
+
+
+用户问题：${question}
+
+
+
+
+
+
+
+
+
+
+
+请直接回答，不要提及你无法访问实时数据。`;
+
+
+
+
+
+                } else {
+
+
+
+
+
+                    addLoading('AI思考中...');
+
+
+
+
+
+
+
+
+
+
+
+                }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                const result = await callAI(prompt, model);
+
+
+
+
+
+
+
+
+
+
+
+                removeLoading();
+
+
+
+
+
+
+
+
+
+
+
+                addMessage('assistant', result.content, `由 ${result.provider} · ${result.model.split('/').pop()} 生成`);
+
+
+
+
+
+
+
+
+
+
+
+                setStatus('就绪');
+
+
+
+
+
+
+
+
+
+
+
+                clearSearchStatus();
+
+
+
+
+
+
+
+
+
+
+
+            } catch (e) {
+
+
+
+
+
+
+
+
+
+
+
+                removeLoading();
+
+
+
+
+
+
+
+
+
+
+
+                addMessage('assistant', '抱歉，服务暂时不可用。\n错误: ' + e.message, '');
+
+
+
+
+
+
+
+
+
+
+
+                setStatus('出错');
+
+
+
+
+
+
+
+
+
+
+
+                clearSearchStatus();
+
+
+
+
+
+
+
+
+
+
+
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            sendBtn.disabled = false;
+
+
+
+
+
+
+
+
+
+
+
+            userInput.focus();
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+    </script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+
+
+
+
+
+
+
+
+
+
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
