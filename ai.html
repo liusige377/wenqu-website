@@ -622,7 +622,7 @@
 
 
 
-                <p>硅基流动 · 免费模型 · 联网搜索</p>
+                <p>硅基流动+智谱AI · 多源聚合 · 联网搜索</p>
 
 
 
@@ -636,23 +636,83 @@
 
                 <select class="model-select" id="modelSelect">
 
+                    <optgroup label="🔥 推荐模型">
 
+                        <option value="deepseek-ai/DeepSeek-V3.2">DeepSeek-V3.2 ⚡</option>
 
-                    <option value="deepseek-ai/DeepSeek-V3.2">DeepSeek-V3.2 ⚡</option>
+                        <option value="Qwen/Qwen3-8B">Qwen3-8B</option>
 
+                        <option value="THUDM/GLM-4-9B-0414">GLM-4-9B</option>
 
+                    </optgroup>
 
-                    <option value="Qwen/Qwen3-8B">Qwen3-8B</option>
+                    <optgroup label="🤖 Qwen系列">
 
+                        <option value="Qwen/Qwen2.5-7B-Instruct">Qwen2.5-7B</option>
 
+                        <option value="Qwen/Qwen2.5-14B-Instruct">Qwen2.5-14B</option>
 
-                    <option value="THUDM/GLM-4-9B-0414">GLM-4-9B</option>
+                        <option value="Qwen/Qwen3-8B">Qwen3-8B</option>
 
+                        <option value="Qwen/Qwen3.5-4B">Qwen3.5-4B</option>
 
+                    </optgroup>
 
-                    <option value="Qwen/Qwen2.5-14B-Instruct">Qwen2.5-14B</option>
+                    <optgroup label="🧠 GLM系列">
 
+                        <option value="THUDM/GLM-4-9B-0414">GLM-4-9B</option>
 
+                        <option value="THUDM/GLM-Z1-9B-0414">GLM-Z1-9B</option>
+
+                        <option value="THUDM/GLM-4.1V-9B-Thinking">GLM-4.1V-9B</option>
+
+                    </optgroup>
+
+                    <optgroup label="⚡ DeepSeek系列">
+
+                        <option value="deepseek-ai/DeepSeek-V3.2">DeepSeek-V3.2</option>
+
+                        <option value="deepseek-ai/DeepSeek-R1-Distill-Qwen-7B">DeepSeek-R1-7B</option>
+
+                        <option value="deepseek-ai/DeepSeek-R1-0528-Qwen3-8B">DeepSeek-R1-Qwen3-8B</option>
+
+                    </optgroup>
+
+                    <optgroup label="🔧 其他对话模型">
+
+                        <option value="internlm/internlm2_5-7b-chat">InternLM2.5-7B</option>
+
+                        <option value="tencent/Hunyuan-MT-7B">Hunyuan-MT-7B</option>
+
+                    </optgroup>
+
+                    <optgroup label="📝 Embedding模型">
+
+                        <option value="BAAI/bge-large-zh-v1.5">BGE-Large-Zh</option>
+
+                        <option value="BAAI/bge-large-en-v1.5">BGE-Large-En</option>
+
+                        <option value="BAAI/bge-m3">BGE-M3</option>
+
+                        <option value="netease-youdao/bce-embedding-base_v1">BCE-Embedding</option>
+
+                    </optgroup>
+
+                    <optgroup label="🎯 Reranker模型">
+
+                        <option value="BAAI/bge-reranker-v2-m3">BGE-Reranker-V2</option>
+
+                        <option value="netease-youdao/bce-reranker-base_v1">BCE-Reranker</option>
+
+                    </optgroup>
+
+                    <optgroup label="🖼️ 图像/语音模型">
+
+                        <option value="Kwai-Kolors/Kolors">Kolors图像生成</option>
+
+                        <option value="TeleAI/TeleSpeechASR">TeleSpeech语音识别</option>
+
+                    </optgroup>
 
                 </select>
 
@@ -822,15 +882,73 @@
 
 
 
-        // 硅基流动 API Key（免费）
+        // API配置 - 多源聚合
 
+        const API_CONFIG = {
 
+            siliconflow: {
 
-        const API_KEY = "sk-bpbwbmbqkcjqjbrjiijkmkmpypwitkkypifldowwhghecruc";
+                name: '硅基流动',
 
+                baseUrl: 'https://api.siliconflow.cn/v1',
 
+                apiKey: 'sk-bpbwbmbqkcjqjbrjiijkmkmpypwitkkypifldowwhghecruc',
 
-        const API_BASE = "https://api.siliconflow.cn/v1";
+                models: [
+
+                    // 对话模型
+
+                    'deepseek-ai/DeepSeek-V3.2',
+
+                    'Qwen/Qwen3-8B',
+
+                    'Qwen/Qwen3.5-4B',
+
+                    'Qwen/Qwen2.5-7B-Instruct',
+
+                    'Qwen/Qwen2.5-14B-Instruct',
+
+                    'THUDM/GLM-4-9B-0414',
+
+                    'THUDM/GLM-Z1-9B-0414',
+
+                    'THUDM/GLM-4.1V-9B-Thinking',
+
+                    'deepseek-ai/DeepSeek-R1-Distill-Qwen-7B',
+
+                    'deepseek-ai/DeepSeek-R1-0528-Qwen3-8B',
+
+                    'internlm/internlm2_5-7b-chat',
+
+                    'tencent/Hunyuan-MT-7B',
+
+                    // Embedding模型
+
+                    'BAAI/bge-large-zh-v1.5',
+
+                    'BAAI/bge-large-en-v1.5',
+
+                    'BAAI/bge-m3',
+
+                    'netease-youdao/bce-embedding-base_v1',
+
+                    // Reranker模型
+
+                    'BAAI/bge-reranker-v2-m3',
+
+                    'netease-youdao/bce-reranker-base_v1',
+
+                    // 图像/语音模型
+
+                    'Kwai-Kolors/Kolors',
+
+                    'TeleAI/TeleSpeechASR'
+
+                ]
+
+            }
+
+        };
 
 
 
@@ -1308,101 +1426,107 @@
 
 
 
-        // 调用硅基流动AI
+        // 获取模型对应的API配置
+
+        function getApiConfig(model) {
+
+            for (const [key, config] of Object.entries(API_CONFIG)) {
+
+                if (config.models.includes(model)) {
+
+                    return { provider: key, ...config };
+
+                }
+
+            }
+
+            // 默认使用硅基流动
+
+            return { provider: 'siliconflow', ...API_CONFIG.siliconflow };
+
+        }
 
 
+
+        // 调用AI（支持多源聚合）
 
         async function callAI(prompt, model) {
 
-
-
             setStatus('AI思考中...');
 
+            
 
+            const api = getApiConfig(model);
 
-            const response = await fetch(API_BASE + '/chat/completions', {
+            
 
+            // 检查API Key是否配置
 
+            if (!api.apiKey) {
+
+                throw new Error(`${api.name} 的API Key未配置，请在代码中填写`);
+
+            }
+
+            
+
+            const response = await fetch(api.baseUrl + '/chat/completions', {
 
                 method: 'POST',
 
-
-
                 headers: {
 
-
-
-                    'Authorization': 'Bearer ' + API_KEY,
-
-
+                    'Authorization': 'Bearer ' + api.apiKey,
 
                     'Content-Type': 'application/json'
 
-
-
                 },
-
-
 
                 body: JSON.stringify({
 
-
-
                     model: model,
-
-
 
                     messages: [{ role: 'user', content: prompt }],
 
-
-
                     stream: false
-
-
 
                 })
 
-
-
             });
 
-
+            
 
             if (!response.ok) {
 
-
-
                 const errText = await response.text();
 
-
-
-                throw new Error('AI请求失败 HTTP ' + response.status + ': ' + errText);
-
-
+                throw new Error(`${api.name} 请求失败 HTTP ${response.status}: ${errText}`);
 
             }
 
-
+            
 
             const data = await response.json();
 
-
+            
 
             if (data.error) {
 
-
-
-                throw new Error('AI错误: ' + (data.error.message || JSON.stringify(data.error)));
-
-
+                throw new Error(`${api.name} 错误: ${data.error.message || JSON.stringify(data.error)}`);
 
             }
 
+            
 
+            return {
 
-            return data.choices[0].message.content;
+                content: data.choices[0].message.content,
 
+                provider: api.name,
 
+                model: model
+
+            };
 
         }
 
@@ -1548,7 +1672,7 @@ ${searchResults}
 
 
 
-                const answer = await callAI(prompt, model);
+                const result = await callAI(prompt, model);
 
 
 
@@ -1556,7 +1680,7 @@ ${searchResults}
 
 
 
-                addMessage('assistant', answer, `由硅基流动 · ${model.split('/').pop()} 生成`);
+                addMessage('assistant', result.content, `由 ${result.provider} · ${result.model.split('/').pop()} 生成`);
 
 
 
