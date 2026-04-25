@@ -119,6 +119,23 @@ wenqu-website/
 
 ---
 
+## 💾 备份系统（滚动保留两份）
+
+**命名规则：**
+- `index_backup_prev.html` - 上一次版本
+- `index_backup_curr.html` - 本次版本（最新）
+
+**操作流程：**
+1. 修改前：复制当前index.html → `index_backup_curr.html`
+2. 修改后：复制当前index.html → `index_backup_prev.html`
+3. 如果有第三次：覆盖最早的
+
+**当前备份状态：**
+- `index_backup_prev.html` - 21:25版本（登录注册接入API前的版本）
+- `index_backup_curr.html` - 21:38版本（当前最新版）
+
+---
+
 ## 📋 历史变更记录
 
 | 时间 | 变更 | 备注 |
@@ -126,6 +143,7 @@ wenqu-website/
 | 2026-04-25 21:01 | 添加第9个工具「问渠下载器」 | 恢复缺失的工具 |
 | 2026-04-25 21:34 | 修复portal.html JS语法错误 | 反引号转义问题 |
 | 2026-04-25 21:39 | 登录注册接入后端API | 获取真实API Key |
+| 2026-04-25 21:41 | 添加备份系统，保留两份 | 滚动覆盖机制 |
 
 ---
 

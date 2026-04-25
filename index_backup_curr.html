@@ -1,0 +1,557 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>问渠AI - wenquso.cn</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#f5f0e8;--sidebar:#2c1810;--accent:#c9a96e;--text:#3d2b1f;--chat-bg:#fff;--panel:#faf7f2;--border:#d4c5b0}
+body{font-family:'Microsoft YaHei',sans-serif;background:var(--bg);height:100vh;display:flex;overflow:hidden}
+
+/* 左侧边栏 */
+.sidebar{width:260px;background:var(--sidebar);color:#fff;display:flex;flex-direction:column;padding:20px 0;flex-shrink:0}
+.logo{text-align:center;padding:15px 0 5px}
+.logo-title{font-size:52px;font-family:'KaiTi','STKaiti','楷体',serif;color:var(--accent);text-shadow:2px 2px 8px rgba(0,0,0,0.5);line-height:1.2}
+.logo-poem{font-size:13px;color:#c9a96e99;font-style:italic;margin-top:8px;line-height:1.5;padding:0 15px}
+.divider{height:1px;background:linear-gradient(90deg,transparent,#c9a96e55,transparent);margin:12px 20px}
+
+.history-widget{margin:0 15px;background:#ffffff10;border-radius:8px;padding:10px 12px}
+.history-widget h4{font-size:11px;color:var(--accent);margin-bottom:6px}
+.history-widget p{font-size:12px;color:#ccc;line-height:1.4}
+
+.tools-section{flex:1;padding:0 15px;overflow-y:auto}
+.tools-section h3{font-size:12px;color:#c9a96e99;margin:8px 0 8px;text-transform:uppercase;letter-spacing:1px}
+.tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:15px}
+.tool-btn{background:#ffffff10;border:1px solid #ffffff15;border-radius:8px;padding:10px 6px;text-align:center;cursor:pointer;transition:all 0.2s;text-decoration:none;color:#fff}
+.tool-btn:hover{background:#c9a96e33;border-color:var(--accent);transform:translateY(-2px)}
+.tool-btn .icon{font-size:22px;display:block;margin-bottom:4px}
+.tool-btn .name{font-size:11px;color:#ccc}
+
+.auth-section{padding:0 15px}
+.auth-btn{width:100%;padding:10px;background:var(--accent);color:#2c1810;border:none;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer}
+.auth-btn:hover{background:#ddb87a}
+.auth-user{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#ffffff15;border-radius:8px}
+.auth-user-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#2c1810;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:bold}
+.auth-user-info{flex:1;min-width:0}
+.auth-user-name{font-size:13px;font-weight:bold;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.auth-user-email{font-size:11px;color:#aaa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.auth-logout-btn{background:none;border:none;color:#c9a96e;font-size:12px;cursor:pointer;padding:4px 8px;border-radius:4px;white-space:nowrap}
+.auth-logout-btn:hover{background:#c9a96e33}
+
+/* 登录注册弹窗 */
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:9999;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:#fff;border-radius:16px;width:380px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,0.3);overflow:hidden;animation:modalIn 0.25s ease}
+@keyframes modalIn{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:scale(1)}}
+.modal-header{background:var(--sidebar);color:#fff;padding:20px;display:flex;align-items:center;justify-content:space-between}
+.modal-header h3{font-size:18px}
+.modal-close{background:none;border:none;color:#fff;font-size:24px;cursor:pointer;line-height:1}
+.modal-tabs{display:flex;border-bottom:2px solid var(--border)}
+.modal-tab{flex:1;padding:14px;text-align:center;font-size:15px;cursor:pointer;color:#666;background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all 0.2s}
+.modal-tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:bold}
+.modal-tab:hover{color:var(--accent)}
+.modal-body{padding:24px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:13px;color:#666;margin-bottom:6px}
+.form-group input{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;outline:none;transition:border-color 0.2s}
+.form-group input:focus{border-color:var(--accent)}
+.form-submit{width:100%;padding:14px;background:var(--accent);color:#2c1810;border:none;border-radius:8px;font-size:15px;font-weight:bold;cursor:pointer;transition:background 0.2s}
+.form-submit:hover{background:#ddb87a}
+.form-submit:disabled{background:#ccc;cursor:not-allowed}
+.form-error{color:#e74c3c;font-size:13px;margin-top:8px;display:none}
+.form-success{color:#27ae60;font-size:13px;margin-top:8px;display:none}
+.form-info{font-size:12px;color:#999;margin-top:12px;text-align:center}
+
+/* 右侧主区域 */
+.main-area{flex:1;display:flex;overflow:hidden}
+
+/* AI对话区 */
+.chat-section{flex:4;display:flex;flex-direction:column;border-right:1px solid var(--border)}
+.chat-header{background:var(--panel);padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.chat-header h2{font-size:16px;color:var(--text)}
+.status-dot{width:8px;height:8px;background:#4caf50;border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+.chat-messages{flex:1;overflow-y:auto;padding:20px;background:var(--chat-bg)}
+.msg{margin-bottom:15px;animation:fadeIn 0.3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.msg.user{text-align:right}
+.msg.user .bubble{background:var(--accent);color:#fff;display:inline-block;padding:10px 15px;border-radius:15px 15px 3px 15px;max-width:75%;text-align:left}
+.msg.ai .bubble{background:var(--panel);color:var(--text);display:inline-block;padding:10px 15px;border-radius:15px 15px 15px 3px;max-width:75%;border:1px solid var(--border)}
+
+.typing{color:#999;font-size:13px;padding:5px 0;display:none}
+.typing.active{display:block}
+
+.chat-input-area{padding:15px 20px;background:var(--panel);border-top:1px solid var(--border)}
+.input-row{display:flex;gap:10px;align-items:center}
+#userInput{flex:1;padding:12px 15px;border:1px solid var(--border);border-radius:25px;background:#fff;font-size:14px;outline:none}
+#userInput:focus{border-color:var(--accent)}
+.send-btn{width:44px;height:44px;background:var(--accent);border:none;border-radius:50%;cursor:pointer;font-size:18px;transition:transform 0.2s}
+.send-btn:hover{transform:scale(1.1)}
+
+/* 右侧1/5面板 */
+.side-panel{flex:1;min-width:180px;max-width:220px;background:var(--panel);display:flex;flex-direction:column;padding:15px}
+.panel-section{flex:1;background:#fff;border-radius:10px;border:1px solid var(--border);padding:12px;margin-bottom:10px;overflow:hidden}
+.panel-section h4{font-size:12px;color:var(--accent);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.panel-section .content{font-size:12px;color:#666;line-height:1.5;overflow-y:auto;max-height:120px}
+.panel-section .content p{margin-bottom:5px}
+
+.ad-placeholder{background:linear-gradient(135deg,#f0e6d3,#e8dcc8);border-radius:10px;border:2px dashed var(--border);padding:20px;text-align:center;flex-shrink:0}
+.ad-placeholder p{font-size:12px;color:#aaa}
+
+/* 响应式 */
+@media(max-width:900px){
+  .side-panel{display:none}
+  .chat-section{flex:1}
+  .sidebar{width:200px}
+}
+@media(max-width:600px){
+  .sidebar{width:60px}
+  .logo-poem,.tools-section h3,.tool-btn .name,.history-widget{display:none}
+  .logo-title{font-size:28px}
+  .tools-grid{grid-template-columns:1fr}
+  .tool-btn .icon{font-size:28px}
+}
+</style>
+</head>
+<body>
+
+<!-- 登录注册弹窗 -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">登录 / 注册</h3>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-tabs">
+      <button class="modal-tab active" id="tabLogin" onclick="switchTab('login')">登录</button>
+      <button class="modal-tab" id="tabRegister" onclick="switchTab('register')">注册</button>
+    </div>
+    <div class="modal-body">
+      <!-- 登录表单 -->
+      <div id="loginForm">
+        <div class="form-group">
+          <label>邮箱地址</label>
+          <input type="email" id="loginEmail" placeholder="请输入邮箱" onkeydown="if(event.key==='Enter')doLogin()">
+        </div>
+        <div class="form-group">
+          <label>密码</label>
+          <input type="password" id="loginPassword" placeholder="请输入密码" onkeydown="if(event.key==='Enter')doLogin()">
+        </div>
+        <div class="form-error" id="loginError"></div>
+        <button class="form-submit" onclick="doLogin()">登录</button>
+        <p class="form-info">首次登录即自动注册</p>
+      </div>
+      <!-- 注册表单 -->
+      <div id="registerForm" style="display:none">
+        <div class="form-group">
+          <label>姓名</label>
+          <input type="text" id="regName" placeholder="请输入姓名" maxlength="20">
+        </div>
+        <div class="form-group">
+          <label>邮箱地址</label>
+          <input type="email" id="regEmail" placeholder="请输入邮箱" onkeydown="if(event.key==='Enter')doRegister()">
+        </div>
+        <div class="form-group">
+          <label>密码</label>
+          <input type="password" id="regPassword" placeholder="请设置密码（至少6位）" minlength="6">
+        </div>
+        <div class="form-error" id="regError"></div>
+        <button class="form-submit" onclick="doRegister()">注册</button>
+        <p class="form-info">注册即表示同意《问渠用户协议》</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 左侧边栏 -->
+<div class="sidebar">
+  <div class="logo">
+    <div class="logo-title">问渠</div>
+    <div class="logo-poem">问渠那得清如许？<br>为有源头活水来。</div>
+  </div>
+  
+  <div class="divider"></div>
+  
+  <div class="history-widget">
+    <h4>历史上的今天</h4>
+    <div id="historyToday" style="font-size:11px;color:#999;text-align:center;padding:5px">加载中...</div>
+  </div>
+  
+  <div class="divider"></div>
+  
+  <div class="tools-section">
+    <h3>工具导航</h3>
+    <div class="tools-grid">
+      <a href="/math.html" class="tool-btn"><span class="icon">&#128290;</span><span class="name">数理医学</span></a>
+      <a href="/history.html" class="tool-btn"><span class="icon">&#128220;</span><span class="name">历史文化</span></a>
+      <a href="/tech.html" class="tool-btn"><span class="icon">&#128187;</span><span class="name">现代科技</span></a>
+      <a href="/geography.html" class="tool-btn"><span class="icon">&#127758;</span><span class="name">天文地理</span></a>
+      <a href="/units.html" class="tool-btn"><span class="icon">&#8635;</span><span class="name">计量单位</span></a>
+      <a href="/agriculture.html" class="tool-btn"><span class="icon">&#127806;</span><span class="name">农业百科</span></a>
+      <a href="/metaphysics.html" class="tool-btn"><span class="icon">&#128172;</span><span class="name">玄学民俗</span></a>
+      <a href="/life.html" class="tool-btn"><span class="icon">&#127968;</span><span class="name">生活综合</span></a>
+      <a href="https://liusige377.github.io/wenqu-dl/" class="tool-btn" target="_blank"><span class="icon">&#11015;</span><span class="name">问渠下载器</span></a>
+    </div>
+  </div>
+  
+  <!-- 登录按钮区域（根据状态动态切换） -->
+  <div class="divider"></div>
+  <div style="padding:0 15px">
+  </div>
+  
+  <div class="auth-section" id="authSection">
+    <button class="auth-btn" id="authBtn" onclick="openModal('login')">登录 / 注册</button>
+  </div>
+</div>
+
+<!-- 主对话区 -->
+<div class="main-area">
+  <div class="chat-section">
+    <div class="chat-header">
+      <div class="status-dot"></div>
+      <h2>问渠AI助手</h2>
+    </div>
+    
+    <div class="chat-messages" id="chatMessages">
+      <div class="msg ai"><div class="bubble">&#128075; 您好！我是问渠AI助手，有什么可以帮助您的吗？</div></div>
+    </div>
+    
+    <div class="typing" id="typingIndicator">AI正在思考中...</div>
+    
+    <div class="chat-input-area">
+      <div class="input-row">
+        <input type="text" id="userInput" placeholder="输入问题，按回车发送..." onkeydown="if(event.key==='Enter')sendMessage()">
+        <button class="send-btn" onclick="sendMessage()">&#10148;</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 右侧面板 -->
+  <div class="side-panel">
+    <div class="panel-section">
+      <h4>&#128203; 重要纪要</h4>
+      <div class="content" id="memoryPanel">
+        <p id="panelText">登录后查看重要纪要</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==================== 登录注册系统 ====================
+const STORAGE_KEY = 'wenqu_user';
+
+function getUser() {
+  try {
+    const d = localStorage.getItem(STORAGE_KEY);
+    return d ? JSON.parse(d) : null;
+  } catch(e) { return null; }
+}
+
+function saveUser(user) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
+}
+
+function clearUser() {
+  localStorage.removeItem(STORAGE_KEY);
+}
+
+function getAllUsers() {
+  try {
+    const d = localStorage.getItem(STORAGE_KEY + '_all');
+    return d ? JSON.parse(d) : {};
+  } catch(e) { return {}; }
+}
+
+function saveAllUsers(users) {
+  localStorage.setItem(STORAGE_KEY + '_all', JSON.stringify(users));
+}
+
+// 后端API地址
+const API_BASE_URL = 'http://101.133.136.55:3000';
+
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+  
+  if (!email) {
+    errEl.textContent = '请输入邮箱地址';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (!password) {
+    errEl.textContent = '请输入密码';
+    errEl.style.display = 'block';
+    return;
+  }
+  
+  try {
+    const res = await fetch(API_BASE_URL + '/v1/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    
+    if (!res.ok) {
+      errEl.textContent = data.error || '登录失败';
+      errEl.style.display = 'block';
+      return;
+    }
+    
+    // 保存用户信息和API key
+    const user = {
+      name: data.user.name || email.split('@')[0],
+      email: data.user.email,
+      apiKey: data.token,
+      loginAt: new Date().toISOString()
+    };
+    saveUser(user);
+    
+    closeModal();
+    updateAuthUI();
+    addMsg('欢迎回来，' + user.name + '！已获取API Key。', 'ai');
+  } catch (e) {
+    errEl.textContent = '网络错误，请稍后重试';
+    errEl.style.display = 'block';
+  }
+}
+
+async function doRegister() {
+  const name = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const password = document.getElementById('regPassword').value;
+  const errEl = document.getElementById('regError');
+  
+  if (!name) {
+    errEl.textContent = '请输入姓名';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (!email) {
+    errEl.textContent = '请输入邮箱地址';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (!email.includes('@')) {
+    errEl.textContent = '邮箱格式不正确';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (!password || password.length < 6) {
+    errEl.textContent = '密码至少6位';
+    errEl.style.display = 'block';
+    return;
+  }
+  
+  try {
+    const res = await fetch(API_BASE_URL + '/v1/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, password })
+    });
+    const data = await res.json();
+    
+    if (!res.ok) {
+      errEl.textContent = data.error || '注册失败';
+      errEl.style.display = 'block';
+      return;
+    }
+    
+    // 保存用户信息和API key
+    const user = {
+      name: data.user.name,
+      email: data.user.email,
+      apiKey: data.token,
+      registeredAt: new Date().toISOString()
+    };
+    saveUser(user);
+    
+    closeModal();
+    updateAuthUI();
+    addMsg('注册成功！欢迎 ' + name + ' 加入问渠！您的API Key已生成。', 'ai');
+  } catch (e) {
+    errEl.textContent = '网络错误，请稍后重试';
+    errEl.style.display = 'block';
+  }
+}
+
+function doLogout() {
+  clearUser();
+  updateAuthUI();
+  document.getElementById('panelText').textContent = '登录后查看重要纪要';
+}
+
+function updateAuthUI() {
+  const user = getUser();
+  const section = document.getElementById('authSection');
+  
+  if (user) {
+    const initial = user.name ? user.name.charAt(0).toUpperCase() : 'U';
+    section.innerHTML = '<div class="auth-user">' +
+      '<div class="auth-user-avatar">'+escHtml(initial)+'</div>' +
+      '<div class="auth-user-info">' +
+        '<div class="auth-user-name">'+escHtml(user.name)+'</div>' +
+        '<div class="auth-user-email">'+escHtml(user.email)+'</div>' +
+      '</div>' +
+      '<button class="auth-logout-btn" onclick="doLogout()">退出</button>' +
+    '</div>';
+    
+    // 更新右侧面板 - 显示API Key
+    const panel = document.getElementById('panelText');
+    const apiKeyShort = user.apiKey ? user.apiKey.substring(0, 12) + '...' : '未获取';
+    panel.innerHTML = '<p><b>'+escHtml(user.name)+'</b>，欢迎回来！</p>' +
+      '<p style="margin-top:8px;font-size:12px;color:#7c5cfc">API Key: '+apiKeyShort+'</p>' +
+      '<p style="margin-top:6px;font-size:11px;color:#999">使用问渠API平台的免费模型</p>';
+  } else {
+    section.innerHTML = '<button class="auth-btn" onclick="openModal(\'login\')">登录 / 注册</button>';
+  }
+}
+
+function openModal(tab) {
+  document.getElementById('authModal').classList.add('show');
+  if (tab === 'register') {
+    switchTab('register');
+  } else {
+    switchTab('login');
+  }
+  // 清空表单
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginPassword').value = '';
+  document.getElementById('regName').value = '';
+  document.getElementById('regEmail').value = '';
+  document.getElementById('regPassword').value = '';
+  document.getElementById('loginError').style.display = 'none';
+  document.getElementById('regError').style.display = 'none';
+}
+
+function closeModal() {
+  document.getElementById('authModal').classList.remove('show');
+}
+
+function switchTab(tab) {
+  document.getElementById('tabLogin').className = 'modal-tab' + (tab === 'login' ? ' active' : '');
+  document.getElementById('tabRegister').className = 'modal-tab' + (tab === 'register' ? ' active' : '');
+  document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
+  document.getElementById('modalTitle').textContent = tab === 'login' ? '登录' : '注册';
+  document.getElementById('loginError').style.display = 'none';
+  document.getElementById('regError').style.display = 'none';
+}
+
+// 点击遮罩关闭
+document.getElementById('authModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ESC关闭
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+});
+
+// ==================== 问渠API（用户登录后使用自己的API Key） ====================
+let chatHistory = [];
+
+// 获取当前用户的API Key（未登录返回null）
+function getUserApiKey() {
+  const user = getUser();
+  return user ? user.apiKey : null;
+}
+
+// 历史上的今天（本地数据）
+function loadHistory() {
+  var el = document.getElementById('historyToday');
+  var now = new Date();
+  var key = (now.getMonth()+1).toString().padStart(2,'0') + '-' + now.getDate().toString().padStart(2,'0');
+  var data = {
+'04-23':[{y:'1564',e:'莎士比亚诞生'},{y:'1616',e:'莎士比亚逝世'}],
+'04-24':[{y:'1915',e:'亚美尼亚大屠杀开始'},{y:'1990',e:'哈勃望远镜发射'}],
+'04-25':[{y:'1945',e:'联合国成立大会'}],
+'04-26':[{y:'1986',e:'切尔诺贝利核事故'}]
+  };
+  var def = [{y:'??',e:'暂无数据'}];
+  var events = data[key] || def;
+  var html = '';
+  for(var i=0; i<events.length && i<3; i++) {
+    html += '<p style="margin:3px 0"><b>'+events[i].y+'</b> '+events[i].e+'</p>';
+  }
+  el.innerHTML = html || '<p>暂无数据</p>';
+}
+
+// 发送消息
+async function sendMessage() {
+  const input = document.getElementById('userInput');
+  const text = input.value.trim();
+  if(!text) return;
+  input.value = '';
+  addMsg(text, 'user');
+  showTyping(true);
+  
+  try {
+    const userKey = getUserApiKey();
+    if (!userKey) {
+      showTyping(false);
+      addMsg('请先登录获取API Key后再使用AI对话功能。', 'ai');
+      return;
+    }
+    
+    chatHistory.push({role:'user', content:text});
+    const r = await fetch(API_BASE_URL + '/v1/chat/completions', {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization':'Bearer '+userKey
+      },
+      body: JSON.stringify({
+        model:'qwen2.5-7b',
+        messages:chatHistory,
+        max_tokens:1024,
+        temperature:0.7
+      })
+    });
+    const d = await r.json();
+    showTyping(false);
+    let reply = '';
+    if(d.choices && d.choices[0]) {
+      reply = d.choices[0].message.content || '（空回复）';
+    } else if(d.error) {
+      reply = '错误：'+(d.error.message || JSON.stringify(d.error));
+    } else {
+      reply = '未知响应';
+    }
+    addMsg(reply, 'ai');
+    chatHistory.push({role:'assistant', content:reply});
+  } catch(e) {
+    showTyping(false);
+    addMsg('网络错误：'+e.message, 'ai');
+  }
+}
+
+function addMsg(text, who) {
+  const box = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'msg '+who;
+  div.innerHTML = '<div class="bubble">'+escHtml(text)+'</div>';
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+
+function showTyping(show) {
+  document.getElementById('typingIndicator').className = show ? 'typing active' : 'typing';
+}
+
+function escHtml(t) {
+  if (!t) return '';
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// 启动
+loadHistory();
+updateAuthUI();
+document.getElementById('userInput').focus();
+</script>
+</body>
+</html>
