@@ -315,6 +315,7 @@
         // ====== API 调用 ======
         async function callSmartAI(question, model) {
             const key = wenquKey || 'wq-guest';
+            const now = new Date().toLocaleString('zh-CN', { year:'numeric', month:'long', day:'numeric', weekday:'long', hour:'2-digit', minute:'2-digit' });
             const res = await fetch(WenquBase + '/v1/chat/smart', {
                 method: 'POST',
                 headers: {
@@ -323,7 +324,10 @@
                 },
                 body: JSON.stringify({
                     model: model,
-                    messages: [{ role: 'user', content: question }],
+                    messages: [
+                        { role: 'system', content: '当前时间：' + now + '。请基于当前时间回答问题。' },
+                        { role: 'user', content: question }
+                    ],
                     stream: false
                 })
             });
@@ -407,17 +411,6 @@
             try {
                 const q = question.trim();
 
-                // 1. 日期时间类 — 前端直接返回，不调API
-                if (isDateTimeQuestion(q)) {
-                    const info = getNowInfo();
-                    removeLoading();
-                    addMessage('assistant', '📅 ' + info.text, '系统实时获取 · 无需联网');
-                    setStatus('就绪');
-                    sendBtn.disabled = false;
-                    userInput.focus();
-                    return;
-                }
-
                 addLoading('🔍 联网搜索中...');
 
                 // 2. 天气类 — 走后端专用端点，不经过模型
@@ -454,11 +447,8 @@
                     } catch(e) { console.log('新闻API失败，降级走smart', e); }
                 }
 
-                // 4. 其他问题走smart接口（后端搜索增强+模型）
-                const nowInfo = getNowInfo();
-                const enhancedQuestion = '【当前时间：' + nowInfo.text + '】\n用户问题：' + q;
-
-                const result = await callSmartAI(enhancedQuestion, model);
+                // 所有问题走smart接口（system prompt已注入当前时间）
+                const result = await callSmartAI(q, model);
 
                 removeLoading();
 
