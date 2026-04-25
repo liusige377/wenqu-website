@@ -621,16 +621,16 @@
         }
 
         init();
-    </script>
+    
         const userInput = document.getElementById('userInput');
         const sendBtn = document.getElementById('sendBtn');
         const modelSelect = document.getElementById('modelSelect');
         const modelStatus = document.getElementById('modelStatus');
         const searchStatus = document.getElementById('searchStatus');
 
-        // 硅基流动API（直连）
-        const API_BASE = 'https://api.siliconflow.cn/v1';
-        const API_KEY = 'sk-bpbwbmbqkcjqjbrjiijkmkmpypwitkkypifldowwhghecruc';
+        // 问渠自研API后端（支持联网搜索）
+        const API_BASE = 'http://101.133.136.55:3000/v1';
+        const API_KEY = localStorage.getItem('wenqu_key') || 'wq-guest';
 
         // 实时关键词
         const REALTIME_KEYWORDS = [
@@ -703,11 +703,11 @@
             return REALTIME_KEYWORDS.some(kw => q.includes(kw));
         }
 
-        // 调用问渠API后端
+        // 调用问渠API后端（使用smart接口，自动联网搜索）
         async function callAI(prompt, model) {
             setStatus('AI思考中...');
             
-            const response = await fetch(API_BASE + '/chat/completions', {
+            const response = await fetch(API_BASE + '/chat/smart', {
                 method: 'POST',
                 headers: {
                     'Authorization': 'Bearer ' + API_KEY,
@@ -732,8 +732,9 @@
             }
             
             return {
-                content: data.choices[0].message.content,
-                model: model
+                content: data.choices ? data.choices[0].message.content : data.content,
+                model: data.model || model,
+                mode: data.mode || 'chat'
             };
         }
 
