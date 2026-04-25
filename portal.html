@@ -353,10 +353,10 @@ Authorization: Bearer wq-your-api-key</div>
                     body: JSON.stringify({ email, password, name })
                 });
                 const data = await r.json();
-                if (data.error) return toast(data.error, 'error');
+                if (data.error) return toast(data.error.message || data.error, 'error');
                 
-                currentUser = { userId: data.userId, email, name: name || email.split('@')[0], hasApikey: true, apiKeys: data.apiKey ? [{ key: data.apiKey, name: 'Default Key', active: true }] : [] };
-                currentKey = data.apiKey || null;
+                currentUser = { userId: data.userId, email, name: data.name || name || email.split('@')[0], hasApikey: true, apiKeys: data.apiKeys || (data.apiKey ? [{ key: data.apiKey, name: 'Default Key', active: true }] : []) };
+                currentKey = data.apiKey || data.apiKeys?.[0]?.key || null;
                 localStorage.setItem('wenqu_user', JSON.stringify(currentUser));
                 if (data.apiKey) { toast('注册成功！API Key: ' + data.apiKey.slice(0,12) + '...'); } else { toast('注册成功！请登录后创建 API Key'); }
                 showDashboard();
@@ -379,7 +379,7 @@ Authorization: Bearer wq-your-api-key</div>
                     body: JSON.stringify({ email, password })
                 });
                 const data = await r.json();
-                if (data.error) return toast(data.error, 'error');
+                if (data.error) return toast(data.error.message || data.error, 'error');
                 
                 currentUser = data;
                 currentKey = data.apiKeys?.[0]?.key;
