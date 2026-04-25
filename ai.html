@@ -420,7 +420,41 @@
 
                 addLoading('🔍 联网搜索中...');
 
-                // 2. 所有问题走smart接口（后端自动判断是否搜索）
+                // 2. 天气类 — 走后端专用端点，不经过模型
+                if (isWeatherQuestion(q)) {
+                    try {
+                        const cityMatch = q.match(/(成都|北京|上海|广州|深圳|杭州|南京|武汉|西安|重庆|长沙|苏州|天津|郑州|青岛|大连|宁波|厦门|福州|合肥|昆明|贵阳|济南|沈阳|哈尔滨|长春|太原|石家庄|兰州|银川|西宁|海口|三亚|拉萨|乌鲁木齐|呼和浩特|南昌|南宁)/);
+                        const city = cityMatch ? cityMatch[1] : '成都';
+                        const wRes = await fetch(WenquBase + '/v1/weather?city=' + encodeURIComponent(city));
+                        const wData = await wRes.json();
+                        if (wData.reply) {
+                            removeLoading();
+                            addMessage('assistant', '🌤️ ' + wData.reply, 'wttr.in 实时数据 · ' + city);
+                            setStatus('就绪');
+                            sendBtn.disabled = false;
+                            userInput.focus();
+                            return;
+                        }
+                    } catch(e) { console.log('天气API失败，降级走smart', e); }
+                }
+
+                // 3. 新闻类 — 走后端专用端点，不经过模型
+                if (isNewsQuestion(q)) {
+                    try {
+                        const nRes = await fetch(WenquBase + '/v1/news?q=' + encodeURIComponent(q));
+                        const nData = await nRes.json();
+                        if (nData.reply) {
+                            removeLoading();
+                            addMessage('assistant', '📰 ' + nData.reply, '新浪RSS 实时数据');
+                            setStatus('就绪');
+                            sendBtn.disabled = false;
+                            userInput.focus();
+                            return;
+                        }
+                    } catch(e) { console.log('新闻API失败，降级走smart', e); }
+                }
+
+                // 4. 其他问题走smart接口（后端搜索增强+模型）
                 const nowInfo = getNowInfo();
                 const enhancedQuestion = '【当前时间：' + nowInfo.text + '】\n用户问题：' + q;
 
