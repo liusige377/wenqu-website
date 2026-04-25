@@ -749,7 +749,7 @@
             const model = modelSelect.value;
 
             try {
-                // 检测是否是日期时间问题
+                // 检测是否是日期时间问题（添加时间上下文后走smart API）
                 const q = question.toLowerCase();
                 const isDateTime = (
                     q.includes('今天') || q.includes('日期') || q.includes('几号') || 
@@ -758,13 +758,9 @@
                     (q.includes('现在') && q.includes('时间'))
                 );
                 
+                // 日期问题也走smart API，让模型结合搜索信息回答
                 if (isDateTime) {
-                    removeLoading();
-                    addMessage('assistant', getDateTimeInfo(), '系统实时获取');
-                    setStatus('就绪');
-                    sendBtn.disabled = false;
-                    userInput.focus();
-                    return;
+                    // 继续执行，不走return，让后续代码调用smart API
                 }
 
                 addLoading('AI思考中...');
