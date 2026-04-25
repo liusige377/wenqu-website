@@ -286,7 +286,7 @@
 
         // 配置
         // SiliconFlow直连已禁用，所有请求必须通过问渠后端(wq-Key)
-        const WENQU_BASE = 'https://101.133.136.55';
+        const WENQU_BASE = 'http://101.133.136.55:3000';
 
         // 当前模式
         let wenquKey = localStorage.getItem('wenqu_api_key') || '';
@@ -602,7 +602,7 @@
         const searchStatus = document.getElementById('searchStatus');
 
         // 硅基流动API（直连）
-        const API_BASE = 'https://101.133.136.55/v1';
+        const API_BASE = 'http://101.133.136.55:3000/v1';
         const API_KEY = 'sk-bpbwbmbqkcjqjbrjiijkmkmpypwitkkypifldowwhghecruc';
 
         // 实时关键词
