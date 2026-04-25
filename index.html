@@ -3,524 +3,638 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>问渠AI - wenquso.cn</title>
+<title>问渠 API 平台</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#f5f0e8;--sidebar:#2c1810;--accent:#c9a96e;--text:#3d2b1f;--chat-bg:#fff;--panel:#faf7f2;--border:#d4c5b0}
-body{font-family:'Microsoft YaHei',sans-serif;background:var(--bg);height:100vh;display:flex;overflow:hidden}
-
-/* 左侧边栏 */
-.sidebar{width:260px;background:var(--sidebar);color:#fff;display:flex;flex-direction:column;padding:20px 0;flex-shrink:0}
-.logo{text-align:center;padding:15px 0 5px}
-.logo-title{font-size:52px;font-family:'KaiTi','STKaiti','楷体',serif;color:var(--accent);text-shadow:2px 2px 8px rgba(0,0,0,0.5);line-height:1.2}
-.logo-poem{font-size:13px;color:#c9a96e99;font-style:italic;margin-top:8px;line-height:1.5;padding:0 15px}
-.divider{height:1px;background:linear-gradient(90deg,transparent,#c9a96e55,transparent);margin:12px 20px}
-
-.history-widget{margin:0 15px;background:#ffffff10;border-radius:8px;padding:10px 12px}
-.history-widget h4{font-size:11px;color:var(--accent);margin-bottom:6px}
-.history-widget p{font-size:12px;color:#ccc;line-height:1.4}
-
-.tools-section{flex:1;padding:0 15px;overflow-y:auto}
-.tools-section h3{font-size:12px;color:#c9a96e99;margin:8px 0 8px;text-transform:uppercase;letter-spacing:1px}
-.tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:15px}
-.tool-btn{background:#ffffff10;border:1px solid #ffffff15;border-radius:8px;padding:10px 6px;text-align:center;cursor:pointer;transition:all 0.2s;text-decoration:none;color:#fff}
-.tool-btn:hover{background:#c9a96e33;border-color:var(--accent);transform:translateY(-2px)}
-.tool-btn .icon{font-size:22px;display:block;margin-bottom:4px}
-.tool-btn .name{font-size:11px;color:#ccc}
-
-.auth-section{padding:0 15px}
-.auth-btn{width:100%;padding:10px;background:var(--accent);color:#2c1810;border:none;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer}
-.auth-btn:hover{background:#ddb87a}
-.auth-user{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#ffffff15;border-radius:8px}
-.auth-user-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#2c1810;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:bold}
-.auth-user-info{flex:1;min-width:0}
-.auth-user-name{font-size:13px;font-weight:bold;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.auth-user-email{font-size:11px;color:#aaa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.auth-logout-btn{background:none;border:none;color:#c9a96e;font-size:12px;cursor:pointer;padding:4px 8px;border-radius:4px;white-space:nowrap}
-.auth-logout-btn:hover{background:#c9a96e33}
-
-/* 登录注册弹窗 */
-.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:9999;align-items:center;justify-content:center}
-.modal-overlay.show{display:flex}
-.modal{background:#fff;border-radius:16px;width:380px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,0.3);overflow:hidden;animation:modalIn 0.25s ease}
-@keyframes modalIn{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:scale(1)}}
-.modal-header{background:var(--sidebar);color:#fff;padding:20px;display:flex;align-items:center;justify-content:space-between}
-.modal-header h3{font-size:18px}
-.modal-close{background:none;border:none;color:#fff;font-size:24px;cursor:pointer;line-height:1}
-.modal-tabs{display:flex;border-bottom:2px solid var(--border)}
-.modal-tab{flex:1;padding:14px;text-align:center;font-size:15px;cursor:pointer;color:#666;background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all 0.2s}
-.modal-tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:bold}
-.modal-tab:hover{color:var(--accent)}
-.modal-body{padding:24px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0a;color:#e0e0e0;min-height:100vh}
+.container{max-width:900px;margin:0 auto;padding:20px}
+/* Nav */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid #222;margin-bottom:24px}
+.nav-brand{font-size:20px;font-weight:700;color:#c9a96e}
+.nav-btns{display:flex;gap:10px}
+.btn{padding:8px 20px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:500;transition:all .2s}
+.btn-primary{background:#c9a96e;color:#000}
+.btn-primary:hover{background:#dab87a}
+.btn-outline{background:transparent;color:#c9a96e;border:1px solid #c9a96e}
+.btn-outline:hover{background:#c9a96e20}
+.btn-danger{background:#dc3545;color:#fff}
+.btn-sm{padding:6px 14px;font-size:13px}
+.btn-lg{padding:12px 32px;font-size:16px}
+.hidden{display:none!important}
+/* Card */
+.card{background:#141414;border:1px solid #222;border-radius:12px;padding:24px;margin-bottom:16px}
+.card h2{color:#c9a96e;margin-bottom:12px;font-size:18px}
+.card h3{color:#e0e0e0;margin-bottom:8px;font-size:15px}
+/* Form */
 .form-group{margin-bottom:16px}
-.form-group label{display:block;font-size:13px;color:#666;margin-bottom:6px}
-.form-group input{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;outline:none;transition:border-color 0.2s}
-.form-group input:focus{border-color:var(--accent)}
-.form-submit{width:100%;padding:14px;background:var(--accent);color:#2c1810;border:none;border-radius:8px;font-size:15px;font-weight:bold;cursor:pointer;transition:background 0.2s}
-.form-submit:hover{background:#ddb87a}
-.form-submit:disabled{background:#ccc;cursor:not-allowed}
-.form-error{color:#e74c3c;font-size:13px;margin-top:8px;display:none}
-.form-success{color:#27ae60;font-size:13px;margin-top:8px;display:none}
-.form-info{font-size:12px;color:#999;margin-top:12px;text-align:center}
-
-/* 右侧主区域 */
-.main-area{flex:1;display:flex;overflow:hidden}
-
-/* AI对话区 */
-.chat-section{flex:4;display:flex;flex-direction:column;border-right:1px solid var(--border)}
-.chat-header{background:var(--panel);padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
-.chat-header h2{font-size:16px;color:var(--text)}
-.status-dot{width:8px;height:8px;background:#4caf50;border-radius:50%;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
-
-.chat-messages{flex:1;overflow-y:auto;padding:20px;background:var(--chat-bg)}
-.msg{margin-bottom:15px;animation:fadeIn 0.3s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.msg.user{text-align:right}
-.msg.user .bubble{background:var(--accent);color:#fff;display:inline-block;padding:10px 15px;border-radius:15px 15px 3px 15px;max-width:75%;text-align:left}
-.msg.ai .bubble{background:var(--panel);color:var(--text);display:inline-block;padding:10px 15px;border-radius:15px 15px 15px 3px;max-width:75%;border:1px solid var(--border)}
-
-.typing{color:#999;font-size:13px;padding:5px 0;display:none}
-.typing.active{display:block}
-
-.chat-input-area{padding:15px 20px;background:var(--panel);border-top:1px solid var(--border)}
-.input-row{display:flex;gap:10px;align-items:center}
-#userInput{flex:1;padding:12px 15px;border:1px solid var(--border);border-radius:25px;background:#fff;font-size:14px;outline:none}
-#userInput:focus{border-color:var(--accent)}
-.send-btn{width:44px;height:44px;background:var(--accent);border:none;border-radius:50%;cursor:pointer;font-size:18px;transition:transform 0.2s}
-.send-btn:hover{transform:scale(1.1)}
-
-/* 右侧1/5面板 */
-.side-panel{flex:1;min-width:180px;max-width:220px;background:var(--panel);display:flex;flex-direction:column;padding:15px}
-.panel-section{flex:1;background:#fff;border-radius:10px;border:1px solid var(--border);padding:12px;margin-bottom:10px;overflow:hidden}
-.panel-section h4{font-size:12px;color:var(--accent);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
-.panel-section .content{font-size:12px;color:#666;line-height:1.5;overflow-y:auto;max-height:120px}
-.panel-section .content p{margin-bottom:5px}
-
-.ad-placeholder{background:linear-gradient(135deg,#f0e6d3,#e8dcc8);border-radius:10px;border:2px dashed var(--border);padding:20px;text-align:center;flex-shrink:0}
-.ad-placeholder p{font-size:12px;color:#aaa}
-
-/* 响应式 */
-@media(max-width:900px){
-  .side-panel{display:none}
-  .chat-section{flex:1}
-  .sidebar{width:200px}
-}
-@media(max-width:600px){
-  .sidebar{width:60px}
-  .logo-poem,.tools-section h3,.tool-btn .name,.history-widget{display:none}
-  .logo-title{font-size:28px}
-  .tools-grid{grid-template-columns:1fr}
-  .tool-btn .icon{font-size:28px}
-}
+.form-group label{display:block;margin-bottom:6px;color:#999;font-size:13px}
+.form-group input{width:100%;padding:10px 14px;background:#1a1a1a;border:1px solid #333;border-radius:8px;color:#e0e0e0;font-size:14px}
+.form-group input:focus{outline:none;border-color:#c9a96e}
+/* Tabs */
+.tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid #222;padding-bottom:0}
+.tab{padding:10px 18px;cursor:pointer;color:#888;font-size:14px;border-bottom:2px solid transparent;transition:all .2s}
+.tab.active{color:#c9a96e;border-bottom-color:#c9a96e}
+/* Key box */
+.key-box{background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.key-value{font-family:monospace;color:#c9a96e;font-size:13px;word-break:break-all}
+.key-meta{color:#666;font-size:12px;margin-top:4px}
+/* Pricing */
+.price-card{background:linear-gradient(135deg,#1a1510,#141414);border:1px solid #c9a96e40;border-radius:12px;padding:24px;text-align:center;margin-bottom:16px}
+.price-amount{font-size:36px;font-weight:700;color:#c9a96e}
+.price-unit{font-size:14px;color:#999}
+.price-desc{color:#888;font-size:13px;margin-top:8px}
+.price-highlight{color:#4caf50;font-size:13px;margin-top:4px}
+/* Stats */
+.stat-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #1a1a1a}
+.stat-label{color:#888;font-size:13px}
+.stat-value{color:#e0e0e0;font-size:14px;font-weight:500}
+/* Table */
+.model-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.model-item{background:#1a1a1a;border:1px solid #222;border-radius:6px;padding:10px;font-size:13px}
+.model-name{color:#c9a96e;font-weight:500}
+.model-tags{margin-top:4px}
+.tag{display:inline-block;background:#c9a96e20;color:#c9a96e;padding:2px 8px;border-radius:4px;font-size:11px;margin-right:4px}
+/* Code block */
+.code-block{background:#0d0d0d;border:1px solid #222;border-radius:8px;padding:16px;font-family:monospace;font-size:13px;overflow-x:auto;color:#b0b0b0;margin:8px 0}
+/* Toast */
+.toast{position:fixed;top:20px;right:20px;padding:12px 20px;border-radius:8px;font-size:14px;z-index:9999;animation:slideIn .3s}
+.toast-success{background:#1b5e20;color:#a5d6a7;border:1px solid #2e7d32}
+.toast-error{background:#b71c1c;color:#ef9a9a;border:1px solid #c62828}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+/* Responsive */
+@media(max-width:600px){.container{padding:12px}.nav{flex-wrap:wrap;gap:8px}.price-amount{font-size:28px}}
 </style>
 </head>
 <body>
+<div class="container">
+  <!-- 导航 -->
+  <div class="nav">
+    <div class="nav-brand">问渠 API</div>
+    <div class="nav-btns">
+      <span id="navUser" class="hidden" style="color:#888;font-size:13px;margin-right:8px"></span>
+      <button class="btn btn-outline btn-sm" id="navLogin" onclick="showPage('pageLogin')">登录</button>
+      <button class="btn btn-primary btn-sm" id="navRegister" onclick="showPage('pageRegister')">注册</button>
+      <button class="btn btn-outline btn-sm hidden" id="navLogout" onclick="doLogout()">退出</button>
+      <button class="btn btn-primary btn-sm hidden" id="navDashboard" onclick="showPage('pageDashboard')">控制台</button>
+    </div>
+  </div>
 
-<!-- 登录注册弹窗 -->
-<div class="modal-overlay" id="authModal">
-  <div class="modal">
-    <div class="modal-header">
-      <h3 id="modalTitle">登录 / 注册</h3>
-      <button class="modal-close" onclick="closeModal()">&times;</button>
+  <!-- ===== 首页 ===== -->
+  <div id="pageHome">
+    <div class="card" style="text-align:center;padding:40px 24px">
+      <h1 style="color:#c9a96e;font-size:28px;margin-bottom:12px">问渠 API 平台</h1>
+      <p style="color:#999;font-size:15px;margin-bottom:24px">聚合 9 大免费 AI 模型，一个 Key 全部搞定</p>
+      <button class="btn btn-primary btn-lg" onclick="showPage('pageRegister')">免费注册</button>
     </div>
-    <div class="modal-tabs">
-      <button class="modal-tab active" id="tabLogin" onclick="switchTab('login')">登录</button>
-      <button class="modal-tab" id="tabRegister" onclick="switchTab('register')">注册</button>
-    </div>
-    <div class="modal-body">
-      <!-- 登录表单 -->
-      <div id="loginForm">
-        <div class="form-group">
-          <label>邮箱地址</label>
-          <input type="email" id="loginEmail" placeholder="请输入邮箱" onkeydown="if(event.key==='Enter')doLogin()">
+
+    <div class="card">
+      <h2>💡 平台特色</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-top:12px">
+        <div style="padding:12px;background:#1a1a1a;border-radius:8px">
+          <div style="color:#c9a96e;font-weight:600;margin-bottom:4px">🧠 模型叠加</div>
+          <div style="color:#888;font-size:13px">多个模型同时回答，取最优结果</div>
         </div>
-        <div class="form-group">
-          <label>姓名（选填）</label>
-          <input type="text" id="loginName" placeholder="请输入姓名" onkeydown="if(event.key==='Enter')doLogin()">
+        <div style="padding:12px;background:#1a1a1a;border-radius:8px">
+          <div style="color:#c9a96e;font-weight:600;margin-bottom:4px">🎯 智能路由</div>
+          <div style="color:#888;font-size:13px">自动识别问题类型，选最合适的模型</div>
         </div>
-        <div class="form-error" id="loginError"></div>
-        <button class="form-submit" onclick="doLogin()">登录</button>
-        <p class="form-info">首次登录即自动注册</p>
-      </div>
-      <!-- 注册表单 -->
-      <div id="registerForm" style="display:none">
-        <div class="form-group">
-          <label>姓名</label>
-          <input type="text" id="regName" placeholder="请输入姓名" maxlength="20">
+        <div style="padding:12px;background:#1a1a1a;border-radius:8px">
+          <div style="color:#c9a96e;font-weight:600;margin-bottom:4px">🔍 互相纠错</div>
+          <div style="color:#888;font-size:13px">三阶段审查，大幅提升回答准确率</div>
         </div>
-        <div class="form-group">
-          <label>邮箱地址</label>
-          <input type="email" id="regEmail" placeholder="请输入邮箱" onkeydown="if(event.key==='Enter')doRegister()">
+        <div style="padding:12px;background:#1a1a1a;border-radius:8px">
+          <div style="color:#c9a96e;font-weight:600;margin-bottom:4px">💰 按天计费</div>
+          <div style="color:#888;font-size:13px">没用不收钱，每天仅 ¥1</div>
         </div>
-        <div class="form-group">
-          <label>手机号（选填）</label>
-          <input type="tel" id="regPhone" placeholder="请输入手机号（选填）" maxlength="20">
-        </div>
-        <div class="form-error" id="regError"></div>
-        <button class="form-submit" onclick="doRegister()">注册</button>
-        <p class="form-info">注册即表示同意《问渠用户协议》</p>
       </div>
     </div>
-  </div>
-</div>
 
-<!-- 左侧边栏 -->
-<div class="sidebar">
-  <div class="logo">
-    <div class="logo-title">问渠</div>
-    <div class="logo-poem">问渠那得清如许？<br>为有源头活水来。</div>
-  </div>
-  
-  <div class="divider"></div>
-  
-  <div class="history-widget">
-    <h4>历史上的今天</h4>
-    <div id="historyToday" style="font-size:11px;color:#999;text-align:center;padding:5px">加载中...</div>
-  </div>
-  
-  <div class="divider"></div>
-  
-  <div class="tools-section">
-    <h3>工具导航</h3>
-    <div class="tools-grid">
-      <a href="/math.html" class="tool-btn"><span class="icon">&#128290;</span><span class="name">数理医学</span></a>
-      <a href="/history.html" class="tool-btn"><span class="icon">&#128220;</span><span class="name">历史文化</span></a>
-      <a href="/tech.html" class="tool-btn"><span class="icon">&#128187;</span><span class="name">现代科技</span></a>
-      <a href="/geography.html" class="tool-btn"><span class="icon">&#127758;</span><span class="name">天文地理</span></a>
-      <a href="/units.html" class="tool-btn"><span class="icon">&#8635;</span><span class="name">计量单位</span></a>
-      <a href="/agriculture.html" class="tool-btn"><span class="icon">&#127806;</span><span class="name">农业百科</span></a>
-      <a href="/metaphysics.html" class="tool-btn"><span class="icon">&#128172;</span><span class="name">玄学民俗</span></a>
-      <a href="/life.html" class="tool-btn"><span class="icon">&#127968;</span><span class="name">生活综合</span></a>
+    <div class="card">
+      <h2>💰 充值档位</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:12px">
+        <div class="price-card" style="margin-bottom:0">
+          <div style="color:#888;font-size:13px;margin-bottom:4px">基础包</div>
+          <div class="price-amount">¥10</div>
+          <div class="price-desc">到账 ¥10</div>
+        </div>
+        <div class="price-card" style="margin-bottom:0;border-color:#c9a96e">
+          <div style="color:#c9a96e;font-size:13px;margin-bottom:4px">⭐ 标准包</div>
+          <div class="price-amount">¥50</div>
+          <div class="price-desc">到账 ¥55</div>
+          <div class="price-highlight">送 ¥5</div>
+        </div>
+        <div class="price-card" style="margin-bottom:0">
+          <div style="color:#888;font-size:13px;margin-bottom:4px">💎 豪华包</div>
+          <div class="price-amount">¥100</div>
+          <div class="price-desc">到账 ¥120</div>
+          <div class="price-highlight">送 ¥20</div>
+        </div>
+        <div class="price-card" style="margin-bottom:0">
+          <div style="color:#888;font-size:13px;margin-bottom:4px">👑 至尊包</div>
+          <div class="price-amount">¥200</div>
+          <div class="price-desc">到账 ¥250</div>
+          <div class="price-highlight">送 ¥50</div>
+        </div>
+      </div>
+      <p style="color:#888;font-size:12px;margin-top:16px;text-align:center">💡 充值金额永久有效，用多少扣多少，不使用不扣费</p>
     </div>
-  </div>
-  
-  <!-- 登录按钮区域（根据状态动态切换） -->
-  <div class="divider"></div>
-  <div style="padding:0 15px">
-  </div>
-  
-  <div class="auth-section" id="authSection">
-    <button class="auth-btn" id="authBtn" onclick="openModal('login')">登录 / 注册</button>
-  </div>
-</div>
 
-<!-- 主对话区 -->
-<div class="main-area">
-  <div class="chat-section">
-    <div class="chat-header">
-      <div class="status-dot"></div>
-      <h2>问渠AI助手</h2>
+    <div class="card">
+      <h2>⚖️ 免责声明</h2>
+      <div style="font-size:13px;color:#999;line-height:1.8">
+        <p><strong>一、服务说明</strong><br>本平台提供的 AI 模型调用服务属于虚拟数字服务，一经充值/消费，不支持退款。</p>
+        <p style="margin-top:12px"><strong>二、不可抗力免责</strong><br>因自然灾害、政府政策、网络中断、服务器故障、第三方 API 故障等不可抗力因素导致的服务中断或数据丢失，平台不承担责任，不退款。</p>
+        <p style="margin-top:12px"><strong>三、账户安全</strong><br>用户应妥善保管账号密码及 API Key。因用户保管不当导致的账户被盗、余额被恶意使用等损失，由用户自行承担。</p>
+        <p style="margin-top:12px"><strong>四、使用限制</strong><br>用户不得利用本平台从事违法违规活动。一经发现，平台有权立即终止服务并封禁账户，已充值金额不予退还。</p>
+        <p style="margin-top:12px"><strong>五、服务变更</strong><br>平台有权根据运营情况调整服务内容、价格及功能，调整前将通过站内公告通知。继续使用即视为接受调整。</p>
+        <p style="margin-top:12px"><strong>六、最终解释权</strong><br>本声明的最终解释权归平台运营方所有。</p>
+      </div>
+      <p style="color:#666;font-size:11px;margin-top:12px;text-align:center">注册/充值即表示同意以上条款</p>
     </div>
-    
-    <div class="chat-messages" id="chatMessages">
-      <div class="msg ai"><div class="bubble">&#128075; 您好！我是问渠AI助手，有什么可以帮助您的吗？</div></div>
+
+    <div class="card">
+      <h2>🤖 可用模型（9个）</h2>
+      <div class="model-grid" id="homeModels"></div>
     </div>
-    
-    <div class="typing" id="typingIndicator">AI正在思考中...</div>
-    
-    <div class="chat-input-area">
-      <div class="input-row">
-        <input type="text" id="userInput" placeholder="输入问题，按回车发送..." onkeydown="if(event.key==='Enter')sendMessage()">
-        <button class="send-btn" onclick="sendMessage()">&#10148;</button>
+  </div>
+
+  <!-- ===== 注册 ===== -->
+  <div id="pageRegister" class="hidden">
+    <div class="card" style="max-width:400px;margin:40px auto">
+      <h2 style="text-align:center">注册账号</h2>
+      <div class="form-group">
+        <label>邮箱</label>
+        <input type="email" id="regEmail" placeholder="your@email.com">
+      </div>
+      <div class="form-group">
+        <label>用户名</label>
+        <input type="text" id="regName" placeholder="你的昵称（可选）">
+      </div>
+      <div class="form-group">
+        <label>密码</label>
+        <input type="password" id="regPassword" placeholder="至少6位">
+      </div>
+      <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="doRegister()">注册</button>
+      <p style="text-align:center;margin-top:12px;color:#888;font-size:13px">
+        已有账号？<a href="#" onclick="showPage('pageLogin')" style="color:#c9a96e">去登录</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- ===== 登录 ===== -->
+  <div id="pageLogin" class="hidden">
+    <div class="card" style="max-width:400px;margin:40px auto">
+      <h2 style="text-align:center">登录</h2>
+      <div class="form-group">
+        <label>邮箱</label>
+        <input type="email" id="loginEmail" placeholder="your@email.com">
+      </div>
+      <div class="form-group">
+        <label>密码</label>
+        <input type="password" id="loginPassword" placeholder="密码">
+      </div>
+      <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="doLogin()">登录</button>
+      <p style="text-align:center;margin-top:12px;color:#888;font-size:13px">
+        没有账号？<a href="#" onclick="showPage('pageRegister')" style="color:#c9a96e">去注册</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- ===== 控制台 ===== -->
+  <div id="pageDashboard" class="hidden">
+    <!-- 无API Key时显示 -->
+    <div id="noKeySection" class="hidden">
+      <div class="card" style="text-align:center;padding:40px">
+        <h2>🔐 获取 API Key</h2>
+        <p style="color:#999;margin:12px 0 20px;font-size:14px">注册成功！现在获取你的 API Key 开始使用</p>
+        <div class="price-card" style="margin-bottom:20px">
+          <div class="price-amount">¥1<span class="price-unit">/天</span></div>
+          <div class="price-desc">按使用天数计费，不使用不收费</div>
+          <div class="price-highlight">✅ 每日10次免费体验</div>
+        </div>
+        <button class="btn btn-primary btn-lg" onclick="doCreateKey()">🔑 获取 API Key</button>
+        <p style="color:#666;font-size:12px;margin-top:12px">创建即表示同意按天计费规则</p>
       </div>
     </div>
-  </div>
-  
-  <!-- 右侧面板 -->
-  <div class="side-panel">
-    <div class="panel-section">
-      <h4>&#128203; 重要纪要</h4>
-      <div class="content" id="memoryPanel">
-        <p id="panelText">登录后查看重要纪要</p>
+
+    <!-- 有API Key时显示 -->
+    <div id="hasKeySection" class="hidden">
+      <div class="tabs">
+        <div class="tab active" onclick="showTab('tabKey')">API Key</div>
+        <div class="tab" onclick="showTab('tabRecharge')">充值</div>
+        <div class="tab" onclick="showTab('tabModels')">模型</div>
+        <div class="tab" onclick="showTab('tabBilling')">账单</div>
+        <div class="tab" onclick="showTab('tabDocs')">文档</div>
+      </div>
+
+      <!-- Tab: API Key -->
+      <div id="tabKey" class="tab-content">
+        <div class="card">
+          <h3>我的 API Key</h3>
+          <div id="keyList"></div>
+          <button class="btn btn-outline btn-sm" style="margin-top:12px" onclick="doCreateKey()">+ 新建 Key</button>
+        </div>
+        <div class="card">
+          <h3>快速测试</h3>
+          <div class="form-group">
+            <label>输入消息</label>
+            <input type="text" id="testMsg" placeholder="你好，请介绍一下自己" value="你好，请用一句话介绍自己">
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="doTestChat()">发送测试</button>
+          <div id="testResult" style="margin-top:12px;padding:12px;background:#0d0d0d;border-radius:8px;font-size:13px;display:none"></div>
+        </div>
+      </div>
+
+      <!-- Tab: 模型 -->
+      <div id="tabModels" class="tab-content hidden">
+        <div class="card">
+          <h2>可用模型</h2>
+          <div class="model-grid" id="dashModels"></div>
+        </div>
+      </div>
+
+      <!-- Tab: 充值 -->
+      <div id="tabRecharge" class="tab-content hidden">
+        <div class="card">
+          <h2>当前余额</h2>
+          <div id="balanceInfo" style="font-size:28px;color:#c9a96e;font-weight:700">¥0.00</div>
+        </div>
+        <div class="card">
+          <h2>选择充值档位</h2>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px">
+            <div class="price-card recharge-option" data-amount="10" data-bonus="0" style="cursor:pointer;transition:all .2s" onclick="selectRecharge(this)">
+              <div style="color:#888;font-size:13px">基础包</div>
+              <div class="price-amount">¥10</div>
+              <div class="price-desc">到账 ¥10</div>
+            </div>
+            <div class="price-card recharge-option" data-amount="50" data-bonus="5" style="cursor:pointer;transition:all .2s;border-color:#c9a96e" onclick="selectRecharge(this)">
+              <div style="color:#c9a96e;font-size:13px">⭐ 标准包</div>
+              <div class="price-amount">¥50</div>
+              <div class="price-desc">到账 ¥55</div>
+              <div class="price-highlight">送 ¥5</div>
+            </div>
+            <div class="price-card recharge-option" data-amount="100" data-bonus="20" style="cursor:pointer;transition:all .2s" onclick="selectRecharge(this)">
+              <div style="color:#888;font-size:13px">💎 豪华包</div>
+              <div class="price-amount">¥100</div>
+              <div class="price-desc">到账 ¥120</div>
+              <div class="price-highlight">送 ¥20</div>
+            </div>
+            <div class="price-card recharge-option" data-amount="200" data-bonus="50" style="cursor:pointer;transition:all .2s" onclick="selectRecharge(this)">
+              <div style="color:#888;font-size:13px">👑 至尊包</div>
+              <div class="price-amount">¥200</div>
+              <div class="price-desc">到账 ¥250</div>
+              <div class="price-highlight">送 ¥50</div>
+            </div>
+          </div>
+          <div style="margin-top:20px;padding:16px;background:#1a1a1a;border-radius:8px;display:none" id="rechargeConfirm">
+            <div style="margin-bottom:12px"><strong>已选择：</strong><span id="selectedPackage" style="color:#c9a96e"></span></div>
+            <div style="color:#888;font-size:13px;margin-bottom:12px">支付方式：人工转账<br>请添加客服微信，转账后提供截图确认</div>
+            <button class="btn btn-primary" onclick="doRecharge()">确认充值</button>
+          </div>
+        </div>
+        <div class="card">
+          <h2>充值记录</h2>
+          <div id="rechargeHistory" style="color:#888;font-size:13px">暂无充值记录</div>
+        </div>
+      </div>
+
+      <!-- Tab: 账单 -->
+      <div id="tabBilling" class="tab-content hidden">
+        <div class="card">
+          <h2>今日用量</h2>
+          <div id="todayBilling"></div>
+        </div>
+        <div class="card">
+          <h2>月度统计</h2>
+          <div id="monthBilling"></div>
+        </div>
+      </div>
+
+      <!-- Tab: 文档 -->
+      <div id="tabDocs" class="tab-content hidden">
+        <div class="card">
+          <h2>API 文档</h2>
+          <h3 style="margin-top:16px">基础聊天</h3>
+          <div class="code-block">curl https://101.133.136.55/v1/chat/completions \
+  -H "Authorization: Bearer wq-your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "Qwen/Qwen2.5-7B-Instruct",
+    "messages": [{"role":"user","content":"你好"}]
+  }'</div>
+          <h3 style="margin-top:16px">模型叠加（3模型并行）</h3>
+          <div class="code-block">curl https://101.133.136.55/v1/chat/stack \
+  -H "Authorization: Bearer wq-your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "messages": [{"role":"user","content":"解释量子计算"}],
+    "models": ["Qwen/Qwen2.5-7B-Instruct","THUDM/GLM-4-9B-0414","glm-4-flash"],
+    "merge": "one"
+  }'</div>
+          <h3 style="margin-top:16px">智能路由</h3>
+          <div class="code-block">curl https://101.133.136.55/v1/chat/smart \
+  -H "Authorization: Bearer wq-your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "messages": [{"role":"user","content":"翻译：Hello World"}]
+  }'</div>
+          <h3 style="margin-top:16px">互相纠错</h3>
+          <div class="code-block">curl https://101.133.136.55/v1/chat/review \
+  -H "Authorization: Bearer wq-your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "messages": [{"role":"user","content":"什么是黑洞？"}]
+  }'</div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-// ==================== 登录注册系统 ====================
-const STORAGE_KEY = 'wenqu_user';
+const API_BASE = 'https://101.133.136.55';
 
-function getUser() {
-  try {
-    const d = localStorage.getItem(STORAGE_KEY);
-    return d ? JSON.parse(d) : null;
-  } catch(e) { return null; }
+// Models data
+const MODELS = [
+  {id:'Qwen/Qwen2.5-7B-Instruct',name:'Qwen2.5-7B',tags:['通用','对话']},
+  {id:'Qwen/Qwen3-8B',name:'Qwen3-8B',tags:['通用','推理']},
+  {id:'THUDM/GLM-4-9B-0414',name:'GLM-4-9B',tags:['通用','对话']},
+  {id:'THUDM/GLM-Z1-9B-0414',name:'GLM-Z1-9B',tags:['推理']},
+  {id:'deepseek-ai/DeepSeek-R1-Distill-Qwen-7B',name:'DeepSeek-R1-7B',tags:['推理']},
+  {id:'internlm/internlm2_5-7b-chat',name:'InternLM2.5-7B',tags:['通用']},
+  {id:'tencent/Hunyuan-MT-7B',name:'Hunyuan-MT-7B',tags:['翻译']},
+  {id:'glm-4-flash',name:'GLM-4-Flash',tags:['通用','免费']},
+  {id:'glm-z1-flash',name:'GLM-Z1-Flash',tags:['推理','免费']},
+];
+
+let currentUser = null;
+let currentKey = null;
+
+// Render models
+function renderModels(containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = MODELS.map(m => `
+    <div class="model-item">
+      <div class="model-name">${m.name}</div>
+      <div class="model-tags">${m.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+    </div>
+  `).join('');
+}
+renderModels('homeModels');
+renderModels('dashModels');
+
+// Page navigation
+function showPage(pageId) {
+  ['pageHome','pageRegister','pageLogin','pageDashboard'].forEach(p => {
+    document.getElementById(p).classList.add('hidden');
+  });
+  document.getElementById(pageId).classList.remove('hidden');
+  updateNav();
 }
 
-function saveUser(user) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-}
-
-function clearUser() {
-  localStorage.removeItem(STORAGE_KEY);
-}
-
-function getAllUsers() {
-  try {
-    const d = localStorage.getItem(STORAGE_KEY + '_all');
-    return d ? JSON.parse(d) : {};
-  } catch(e) { return {}; }
-}
-
-function saveAllUsers(users) {
-  localStorage.setItem(STORAGE_KEY + '_all', JSON.stringify(users));
-}
-
-function doLogin() {
-  const email = document.getElementById('loginEmail').value.trim();
-  const name = document.getElementById('loginName').value.trim();
-  const errEl = document.getElementById('loginError');
-  
-  if (!email) {
-    errEl.textContent = '请输入邮箱地址';
-    errEl.style.display = 'block';
-    return;
+function updateNav() {
+  const loggedIn = !!currentUser;
+  document.getElementById('navLogin').classList.toggle('hidden', loggedIn);
+  document.getElementById('navRegister').classList.toggle('hidden', loggedIn);
+  document.getElementById('navLogout').classList.toggle('hidden', !loggedIn);
+  document.getElementById('navDashboard').classList.toggle('hidden', !loggedIn);
+  document.getElementById('navUser').classList.toggle('hidden', !loggedIn);
+  if (loggedIn) {
+    document.getElementById('navUser').textContent = currentUser.name || currentUser.email;
   }
-  
-  const allUsers = getAllUsers();
-  let user;
-  
-  if (allUsers[email]) {
-    // 老用户登录
-    user = allUsers[email];
-    if (name) user.name = name;
-    if (!user.lastLogin) user.loginCount = (user.loginCount || 1) + 1;
-    user.lastLogin = new Date().toISOString();
-    allUsers[email] = user;
-    saveAllUsers(allUsers);
-  } else {
-    // 新用户首次登录 = 自动注册
-    user = {
-      name: name || email.split('@')[0],
-      email: email,
-      phone: '',
-      registeredAt: new Date().toISOString(),
-      lastLogin: new Date().toISOString(),
-      loginCount: 1,
-      notes: []
-    };
-    allUsers[email] = user;
-    saveAllUsers(allUsers);
-  }
-  
-  saveUser(user);
-  closeModal();
-  updateAuthUI();
-  addMsg('欢迎回来，' + user.name + '！已自动登录。', 'ai');
 }
 
-function doRegister() {
-  const name = document.getElementById('regName').value.trim();
+// Toast
+function toast(msg, type='success') {
+  const el = document.createElement('div');
+  el.className = `toast toast-${type}`;
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+// Register
+async function doRegister() {
   const email = document.getElementById('regEmail').value.trim();
-  const phone = document.getElementById('regPhone').value.trim();
-  const errEl = document.getElementById('regError');
-  
-  if (!name) {
-    errEl.textContent = '请输入姓名';
-    errEl.style.display = 'block';
-    return;
-  }
-  if (!email) {
-    errEl.textContent = '请输入邮箱地址';
-    errEl.style.display = 'block';
-    return;
-  }
-  if (!email.includes('@')) {
-    errEl.textContent = '邮箱格式不正确';
-    errEl.style.display = 'block';
-    return;
-  }
-  
-  const allUsers = getAllUsers();
-  if (allUsers[email]) {
-    errEl.textContent = '该邮箱已注册，请直接登录';
-    errEl.style.display = 'block';
-    return;
-  }
-  
-  const user = {
-    name: name,
-    email: email,
-    phone: phone,
-    registeredAt: new Date().toISOString(),
-    lastLogin: new Date().toISOString(),
-    loginCount: 1,
-    notes: []
-  };
-  allUsers[email] = user;
-  saveAllUsers(allUsers);
-  saveUser(user);
-  
-  closeModal();
-  updateAuthUI();
-  addMsg('注册成功！欢迎 ' + name + ' 加入问渠！', 'ai');
-}
+  const password = document.getElementById('regPassword').value;
+  const name = document.getElementById('regName').value.trim();
+  if (!email || !password) return toast('请填写邮箱和密码', 'error');
+            const emailReg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailReg.test(email)) return toast('请输入有效的邮箱地址', 'error');
+  if (password.length < 6) return toast('密码至少6位', 'error');
 
-function doLogout() {
-  clearUser();
-  updateAuthUI();
-  document.getElementById('panelText').textContent = '登录后查看重要纪要';
-}
-
-function updateAuthUI() {
-  const user = getUser();
-  const section = document.getElementById('authSection');
-  
-  if (user) {
-    const initial = user.name ? user.name.charAt(0).toUpperCase() : 'U';
-    section.innerHTML = '<div class="auth-user">' +
-      '<div class="auth-user-avatar">'+escHtml(initial)+'</div>' +
-      '<div class="auth-user-info">' +
-        '<div class="auth-user-name">'+escHtml(user.name)+'</div>' +
-        '<div class="auth-user-email">'+escHtml(user.email)+'</div>' +
-      '</div>' +
-      '<button class="auth-logout-btn" onclick="doLogout()">退出</button>' +
-    '</div>';
-    
-    // 更新右侧面板
-    const panel = document.getElementById('panelText');
-    const loginDate = user.lastLogin ? new Date(user.lastLogin).toLocaleDateString('zh-CN') : '首次';
-    panel.innerHTML = '<p><b>'+escHtml(user.name)+'</b>，欢迎回来！</p>' +
-      '<p style="margin-top:6px">注册时间：'+(user.registeredAt ? new Date(user.registeredAt).toLocaleDateString('zh-CN') : '-')+'</p>' +
-      '<p style="margin-top:4px">上次登录：'+loginDate+'</p>' +
-      '<p style="margin-top:6px;font-size:11px;color:#999">您的对话记录保存在本地</p>';
-  } else {
-    section.innerHTML = '<button class="auth-btn" onclick="openModal(\'login\')">登录 / 注册</button>';
-  }
-}
-
-function openModal(tab) {
-  document.getElementById('authModal').classList.add('show');
-  if (tab === 'register') {
-    switchTab('register');
-  } else {
-    switchTab('login');
-  }
-  // 清空表单
-  document.getElementById('loginEmail').value = '';
-  document.getElementById('loginName').value = '';
-  document.getElementById('regName').value = '';
-  document.getElementById('regEmail').value = '';
-  document.getElementById('regPhone').value = '';
-  document.getElementById('loginError').style.display = 'none';
-  document.getElementById('regError').style.display = 'none';
-}
-
-function closeModal() {
-  document.getElementById('authModal').classList.remove('show');
-}
-
-function switchTab(tab) {
-  document.getElementById('tabLogin').className = 'modal-tab' + (tab === 'login' ? ' active' : '');
-  document.getElementById('tabRegister').className = 'modal-tab' + (tab === 'register' ? ' active' : '');
-  document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
-  document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
-  document.getElementById('modalTitle').textContent = tab === 'login' ? '登录' : '注册';
-  document.getElementById('loginError').style.display = 'none';
-  document.getElementById('regError').style.display = 'none';
-}
-
-// 点击遮罩关闭
-document.getElementById('authModal').addEventListener('click', function(e) {
-  if (e.target === this) closeModal();
-});
-
-// ESC关闭
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') closeModal();
-});
-
-// ==================== 硅基流动API（前端直连，零成本） ====================
-const SILICONFLOW_KEY = 'sk-bpbwbmbqkcjqjbrjiijkmkmpypwitkkypifldowwhghecruc';
-const SILICONFLOW_URL = 'https://api.siliconflow.cn/v1/chat/completions';
-let chatHistory = [];
-
-// 历史上的今天（本地数据）
-function loadHistory() {
-  var el = document.getElementById('historyToday');
-  var now = new Date();
-  var key = (now.getMonth()+1).toString().padStart(2,'0') + '-' + now.getDate().toString().padStart(2,'0');
-  var data = {
-'04-23':[{y:'1564',e:'莎士比亚诞生'},{y:'1616',e:'莎士比亚逝世'}],
-'04-24':[{y:'1915',e:'亚美尼亚大屠杀开始'},{y:'1990',e:'哈勃望远镜发射'}],
-'04-25':[{y:'1945',e:'联合国成立大会'}],
-'04-26':[{y:'1986',e:'切尔诺贝利核事故'}]
-  };
-  var def = [{y:'??',e:'暂无数据'}];
-  var events = data[key] || def;
-  var html = '';
-  for(var i=0; i<events.length && i<3; i++) {
-    html += '<p style="margin:3px 0"><b>'+events[i].y+'</b> '+events[i].e+'</p>';
-  }
-  el.innerHTML = html || '<p>暂无数据</p>';
-}
-
-// 发送消息
-async function sendMessage() {
-  const input = document.getElementById('userInput');
-  const text = input.value.trim();
-  if(!text) return;
-  input.value = '';
-  addMsg(text, 'user');
-  showTyping(true);
-  
   try {
-    chatHistory.push({role:'user', content:text});
-    const r = await fetch(SILICONFLOW_URL, {
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'Authorization':'Bearer '+SILICONFLOW_KEY
-      },
+    const r = await fetch(API_BASE + '/v1/auth/register', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ email, password, name })
+    });
+    const data = await r.json();
+    if (data.error) return toast(data.error.message || data.error, 'error');
+                currentUser = { userId: data.userId, email, name: data.name || name || email.split('@')[0], hasApikey: !!data.apiKey, apiKeys: data.apiKeys || (data.apiKey ? [{ key: data.apiKey, name: 'Default Key', active: true }] : [] };
+    toast('注册成功！请获取 API Key');
+    showDashboard();
+  } catch (e) {
+    toast('注册失败: ' + e.message, 'error');
+  }
+}
+
+// Login
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  if (!email || !password) return toast('请填写邮箱和密码', 'error');
+
+  try {
+    const r = await fetch(API_BASE + '/v1/auth/login', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ email, password })
+    });
+    const data = await r.json();
+    if (data.error) return toast(data.error.message || data.error, 'error');
+    currentUser = data;
+    if (data.apiKeys && data.apiKeys.length > 0) {
+                currentKey = data.apiKey || null;
+    }
+    toast('登录成功！');
+    showDashboard();
+  } catch (e) {
+    toast('登录失败: ' + e.message, 'error');
+  }
+}
+
+// Logout
+function doLogout() {
+  currentUser = null;
+  currentKey = null;
+  showPage('pageHome');
+  toast('已退出登录');
+}
+
+// Show dashboard
+function showDashboard() {
+  showPage('pageDashboard');
+  const hasKey = currentUser?.hasApikey || currentKey;
+  document.getElementById('noKeySection').classList.toggle('hidden', !!hasKey);
+  document.getElementById('hasKeySection').classList.toggle('hidden', !hasKey);
+  if (hasKey) {
+    loadKeys();
+    loadBilling();
+  }
+}
+
+// Create API Key
+async function doCreateKey() {
+  if (!currentUser) return toast('请先登录', 'error');
+  try {
+    const r = await fetch(API_BASE + '/v1/keys/create', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ userId: currentUser.userId })
+    });
+    const data = await r.json();
+    if (data.error) return toast(data.error.message || data.error, 'error');
+    currentKey = data.key;
+    currentUser.hasApikey = true;
+    toast('API Key 创建成功！');
+    showDashboard();
+  } catch (e) {
+    toast('创建失败: ' + e.message, 'error');
+  }
+}
+
+// Load keys
+async function loadKeys() {
+  if (!currentUser) return;
+  try {
+    const r = await fetch(API_BASE + '/v1/keys/list?userId=' + currentUser.userId);
+    const data = await r.json();
+    if (data.keys) {
+      currentKey = data.keys[0]?.key;
+      document.getElementById('keyList').innerHTML = data.keys.map(k => `
+        <div class="key-box">
+          <div>
+            <div class="key-value" id="key_${k.key.slice(0,10)}">${k.key.slice(0,12)}...${k.key.slice(-8)}</div>
+            <div class="key-meta">${k.name} · 创建于 ${new Date(k.createdAt).toLocaleDateString()}</div>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="copyKey('${k.key}')">复制</button>
+        </div>
+      `).join('');
+    }
+  } catch (e) {}
+}
+
+function copyKey(key) {
+  navigator.clipboard.writeText(key).then(() => toast('已复制到剪贴板'));
+}
+
+// Load billing
+async function loadBilling() {
+  if (!currentUser) return;
+  try {
+    const r = await fetch(API_BASE + '/v1/billing?userId=' + currentUser.userId);
+    const data = await r.json();
+    // Today
+    document.getElementById('todayBilling').innerHTML = `
+      <div class="stat-row"><span class="stat-label">日期</span><span class="stat-value">${data.today.date}</span></div>
+      <div class="stat-row"><span class="stat-label">今日请求</span><span class="stat-value">${data.today.requests} 次</span></div>
+      <div class="stat-row"><span class="stat-label">免费剩余</span><span class="stat-value" style="color:#4caf50">${data.today.freeRemaining} 次</span></div>
+      <div class="stat-row"><span class="stat-label">今日费用</span><span class="stat-value">¥${data.today.charge}</span></div>
+    `;
+    // Monthly
+    document.getElementById('monthBilling').innerHTML = `
+      <div class="stat-row"><span class="stat-label">本月费用</span><span class="stat-value">¥${data.monthly.totalCharge}</span></div>
+      <div class="stat-row"><span class="stat-label">使用天数</span><span class="stat-value">${data.monthly.usedDays} 天</span></div>
+      <div class="stat-row"><span class="stat-label">总请求</span><span class="stat-value">${data.monthly.totalRequests} 次</span></div>
+      <div class="stat-row"><span class="stat-label">日均费用</span><span class="stat-value">¥${data.monthly.avgDailyCharge}</span></div>
+    `;
+    // Balance
+    if (data.balance !== undefined) {
+      document.getElementById('balanceInfo').textContent = '¥' + data.balance.toFixed(2);
+    }
+  } catch (e) {}
+}
+
+// Recharge functions
+let selectedRechargeAmount = 0;
+let selectedRechargeBonus = 0;
+
+function selectRecharge(el) {
+  document.querySelectorAll('.recharge-option').forEach(opt => opt.style.borderColor = '#c9a96e40');
+  el.style.borderColor = '#c9a96e';
+  selectedRechargeAmount = parseInt(el.dataset.amount);
+  selectedRechargeBonus = parseInt(el.dataset.bonus);
+  const total = selectedRechargeAmount + selectedRechargeBonus;
+  document.getElementById('selectedPackage').textContent = `充值 ¥${selectedRechargeAmount}，到账 ¥${total}`;
+  document.getElementById('rechargeConfirm').style.display = 'block';
+}
+
+async function doRecharge() {
+  if (!currentUser || !selectedRechargeAmount) return toast('请选择充值档位', 'error');
+  try {
+    const r = await fetch(API_BASE + '/v1/recharge', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        model:'Qwen/Qwen2.5-7B-Instruct',
-        messages:chatHistory,
-        max_tokens:1024,
-        temperature:0.7
+        userId: currentUser.userId,
+        amount: selectedRechargeAmount,
+        bonus: selectedRechargeBonus
       })
     });
-    const d = await r.json();
-    showTyping(false);
-    let reply = '';
-    if(d.choices && d.choices[0]) {
-      reply = d.choices[0].message.content || '（空回复）';
-    } else if(d.error) {
-      reply = '错误：'+(d.error.message || JSON.stringify(d.error));
+    const data = await r.json();
+    if (data.error) return toast(data.error.message || data.error, 'error');
+    toast('充值成功！到账 ¥' + (selectedRechargeAmount + selectedRechargeBonus));
+    loadBilling();
+    document.getElementById('rechargeConfirm').style.display = 'none';
+  } catch (e) {
+    toast('充值失败: ' + e.message, 'error');
+  }
+}
+    `;
+  } catch (e) {}
+}
+
+// Test chat
+async function doTestChat() {
+  const msg = document.getElementById('testMsg').value.trim();
+  if (!msg || !currentKey) return toast('请输入消息', 'error');
+  const resultEl = document.getElementById('testResult');
+  resultEl.style.display = 'block';
+  resultEl.textContent = '思考中...';
+
+  try {
+    const r = await fetch(API_BASE + '/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + currentKey
+      },
+      body: JSON.stringify({
+        model: 'Qwen/Qwen2.5-7B-Instruct',
+        messages: [{ role: 'user', content: msg }]
+      })
+    });
+    const data = await r.json();
+    if (data.error) {
+      resultEl.textContent = '❌ ' + data.error.message;
     } else {
-      reply = '未知响应';
+      resultEl.textContent = data.choices?.[0]?.message?.content || '无回复';
     }
-    addMsg(reply, 'ai');
-    chatHistory.push({role:'assistant', content:reply});
-  } catch(e) {
-    showTyping(false);
-    addMsg('网络错误：'+e.message, 'ai');
+  } catch (e) {
+    resultEl.textContent = '❌ ' + e.message;
   }
 }
 
-function addMsg(text, who) {
-  const box = document.getElementById('chatMessages');
-  const div = document.createElement('div');
-  div.className = 'msg '+who;
-  div.innerHTML = '<div class="bubble">'+escHtml(text)+'</div>';
-  box.appendChild(div);
-  box.scrollTop = box.scrollHeight;
+// Tabs
+function showTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(tabId).classList.remove('hidden');
+  event.target.classList.add('active');
+  if (tabId === 'tabBilling') loadBilling();
 }
-
-function showTyping(show) {
-  document.getElementById('typingIndicator').className = show ? 'typing active' : 'typing';
-}
-
-function escHtml(t) {
-  if (!t) return '';
-  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-// 启动
-loadHistory();
-updateAuthUI();
-document.getElementById('userInput').focus();
 </script>
 </body>
 </html>
