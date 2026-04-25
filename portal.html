@@ -206,7 +206,7 @@
             <!-- 模型列表 -->
             <div id="tabModels" class="hidden">
                 <div class="card">
-                    <h2>🤖 可用模型（12个）</h2>
+                    <h2>🤖 可用模型</h2>
                     <div class="models-grid" id="modelsGrid"></div>
                 </div>
             </div>
@@ -530,7 +530,7 @@ Authorization: Bearer wq-your-api-key</div>
         function refreshDash() { loadBalance(); loadUsage(); toast('已刷新'); }
 
         // 充值弹窗HTML
-        const rechargeHTML = \`
+        const rechargeHTML = `
             <div id="rechargeOverlay" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:1000;display:flex;align-items:center;justify-content:center;" onclick="if(event.target===this)closeRecharge()">
                 <div style="background:#1a1a2e;border:1px solid #2a2a4a;border-radius:16px;padding:28px;max-width:440px;width:90%;">
                     <h2 style="color:#ff6b6b;margin-bottom:6px;">💰 充值余额</h2>
@@ -573,7 +573,7 @@ Authorization: Bearer wq-your-api-key</div>
                     </div>
                 </div>
             </div>
-        \`;
+        `;
 
         let selectedPkg = null;
 
