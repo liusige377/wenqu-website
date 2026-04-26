@@ -271,6 +271,62 @@ function saveAllUsers(users) {
 
 // 后端API地址
 const API_BASE_URL = 'http://101.133.136.55:3000';
+const IS_HTTPS = window.location.protocol === 'https:';
+
+// 统一API请求函数（自动处理HTTPS代理）
+async function wenquApi(endpoint, data) {
+  const url = API_BASE_URL + endpoint;
+  const body = JSON.stringify(data);
+  
+  if (IS_HTTPS) {
+    // HTTPS环境：使用支持POST的CORS代理
+    // 方案1: corsproxy.io（支持任意方法）
+    const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
+    const r = await fetch(proxyUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: body
+    });
+    if (!r.ok) throw new Error('网络错误(HTTP ' + r.status + ')');
+    const text = await r.text();
+    try { return JSON.parse(text); } catch(e) { throw new Error('服务器响应异常'); }
+  } else {
+    // HTTP环境：直接请求
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: body
+    });
+    if (!r.ok) throw new Error('网络错误(HTTP ' + r.status + ')');
+    return await r.json();
+  }
+}
+
+// ====== 游客模式：每天免费10次 =====
+const GUEST_LIMIT = 10;
+const GUEST_KEY = 'wenqu_guest_count';
+
+function getGuestCount() {
+  const today = new Date().toDateString();
+  const saved = localStorage.getItem(GUEST_KEY);
+  if (!saved) return 0;
+  try {
+    const data = JSON.parse(saved);
+    if (data.date === today) return data.count;
+    return 0; // 新的一天重置
+  } catch(e) { return 0; }
+}
+
+function addGuestCount() {
+  const today = new Date().toDateString();
+  const count = getGuestCount() + 1;
+  localStorage.setItem(GUEST_KEY, JSON.stringify({ date: today, count: count }));
+  return count;
+}
+
+function getRemainingGuestCount() {
+  return Math.max(0, GUEST_LIMIT - getGuestCount());
+}
 
 async function doLogin() {
   const email = document.getElementById('loginEmail').value.trim();
@@ -289,12 +345,7 @@ async function doLogin() {
   }
   
   try {
-    const res = await fetch(API_BASE_URL + '/v1/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
-    const data = await res.json();
+    const data = await wenquApi('/v1/auth/login', { email, password });
     
     if (!res.ok) {
       errEl.textContent = data.error || '登录失败';
@@ -348,12 +399,7 @@ async function doRegister() {
   }
   
   try {
-    const res = await fetch(API_BASE_URL + '/v1/auth/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password })
-    });
-    const data = await res.json();
+    const data = await wenquApi('/v1/auth/register', { name, email, password });
     
     if (!res.ok) {
       errEl.textContent = data.error || '注册失败';
@@ -391,13 +437,14 @@ function updateAuthUI() {
   
   if (user) {
     const initial = user.name ? user.name.charAt(0).toUpperCase() : 'U';
-    section.innerHTML = '<div class="auth-user">' +
-      '<div class="auth-user-avatar">'+escHtml(initial)+'</div>' +
+    // 头像点击跳转用户中心
+    section.innerHTML = '<div class="auth-user" style="cursor:pointer" onclick="window.location.href=\'portal.html\'">' +
+      '<div class="auth-user-avatar" title="点击进入用户中心">'+escHtml(initial)+'</div>' +
       '<div class="auth-user-info">' +
         '<div class="auth-user-name">'+escHtml(user.name)+'</div>' +
         '<div class="auth-user-email">'+escHtml(user.email)+'</div>' +
       '</div>' +
-      '<button class="auth-logout-btn" onclick="doLogout()">退出</button>' +
+      '<button class="auth-logout-btn" onclick="event.stopPropagation();doLogout()">退出</button>' +
     '</div>';
     
     // 更新右侧面板 - 显示API Key
@@ -490,29 +537,112 @@ async function sendMessage() {
   addMsg(text, 'user');
   showTyping(true);
   
-  try {
-    const userKey = getUserApiKey();
-    if (!userKey) {
+  const userKey = getUserApiKey();
+  
+  // 游客模式检查
+  if (!userKey) {
+    const remaining = getRemainingGuestCount();
+    if (remaining <= 0) {
       showTyping(false);
-      addMsg('请先登录获取API Key后再使用AI对话功能。', 'ai');
+      addMsg('⚠️ 今天免费次数已用完（每日10次）。请登录注册获取API Key，享受无限对话！', 'ai');
+      openModal('login');
       return;
     }
     
-    chatHistory.push({role:'user', content:text});
-    const r = await fetch(API_BASE_URL + '/v1/chat/completions', {
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'Authorization':'Bearer '+userKey
-      },
-      body: JSON.stringify({
-        model:'qwen2.5-7b',
+    // 游客模式调用API（使用系统默认key）
+    try {
+      addGuestCount();
+      chatHistory.push({role:'user', content:text});
+      
+      const url = API_BASE_URL + '/v1/chat/completions';
+      const body = JSON.stringify({
+        model:'glm-4-flash',
         messages:chatHistory,
         max_tokens:1024,
         temperature:0.7
-      })
+      });
+      
+      let d;
+      if (IS_HTTPS) {
+        // HTTPS代理
+        const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
+        const r = await fetch(proxyUrl, {
+          method:'POST',
+          headers:{ 'Content-Type':'application/json' },
+          body: body
+        });
+        const wrapped = await r.json();
+        d = typeof wrapped === 'string' ? JSON.parse(wrapped) : wrapped;
+      } else {
+        const r = await fetch(url, {
+          method:'POST',
+          headers:{ 'Content-Type':'application/json' },
+          body: body
+        });
+        d = await r.json();
+      }
+      
+      showTyping(false);
+      let reply = '';
+      if(d.choices && d.choices[0]) {
+        reply = d.choices[0].message.content || '（空回复）';
+      } else if(d.error) {
+        reply = '错误：'+(d.error.message || JSON.stringify(d.error));
+      } else {
+        reply = '未知响应';
+      }
+      addMsg(reply, 'ai');
+      chatHistory.push({role:'assistant', content:reply});
+      
+      // 显示剩余次数
+      const newRemaining = getRemainingGuestCount();
+      if (newRemaining <= 3) {
+        addMsg('💡 今日剩余' + newRemaining + '次免费对话。登录后无限制！', 'ai');
+      }
+    } catch(e) {
+      showTyping(false);
+      addMsg('网络错误：'+e.message, 'ai');
+    }
+    return;
+  }
+  
+  // 登录用户：使用自己的API Key
+  try {
+    chatHistory.push({role:'user', content:text});
+    
+    const url = API_BASE_URL + '/v1/chat/completions';
+    const body = JSON.stringify({
+      model:'glm-4-flash',
+      messages:chatHistory,
+      max_tokens:1024,
+      temperature:0.7
     });
-    const d = await r.json();
+    
+    let d;
+    if (IS_HTTPS) {
+      const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
+      const r = await fetch(proxyUrl, {
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'Authorization':'Bearer '+userKey
+        },
+        body: body
+      });
+      const wrapped = await r.json();
+      d = typeof wrapped === 'string' ? JSON.parse(wrapped) : wrapped;
+    } else {
+      const r = await fetch(url, {
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'Authorization':'Bearer '+userKey
+        },
+        body: body
+      });
+      d = await r.json();
+    }
+    
     showTyping(false);
     let reply = '';
     if(d.choices && d.choices[0]) {
