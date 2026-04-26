@@ -463,9 +463,10 @@
             updateKeyInfo();
         }
 
-        async function callAI(prompt, model) {
-            setStatus('AI思考中...');
-            const response = await fetch(WENQU_BASE + '/v1/chat/completions', {
+        async function callAI(prompt, model, useSmart = false) {
+            setStatus(useSmart ? '实时查询中...' : 'AI思考中...');
+            const endpoint = useSmart ? '/v1/chat/smart' : '/v1/chat/completions';
+            const response = await fetch(WENQU_BASE + endpoint, {
                 method: 'POST',
                 headers: {
                     'Authorization': 'Bearer ' + wenquKey,
@@ -490,6 +491,10 @@
             }
             // 更新配额
             await loadVipStatus();
+            // smart端点直接返回content
+            if (useSmart && data.content) {
+                return { content: data.content, model: data.model || model, mode: data.mode, category: data.category };
+            }
             return { content: data.choices[0].message.content, model: model };
         }
 
@@ -507,12 +512,15 @@
 
             try {
                 const q = question.toLowerCase();
-                const isDateTime = q.includes('今天') || q.includes('日期') || q.includes('几号') ||
-                    q.includes('星期') || q.includes('礼拜') || q.includes('几点') ||
-                    q.includes('某年') || q.includes('某月') || q.includes('某日') ||
-                    (q.includes('现在') && q.includes('时间'));
+                
+                // 检测实时问题类型
+                const isWeather = /天气|气温|温度|下雨|下雪|晴天|台风|weather/i.test(q) && !/代码|程序|函数|API|编程|怎么写|如何实现/i.test(q);
+                const isNews = /新闻|热点|今日|最近发生|最新消息|大事|news|头条/i.test(q) && !/代码|程序|函数|API|编程|怎么写|如何实现/i.test(q);
+                const isDateTime = /今天|日期|几号|星期|礼拜|几点|时间|现在|当前/i.test(q);
+                const isRealtime = isWeather || isNews || needsRealtime(question);
 
-                if (isDateTime) {
+                // 日期时间直接本地返回
+                if (isDateTime && !isWeather && !isNews) {
                     removeLoading();
                     addMessage('assistant', getDateTimeInfo(), '系统实时获取');
                     setStatus('就绪');
@@ -521,12 +529,28 @@
                     return;
                 }
 
+                // 天气/新闻等实时问题走smart端点
+                if (isWeather || isNews) {
+                    addLoading(isWeather ? '查询天气中...' : '获取新闻中...');
+                    const result = await callAI(question, model, true); // useSmart=true
+                    removeLoading();
+                    const tag = result.mode === 'smart-direct' ? 
+                        (result.category + ' · 实时获取') : 
+                        ('模型: ' + result.model.split('/').pop());
+                    addMessage('assistant', result.content, tag);
+                    setStatus('就绪');
+                    sendBtn.disabled = false;
+                    userInput.focus();
+                    return;
+                }
+
+                // 其他问题走普通completions
                 addLoading('AI思考中...');
                 let prompt = question;
                 if (needsRealtime(question)) {
                     prompt = '当前时间信息：\n' + getDateTimeInfo() + '\n\n用户问题：' + question + '\n\n请回答。';
                 }
-                const result = await callAI(prompt, model);
+                const result = await callAI(prompt, model, false);
                 removeLoading();
                 addMessage('assistant', result.content, '模型: ' + result.model.split('/').pop());
                 setStatus('就绪');
