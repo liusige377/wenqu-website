@@ -67,6 +67,13 @@
         .code-block { background: #0a0a14; border: 1px solid #2a2a4a; border-radius: 8px; padding: 16px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.6; color: #a0ffa0; margin-top: 12px; }
         
         .hidden { display: none !important; }
+        .vip-badge { background: linear-gradient(135deg,#7c5cfc,#5a3fd4); color: white; padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; display: inline-block; }
+        .vip-badge-expired { background: #2a2a4a; color: #888; padding: 4px 14px; border-radius: 20px; font-size: 13px; }
+        .recharge-vip-card { background: linear-gradient(135deg,#1a1a2e,#2d1f4e); border: 1px solid #7c5cfc; border-radius: 12px; padding: 20px; margin-bottom: 16px; text-align: center; }
+        .recharge-vip-card .vip-icon { font-size: 40px; margin-bottom: 8px; }
+        .recharge-vip-card .vip-title { font-size: 20px; font-weight: bold; color: #fff; margin-bottom: 4px; }
+        .recharge-vip-card .vip-desc { color: #a0a0c0; font-size: 13px; margin-bottom: 16px; }
+        .recharge-vip-card .vip-cta { background: linear-gradient(135deg,#7c5cfc,#5a3fd4); color: white; padding: 10px 20px; border-radius: 8px; font-size: 14px; border: none; cursor: pointer; }
         
         @media (max-width: 600px) {
             .hero h1 { font-size: 26px; }
@@ -142,6 +149,12 @@
         <div id="pageDashboard" class="hidden">
 
             <div id="balanceCard" style="display:none;">
+                <div id="vipStatusBanner" style="display:none; background:linear-gradient(135deg,#7c5cfc,#5a3fd4); border-radius:12px; padding:14px 20px; margin-bottom:16px; text-align:center;">
+                    <span style="font-size:16px;">👑</span>
+                    <span style="color:white; font-size:16px; font-weight:bold; margin-left:8px;" id="vipBannerText">VIP会员</span>
+                    <span style="color:rgba(255,255,255,0.8); font-size:13px; margin-left:12px;" id="vipBannerDays">剩余30天</span>
+                    <button onclick="showRecharge()" style="margin-left:16px; background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.4); color:white; padding:4px 14px; border-radius:20px; font-size:12px; cursor:pointer;">续费</button>
+                </div>
                 <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:12px; margin-bottom:20px;">
                     <div class="card" style="padding:16px; text-align:center;">
                         <div style="font-size:24px; font-weight:bold; color:#7c5cfc;" id="dashBalance">--</div>
@@ -161,9 +174,9 @@
                     </div>
                 </div>
                 <div style="display:flex; gap:10px; align-items:center; margin-bottom:4px;">
-                    <button class="btn btn-primary btn-sm" onclick="showRecharge()" style="background:#ff6b6b;">💰 充值余额</button>
+                    <button class="btn btn-primary btn-sm" onclick="showRecharge()" style="background:linear-gradient(135deg,#7c5cfc,#5a3fd4);">👑 升级VIP</button>
                     <button class="btn btn-sm" onclick="refreshDash()" style="background:#2a2a4a; color:#aaa; border:1px solid #2a2a4a;">🔄 刷新</button>
-                    <span style="font-size:12px; color:#666; margin-left:auto;">每天10次免费，超出¥1/天不限次</span>
+                    <span style="font-size:12px; color:#666; margin-left:auto;">每天10次免费 · 升级VIP无限次</span>
                 </div>
             </div>
 
@@ -379,9 +392,8 @@ Authorization: Bearer wq-your-api-key</div>
                 currentUser = { userId: data.userId, email, name: data.name || name || email.split('@')[0], hasApikey: true, apiKeys: data.apiKeys || (data.apiKey ? [{ key: data.apiKey, name: 'Default Key', active: true }] : []) };
                 currentKey = data.apiKey || data.apiKeys?.[0]?.key || null;
                 localStorage.setItem('wenqu_user', JSON.stringify(currentUser));
-                if (data.apiKey) { toast('注册成功！API Key: ' + data.apiKey.slice(0,12) + '...'); } else { toast('注册成功！请登录后创建 API Key'); }
-                showDashboard();
-                loadBalance();
+                toast('注册成功！即将跳转到AI助手...');
+                setTimeout(() => { window.location.href = 'ai.html'; }, 1200);
             } catch (e) {
                 toast('网络错误: ' + e.message, 'error');
             }
@@ -405,9 +417,8 @@ Authorization: Bearer wq-your-api-key</div>
                 currentUser = data;
                 currentKey = data.apiKeys?.[0]?.key;
                 localStorage.setItem('wenqu_user', JSON.stringify(currentUser));
-                toast('登录成功');
-                showDashboard();
-                loadBalance();
+                toast('登录成功！即将跳转到AI助手...');
+                setTimeout(() => { window.location.href = 'ai.html'; }, 1200);
             } catch (e) {
                 toast('网络错误: ' + e.message, 'error');
             }
@@ -535,15 +546,42 @@ Authorization: Bearer wq-your-api-key</div>
             if (!currentKey || !currentUser) { card.style.display = 'none'; return; }
             card.style.display = 'block';
             try {
+                // 先查VIP状态
+                let isVip = false, vipDays = 0;
+                try {
+                    const vr = await wenquFetch(API_BASE + '/v1/vip/status', {
+                        headers: { 'Authorization': 'Bearer ' + currentKey }
+                    });
+                    const vd = await vr.json();
+                    if (!vd.error) {
+                        isVip = vd.isVip || false;
+                        vipDays = vd.vipDaysRemaining || 0;
+                    }
+                } catch(e) {}
+
+                // 查余额
                 const r = await wenquFetch(API_BASE + '/v1/balance?userId=' + currentUser.userId, {
                     headers: { 'Authorization': 'Bearer ' + currentKey }
                 });
                 const d = await r.json();
                 if (d.error) { console.warn('余额查询失败:', d.error.message); return; }
+
+                // 更新VIP banner
+                const banner = document.getElementById('vipStatusBanner');
+                if (isVip) {
+                    banner.style.display = 'block';
+                    document.getElementById('vipBannerText').textContent = '👑 VIP会员';
+                    document.getElementById('vipBannerDays').textContent = '剩余 ' + vipDays + ' 天';
+                } else {
+                    banner.style.display = 'none';
+                }
+
                 document.getElementById('dashBalance').textContent = d.totalBalance.toFixed(2);
                 document.getElementById('dashQuotaUsed').textContent = d.todayUsed;
                 document.getElementById('dashQuotaFree').textContent = d.freeRemaining;
-                let statusText = d.todayStatus === 'paid' ? '✅ 已付费' : (d.todayStatus === 'quota_exceeded' ? '⏳ 超额待扣' : '🎁 免费中');
+                let statusText = isVip ? '👑 VIP' : (d.todayStatus === 'paid' ? '✅ 已付费' : (d.todayStatus === 'quota_exceeded' ? '⏳ 超额' : '🎁 免费中'));
+                if (isVip) document.getElementById('dashStatus').style.color = '#7c5cfc';
+                else document.getElementById('dashStatus').style.color = '#f39c12';
                 document.getElementById('dashStatus').textContent = statusText;
             } catch(e) { console.warn('余额加载失败:', e); }
         }

@@ -33,19 +33,7 @@
         }
         .header-left h1 { font-size: 24px; margin-bottom: 5px; }
         .header-left p { opacity: 0.8; font-size: 13px; }
-        .header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
-        .auth-btn { padding: 6px 14px; border-radius: 20px; font-size: 13px; cursor: pointer; transition: all 0.2s; text-decoration: none; }
-        .auth-btn-login { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.4); color: white; }
-        .auth-btn-login:hover { background: rgba(255,255,255,0.25); }
-        .auth-btn-register { background: #7c5cfc; border: 1px solid #7c5cfc; color: white; }
-        .auth-btn-register:hover { background: #6a4ae8; }
-        .user-info-box { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.1); border-radius: 20px; padding: 4px 12px 4px 4px; }
-        .user-avatar { width: 28px; height: 28px; border-radius: 50%; background: #7c5cfc; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
-        .user-name { font-size: 13px; color: white; }
-        .user-balance { font-size: 11px; color: rgba(255,255,255,0.7); }
-        .user-balance span { color: #f39c12; font-weight: bold; }
-        .btn-logout { background: none; border: 1px solid rgba(255,255,255,0.3); color: rgba(255,255,255,0.7); padding: 3px 10px; border-radius: 12px; font-size: 11px; cursor: pointer; }
-        .btn-logout:hover { background: rgba(255,255,255,0.15); color: white; }
+        .header-right { display: flex; align-items: center; gap: 10px; }
         .model-select {
             padding: 8px 15px;
             border-radius: 20px;
@@ -218,22 +206,6 @@
                 <p>问渠自研API · 多模型聚合 · 联网搜索</p>
             </div>
             <div class="header-right">
-                <!-- 登录/注册按钮（未登录时显示） -->
-                <span id="authButtonsGuest">
-                    <a href="portal.html" class="auth-btn auth-btn-register">注册领Key</a>
-                    <a href="portal.html" class="auth-btn auth-btn-login">登录</a>
-                </span>
-                <!-- 用户信息（登录后显示） -->
-                <span id="authButtonsUser" style="display:none;">
-                    <div class="user-info-box">
-                        <div class="user-avatar" id="userAvatar">?</div>
-                        <div>
-                            <div class="user-name" id="userName">--</div>
-                            <div class="user-balance">余额: <span id="userBalance">--</span>元</div>
-                        </div>
-                    </div>
-                    <button class="btn-logout" onclick="userLogout()">退出</button>
-                </span>
                 <select class="model-select" id="modelSelect">
                     <optgroup label="🔥 推荐模型">
                         <option value="Qwen/Qwen2.5-7B-Instruct">Qwen2.5-7B ⚡</option>
@@ -538,77 +510,7 @@
             userInput.focus();
         }
 
-        // ===== 用户认证状态 =====
-        const API_BASE = 'http://101.133.136.55:3000';
-
-        async function wenquFetch(url, opts) {
-            const proxyUrl = 'https://api.allorigins.win/' + (opts?.method === 'POST' ? 'post' : 'get') + '?url=' + encodeURIComponent(url);
-            const r = await fetch(proxyUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', ...opts?.headers },
-                body: opts?.body
-            });
-            const wrapped = await r.json();
-            const httpStatus = wrapped.status?.http_code || 200;
-            const data = JSON.parse(wrapped.contents);
-            const mockResponse = {
-                ok: httpStatus >= 200 && httpStatus < 300,
-                status: httpStatus,
-                json: () => Promise.resolve(data)
-            };
-            if (data.error) mockResponse.ok = false;
-            return mockResponse;
-        }
-
-        function updateAuthUI() {
-            const saved = localStorage.getItem('wenqu_user');
-            const guestEl = document.getElementById('authButtonsGuest');
-            const userEl = document.getElementById('authButtonsUser');
-            if (saved) {
-                try {
-                    const user = JSON.parse(saved);
-                    if (user && user.userId) {
-                        guestEl.style.display = 'none';
-                        userEl.style.display = 'flex';
-                        userEl.style.alignItems = 'center';
-                        userEl.style.gap = '8px';
-                        const name = user.name || user.email || '用户';
-                        document.getElementById('userName').textContent = name;
-                        document.getElementById('userAvatar').textContent = name.charAt(0).toUpperCase();
-                        // 显示余额
-                        loadUserBalance(user);
-                        return;
-                    }
-                } catch(e) {}
-            }
-            guestEl.style.display = 'inline-flex';
-            guestEl.style.gap = '8px';
-            userEl.style.display = 'none';
-        }
-
-        async function loadUserBalance(user) {
-            const key = user.apiKeys?.[0]?.key || null;
-            if (!key) return;
-            try {
-                const r = await wenquFetch(API_BASE + '/v1/balance?userId=' + user.userId, {
-                    headers: { 'Authorization': 'Bearer ' + key }
-                });
-                const d = await r.json();
-                if (!d.error && d.totalBalance !== undefined) {
-                    document.getElementById('userBalance').textContent = d.totalBalance.toFixed(2);
-                }
-            } catch(e) {}
-        }
-
-        function userLogout() {
-            localStorage.removeItem('wenqu_user');
-            updateAuthUI();
-        }
-
-        // ===== 原有init =====
         init();
-        // 页面加载后更新认证状态
-        updateAuthUI();
     </script>
 </body>
 </html>
