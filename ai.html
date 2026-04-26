@@ -4,7 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>问渠AI助手 - 多模型免费聚合</title>
+    <script>
+        // HTTPS检测：如果是HTTPS访问，提示切换到HTTP
+        if (window.location.protocol === 'https:') {
+            // 尝试自动跳转到HTTP（如果用户允许）
+            var httpUrl = window.location.href.replace('https:', 'http:');
+            // 显示提示横幅而不是直接跳转，避免无限循环
+            window.__HTTPS_WARNING__ = true;
+        }
+    </script>
     <style>
+        .https-warning {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 12px 20px;
+            text-align: center;
+            font-size: 14px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10000;
+            display: none;
+        }
+        .https-warning.show { display: block; }
+        .https-warning a {
+            color: #fff;
+            text-decoration: underline;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        body.has-warning { padding-top: 50px; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -211,6 +241,11 @@
     </style>
 </head>
 <body>
+    <div class="https-warning" id="httpsWarning">
+        ⚠️ 您正在使用HTTPS访问，API可能无法连接。
+        <a href="#" onclick="switchToHttp();return false;">点击切换到HTTP版本</a>
+        <span style="margin-left:15px;cursor:pointer;font-size:12px;opacity:0.8;" onclick="document.getElementById('httpsWarning').style.display='none';">[忽略]</span>
+    </div>
     <div class="container">
         <div class="header">
             <div class="header-left">
@@ -311,7 +346,10 @@
         const modelStatus = document.getElementById('modelStatus');
         const searchStatus = document.getElementById('searchStatus');
 
-        const WENQU_BASE = 'https://101.133.136.55';
+        // 根据当前页面协议自动选择API协议（避免Mixed Content）
+        const WENQU_BASE = (window.location.protocol === 'https:') 
+            ? 'https://101.133.136.55'  // HTTPS页面（会有警告）
+            : 'http://101.133.136.55';   // HTTP页面（正常工作）
 
         let wenquKey = localStorage.getItem('wenqu_api_key') || '';
         let useWenqu = !!wenquKey;
@@ -649,6 +687,18 @@
             updateAuthUI();
         }
 
+        // ===== HTTPS警告处理 =====
+        function switchToHttp() {
+            var httpUrl = window.location.href.replace('https:', 'http:');
+            window.location.href = httpUrl;
+        }
+        
+        // 显示HTTPS警告
+        if (window.__HTTPS_WARNING__) {
+            document.body.classList.add('has-warning');
+            document.getElementById('httpsWarning').classList.add('show');
+        }
+        
         // ===== 原有init =====
         init();
         // 页面加载后更新认证状态
