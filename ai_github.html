@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>问渠AI助手 - 多模型免费聚合</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            width: 100%;
+            max-width: 900px;
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+            color: white;
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-left h1 { font-size: 24px; margin-bottom: 5px; }
+        .header-left p { opacity: 0.8; font-size: 13px; }
+        .header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+        .auth-btn { padding: 6px 14px; border-radius: 20px; font-size: 13px; cursor: pointer; transition: all 0.2s; text-decoration: none; }
+        .auth-btn-login { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.4); color: white; }
+        .auth-btn-login:hover { background: rgba(255,255,255,0.25); }
+        .auth-btn-register { background: #7c5cfc; border: 1px solid #7c5cfc; color: white; }
+        .auth-btn-register:hover { background: #6a4ae8; }
+        .user-info-box { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.1); border-radius: 20px; padding: 4px 12px 4px 4px; }
+        .user-avatar { width: 28px; height: 28px; border-radius: 50%; background: #7c5cfc; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
+        .user-name { font-size: 13px; color: white; }
+        .user-balance { font-size: 11px; color: rgba(255,255,255,0.7); }
+        .user-balance span { color: #f39c12; font-weight: bold; }
+        .btn-logout { background: none; border: 1px solid rgba(255,255,255,0.3); color: rgba(255,255,255,0.7); padding: 3px 10px; border-radius: 12px; font-size: 11px; cursor: pointer; }
+        .btn-logout:hover { background: rgba(255,255,255,0.15); color: white; }
+        .model-select {
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .model-select option { color: #333; background: white; }
+        .model-status { font-size: 11px; opacity: 0.7; }
+        .search-status {
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.15);
+            display: none;
+        }
+        .search-status.active { display: inline-block; background: #27ae60; }
+        .search-status.searching { background: #f39c12; }
+        .chat-area { height: 450px; overflow-y: auto; padding: 20px; background: #f8f9fa; }
+        .message { margin-bottom: 15px; display: flex; flex-direction: column; }
+        .message.user { align-items: flex-end; }
+        .message.assistant { align-items: flex-start; }
+        .bubble {
+            max-width: 80%;
+            padding: 15px 20px;
+            border-radius: 18px;
+            font-size: 15px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .message.user .bubble {
+            background: linear-gradient(135deg, #0f3460, #16213e);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+        .message.assistant .bubble {
+            background: white;
+            color: #333;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border-bottom-left-radius: 5px;
+        }
+        .model-tag { font-size: 11px; color: #888; margin-top: 5px; padding: 0 5px; }
+        .loading { display: flex; gap: 5px; padding: 15px 20px; }
+        .loading span {
+            width: 8px; height: 8px; background: #0f3460;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .loading span:nth-child(1) { animation-delay: -0.32s; }
+        .loading span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+        .examples {
+            padding: 12px 20px;
+            background: #f0f4f8;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .examples-title { font-size: 12px; color: #666; margin-right: 5px; }
+        .example-btn {
+            padding: 6px 14px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 15px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .example-btn:hover {
+            background: #0f3460;
+            color: white;
+            border-color: #0f3460;
+        }
+        .input-area {
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+        }
+        .input-area input {
+            flex: 1;
+            padding: 14px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .input-area input:focus { border-color: #0f3460; }
+        .input-area button {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #0f3460, #16213e);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .input-area button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(15, 52, 96, 0.4);
+        }
+        .input-area button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .error-msg { color: #e74c3c; font-size: 13px; padding: 10px 20px; }
+        .key-toggle {
+            position: fixed; top: 12px; right: 12px;
+            padding: 6px 14px; background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 20px; color: white; font-size: 12px;
+            cursor: pointer; z-index: 100;
+        }
+        .key-toggle:hover { background: rgba(255,255,255,0.25); }
+        .key-panel {
+            position: fixed; top: 50px; right: 12px;
+            background: white; border-radius: 12px;
+            padding: 16px; width: 300px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            z-index: 100; display: none;
+        }
+        .key-panel.show { display: block; }
+        .key-panel h3 { font-size: 14px; color: #0f3460; margin-bottom: 10px; }
+        .key-panel input {
+            width: 100%; padding: 8px 12px;
+            border: 2px solid #e0e0e0; border-radius: 8px;
+            font-size: 13px; margin-bottom: 8px; outline: none;
+        }
+        .key-panel input:focus { border-color: #0f3460; }
+        .key-panel .hint { font-size: 11px; color: #888; margin-bottom: 10px; }
+        .key-panel .btn-row { display: flex; gap: 8px; }
+        .key-panel button {
+            flex: 1; padding: 8px; border: none; border-radius: 8px;
+            font-size: 13px; cursor: pointer;
+        }
+        .key-panel .btn-use { background: #0f3460; color: white; }
+        .key-panel .btn-guest { background: #eee; color: #666; }
+        .key-info { font-size: 11px; color: #888; margin-top: 8px; line-height: 1.5; }
+        .quota-bar {
+            display: inline-block; padding: 3px 10px;
+            border-radius: 12px; font-size: 11px;
+            margin-left: 6px;
+        }
+        .quota-free { background: #e8f5e9; color: #2e7d32; }
+        .quota-paid { background: #e3f2fd; color: #1565c0; }
+        .quota-warn { background: #fff3e0; color: #e65100; }
+        .quota-empty { background: #fce4ec; color: #c62828; }
+        .quota-vip { background: linear-gradient(135deg, #7c5cfc, #5a3fd4); color: white; }
+        .vip-banner {
+            background: linear-gradient(135deg, #7c5cfc, #5a3fd4);
+            color: white; padding: 10px 16px; border-radius: 10px;
+            font-size: 13px; margin: 8px 0; text-align: center;
+            display: none;
+        }
+        .vip-banner.show { display: block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                <h1>问渠AI助手</h1>
+                <p>问渠自研API · 多模型聚合 · 联网搜索</p>
+            </div>
+            <div class="header-right">
+                <!-- 登录/注册按钮（未登录时显示） -->
+                <span id="authButtonsGuest">
+                    <a href="portal.html" class="auth-btn auth-btn-register">注册领Key</a>
+                    <a href="portal.html" class="auth-btn auth-btn-login">登录</a>
+                </span>
+                <!-- 用户信息（登录后显示） -->
+                <span id="authButtonsUser" style="display:none;">
+                    <div class="user-info-box">
+                        <div class="user-avatar" id="userAvatar">?</div>
+                        <div>
+                            <div class="user-name" id="userName">--</div>
+                            <div class="user-balance">余额: <span id="userBalance">--</span>元</div>
+                        </div>
+                    </div>
+                    <a href="portal.html" class="btn-logout" style="text-decoration:none;text-align:center;">充值</a>
+                    <button class="btn-logout" onclick="userLogout()">退出</button>
+                </span>
+                <select class="model-select" id="modelSelect">
+                    <optgroup label="🔥 推荐模型">
+                        <option value="Qwen/Qwen2.5-7B-Instruct">Qwen2.5-7B ⚡</option>
+                        <option value="THUDM/GLM-4-9B-0414">GLM-4-9B</option>
+                        <option value="deepseek-ai/DeepSeek-R1-Distill-Qwen-7B">DeepSeek-R1-7B</option>
+                    </optgroup>
+                    <optgroup label="🤖 Qwen系列">
+                        <option value="Qwen/Qwen2.5-7B-Instruct">Qwen2.5-7B</option>
+                        <option value="Qwen/Qwen3-8B">Qwen3-8B</option>
+                    </optgroup>
+                    <optgroup label="🧠 GLM系列">
+                        <option value="THUDM/GLM-4-9B-0414">GLM-4-9B</option>
+                        <option value="THUDM/GLM-Z1-9B-0414">GLM-Z1-9B</option>
+                        <option value="THUDM/GLM-4.1V-9B-Thinking">GLM-4.1V-9B</option>
+                    </optgroup>
+                    <optgroup label="⚡ DeepSeek系列">
+                        <option value="deepseek-ai/DeepSeek-R1-Distill-Qwen-7B">DeepSeek-R1-7B</option>
+                    </optgroup>
+                    <optgroup label="🔧 其他模型">
+                        <option value="internlm/internlm2_5-7b-chat">InternLM2.5-7B</option>
+                        <option value="tencent/Hunyuan-MT-7B">Hunyuan-MT-7B</option>
+                    </optgroup>
+                </select>
+                <span class="model-status" id="modelStatus">就绪</span>
+                <span class="search-status" id="searchStatus"></span>
+            </div>
+        </div>
+
+        <div class="chat-area" id="chatArea">
+            <div class="message assistant" id="welcomeMsg">
+                <div class="bubble">👋 您好！我是问渠AI助手。
+
+我可以回答各种问题，包括：
+• 天然气/LNG相关问题
+• 生活常识、科学知识
+• 新闻资讯、技术问题
+• 实时日期时间查询
+
+请选择模型后开始提问！</div>
+            </div>
+        </div>
+
+        <div class="examples">
+            <span class="examples-title">试试：</span>
+            <button class="example-btn" onclick="askExample('今天是几号？')">今天日期</button>
+            <button class="example-btn" onclick="askExample('成都天气怎么样？')">成都天气</button>
+            <button class="example-btn" onclick="askExample('LNG天然气是什么？')">LNG介绍</button>
+            <button class="example-btn" onclick="askExample('LNG天然气安全储存规范')">LNG安全</button>
+        </div>
+
+        <div class="input-area">
+            <input type="text" id="userInput" placeholder="输入你的问题，按Enter发送..." onkeypress="handleKeyPress(event)">
+            <button id="sendBtn" onclick="sendMessage()">发送</button>
+        </div>
+    </div>
+
+    <button class="key-toggle" id="keyToggle" onclick="toggleKeyPanel()">🔑 API Key</button>
+    <div class="key-panel" id="keyPanel">
+        <h3>⚙️ API Key 设置</h3>
+        <input type="text" id="wenquKeyInput" placeholder="输入问渠 API Key (wq-xxxxx)">
+        <div class="hint">在 <a href="/portal.html" target="_blank" style="color:#0f3460;">问渠平台</a> 注册后获取</div>
+        <button class="btn-use" onclick="useWenquKey()" style="width:100%;margin-bottom:8px;">✅ 使用此Key</button>
+        <div style="font-size:12px;color:#888;margin-bottom:8px;">
+            还没有Key？<a href="/portal.html" style="color:#4CAF50;font-weight:bold;">免费注册获取 →</a>
+        </div>
+        <div class="key-info" id="keyInfo"></div>
+    </div>
+
+    <script>
+        const chatArea = document.getElementById('chatArea');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const modelSelect = document.getElementById('modelSelect');
+        const modelStatus = document.getElementById('modelStatus');
+        const searchStatus = document.getElementById('searchStatus');
+
+        const WENQU_BASE = 'https://101.133.136.55';
+
+        let wenquKey = localStorage.getItem('wenqu_api_key') || '';
+        let useWenqu = !!wenquKey;
+        let vipInfo = { isVip: false, vipDaysRemaining: 0, vipExpiryDate: null, freeRemaining: 10 };
+
+        const REALTIME_KEYWORDS = [
+            '今天','昨天','明天','本周','本月','今年','近期',
+            '新闻','热点','最新','现在','此刻','实时',
+            '天气','气温','下雨','晴天','暴雨','地震',
+            '股票','股价','行情','涨跌','大盘','指数',
+            'lng价格','天然气价格','油价','期货'
+        ];
+
+        function init() {
+            updateQuotaDisplay();
+            if (wenquKey) loadVipStatus();
+        }
+
+        function addMessage(role, content, modelInfo) {
+            const msg = document.createElement('div');
+            msg.className = 'message ' + role;
+            msg.innerHTML = '<div class="bubble">' + escapeHtml(content) + '</div>' +
+                (modelInfo ? '<div class="model-tag">' + modelInfo + '</div>' : '');
+            chatArea.appendChild(msg);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        function removeLoading() {
+            const loading = document.getElementById('loadingMsg');
+            if (loading) loading.remove();
+        }
+
+        function addLoading(text) {
+            removeLoading();
+            const msg = document.createElement('div');
+            msg.className = 'message assistant';
+            msg.id = 'loadingMsg';
+            msg.innerHTML = '<div class="loading"><span></span><span></span><span></span></div>' +
+                '<div class="model-tag">' + (text || '思考中...') + '</div>';
+            chatArea.appendChild(msg);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+
+        function askExample(q) {
+            userInput.value = q;
+            sendMessage();
+        }
+
+        function setStatus(text) {
+            modelStatus.textContent = text;
+        }
+
+        function getDateTimeInfo() {
+            const now = new Date();
+            return '今天是' + now.getFullYear() + '年' + (now.getMonth()+1) + '月' + now.getDate() + '日，' +
+                ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'][now.getDay()] + '\n' +
+                '当前时间：' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+        }
+
+        function needsRealtime(question) {
+            return REALTIME_KEYWORDS.some(kw => question.toLowerCase().includes(kw));
+        }
+
+        function toggleKeyPanel() {
+            document.getElementById('keyPanel').classList.toggle('show');
+            if (wenquKey) document.getElementById('wenquKeyInput').value = wenquKey;
+            updateKeyInfo();
+        }
+
+        function updateKeyInfo() {
+            const info = document.getElementById('keyInfo');
+            if (wenquKey) {
+                if (vipInfo.isVip) {
+                    const exp = vipInfo.vipExpiryDate ? new Date(vipInfo.vipExpiryDate).toLocaleDateString('zh-CN') : '未知';
+                    info.innerHTML = '<span style="color:#7c5cfc;font-weight:bold;">👑 VIP会员</span><br>到期：' + exp + '（剩余' + vipInfo.vipDaysRemaining + '天）<br><a href="/portal.html" style="color:#0f3460;">续费/查看详情 →</a>';
+                } else {
+                    info.innerHTML = '✅ 已登录 · 每日' + vipInfo.freeRemaining + '次免费<br>升级VIP：无限次使用<br><a href="/portal.html" style="color:#0f3460;">立即升级 →</a>';
+                }
+            } else {
+                info.innerHTML = '👤 游客模式<br><a href="/portal.html" style="color:#0f3460;">注册账号获取免费额度</a>';
+            }
+        }
+
+        async function useWenquKey() {
+            const key = document.getElementById('wenquKeyInput').value.trim();
+            if (!key || !key.startsWith('wq-')) {
+                alert('请输入有效的问渠 API Key（以 wq- 开头）');
+                return;
+            }
+            wenquKey = key;
+            useWenqu = true;
+            localStorage.setItem('wenqu_api_key', wenquKey);
+            document.getElementById('keyPanel').classList.remove('show');
+            updateQuotaDisplay();
+            await loadVipStatus();
+        }
+
+        function updateQuotaDisplay() {
+            const sel = document.getElementById('modelSelect');
+            const old = sel.parentElement.querySelector('.quota-bar');
+            if (old) old.remove();
+            const bar = document.createElement('span');
+            bar.className = 'quota-bar';
+            if (vipInfo.isVip) {
+                bar.className += ' quota-vip';
+                bar.textContent = '👑 VIP ' + vipInfo.vipDaysRemaining + '天';
+            } else if (vipInfo.freeRemaining > 0) {
+                bar.className += ' quota-free';
+                bar.textContent = '🎁 ' + vipInfo.freeRemaining + '次免费';
+            } else {
+                bar.className += ' quota-empty';
+                bar.textContent = '⚠️ 额度用完';
+            }
+            sel.parentElement.appendChild(bar);
+        }
+
+        async function loadVipStatus() {
+            if (!wenquKey) return;
+            try {
+                const r = await fetch(WENQU_BASE + '/v1/vip/status', {
+                    headers: { 'Authorization': 'Bearer ' + wenquKey }
+                });
+                if (r.ok) {
+                    const d = await r.json();
+                    vipInfo = {
+                        isVip: d.isVip || false,
+                        vipDaysRemaining: d.vipDaysRemaining || 0,
+                        vipExpiryDate: d.vipExpiryDate || null,
+                        freeRemaining: d.freeRemaining !== undefined ? d.freeRemaining : 10
+                    };
+                } else {
+                    // fallback: treat as non-vip with 10 free
+                    vipInfo = { isVip: false, vipDaysRemaining: 0, vipExpiryDate: null, freeRemaining: 10 };
+                }
+            } catch(e) {
+                vipInfo = { isVip: false, vipDaysRemaining: 0, vipExpiryDate: null, freeRemaining: 10 };
+            }
+            updateQuotaDisplay();
+            updateKeyInfo();
+        }
+
+        async function callAI(prompt, model, useSmart = false) {
+            setStatus(useSmart ? '实时查询中...' : 'AI思考中...');
+            const endpoint = useSmart ? '/v1/chat/smart' : '/v1/chat/completions';
+            const response = await fetch(WENQU_BASE + endpoint, {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + wenquKey,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    model: model,
+                    messages: [{ role: 'user', content: prompt }],
+                    stream: false
+                })
+            });
+
+            const data = await response.json();
+            if (response.status === 429) {
+                throw new Error('⚠️ 今日免费10次已用完！\n\n升级VIP会员即可无限次使用。\n请前往 <a href="/portal.html" target="_blank">问渠平台</a> 购买VIP。');
+            }
+            if (response.status === 402) {
+                throw new Error('💰 余额不足！请联系客服「四哥」充值。');
+            }
+            if (!response.ok) {
+                throw new Error('请求失败 HTTP ' + response.status + ': ' + (data.error?.message || JSON.stringify(data)));
+            }
+            // 更新配额
+            await loadVipStatus();
+            // smart端点直接返回content
+            if (useSmart && data.content) {
+                return { content: data.content, model: data.model || model, mode: data.mode, category: data.category };
+            }
+            return { content: data.choices[0].message.content, model: model };
+        }
+
+        async function sendMessage() {
+            if (!wenquKey) {
+                addMessage('assistant', '⚠️ 请先设置 API Key 才能使用！\n\n点击右上角 🔑 按钮输入您的问渠Key。\n还没有Key？前往 https://wenquso.cn/portal.html 免费注册！');
+                return;
+            }
+            const question = userInput.value.trim();
+            if (!question) return;
+            addMessage('user', question);
+            userInput.value = '';
+            sendBtn.disabled = true;
+            const model = modelSelect.value;
+
+            try {
+                const q = question.toLowerCase();
+                
+                // 检测实时问题类型
+                const isWeather = /天气|气温|温度|下雨|下雪|晴天|台风|weather/i.test(q) && !/代码|程序|函数|API|编程|怎么写|如何实现/i.test(q);
+                const isNews = /新闻|热点|今日|最近发生|最新消息|大事|news|头条/i.test(q) && !/代码|程序|函数|API|编程|怎么写|如何实现/i.test(q);
+                const isDateTime = /今天|日期|几号|星期|礼拜|几点|时间|现在|当前/i.test(q);
+                const isRealtime = isWeather || isNews || needsRealtime(question);
+
+                // 日期时间直接本地返回
+                if (isDateTime && !isWeather && !isNews) {
+                    removeLoading();
+                    addMessage('assistant', getDateTimeInfo(), '系统实时获取');
+                    setStatus('就绪');
+                    sendBtn.disabled = false;
+                    userInput.focus();
+                    return;
+                }
+
+                // 天气/新闻等实时问题走smart端点
+                if (isWeather || isNews) {
+                    addLoading(isWeather ? '查询天气中...' : '获取新闻中...');
+                    const result = await callAI(question, model, true); // useSmart=true
+                    removeLoading();
+                    const tag = result.mode === 'smart-direct' ? 
+                        (result.category + ' · 实时获取') : 
+                        ('模型: ' + result.model.split('/').pop());
+                    addMessage('assistant', result.content, tag);
+                    setStatus('就绪');
+                    sendBtn.disabled = false;
+                    userInput.focus();
+                    return;
+                }
+
+                // 其他问题走普通completions
+                addLoading('AI思考中...');
+                let prompt = question;
+                if (needsRealtime(question)) {
+                    prompt = '当前时间信息：\n' + getDateTimeInfo() + '\n\n用户问题：' + question + '\n\n请回答。';
+                }
+                const result = await callAI(prompt, model, false);
+                removeLoading();
+                addMessage('assistant', result.content, '模型: ' + result.model.split('/').pop());
+                setStatus('就绪');
+            } catch (e) {
+                removeLoading();
+                addMessage('assistant', e.message, '');
+                setStatus('出错');
+            }
+            sendBtn.disabled = false;
+            userInput.focus();
+        }
+
+        // ===== 用户认证状态 =====
+        const API_BASE = 'http://101.133.136.55:3000';
+
+        async function wenquFetch(url, opts) {
+            const proxyUrl = 'https://api.allorigins.win/' + (opts?.method === 'POST' ? 'post' : 'get') + '?url=' + encodeURIComponent(url);
+            const r = await fetch(proxyUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', ...opts?.headers },
+                body: opts?.body
+            });
+            const wrapped = await r.json();
+            const httpStatus = wrapped.status?.http_code || 200;
+            const data = JSON.parse(wrapped.contents);
+            const mockResponse = {
+                ok: httpStatus >= 200 && httpStatus < 300,
+                status: httpStatus,
+                json: () => Promise.resolve(data)
+            };
+            if (data.error) mockResponse.ok = false;
+            return mockResponse;
+        }
+
+        function updateAuthUI() {
+            const saved = localStorage.getItem('wenqu_user');
+            const guestEl = document.getElementById('authButtonsGuest');
+            const userEl = document.getElementById('authButtonsUser');
+            if (saved) {
+                try {
+                    const user = JSON.parse(saved);
+                    if (user && user.userId) {
+                        guestEl.style.display = 'none';
+                        userEl.style.display = 'flex';
+                        userEl.style.alignItems = 'center';
+                        userEl.style.gap = '8px';
+                        const name = user.name || user.email || '用户';
+                        document.getElementById('userName').textContent = name;
+                        document.getElementById('userAvatar').textContent = name.charAt(0).toUpperCase();
+                        // 更新欢迎消息
+                        updateWelcomeMsg(name);
+                        // 显示余额
+                        loadUserBalance(user);
+                        return;
+                    }
+                } catch(e) {}
+            }
+            guestEl.style.display = 'inline-flex';
+            guestEl.style.gap = '8px';
+            userEl.style.display = 'none';
+        }
+
+        function updateWelcomeMsg(name) {
+            const welcomeMsg = document.getElementById('welcomeMsg');
+            if (!welcomeMsg) return;
+            const firstBubble = welcomeMsg.querySelector('.bubble');
+            if (!firstBubble) return;
+            const hasKey = (JSON.parse(localStorage.getItem('wenqu_user')||'{}').apiKeys?.length > 0);
+            firstBubble.innerHTML = `👋 您好，${name}！欢迎回到问渠AI助手。
+
+您的专属AI助手已就绪，支持联网搜索、多模型切换。
+
+• 余额充足：畅享所有AI模型
+• 充值送费：点击右上角「充值」享优惠
+• 管理API Key：<a href="portal.html" style="color:#7c5cfc;text-decoration:underline;">前往用户中心</a>
+
+请选择模型，开始提问吧！`;
+        }
+
+        async function loadUserBalance(user) {
+            const key = user.apiKeys?.[0]?.key || null;
+            if (!key) return;
+            try {
+                const r = await wenquFetch(API_BASE + '/v1/balance?userId=' + user.userId, {
+                    headers: { 'Authorization': 'Bearer ' + key }
+                });
+                const d = await r.json();
+                if (!d.error && d.totalBalance !== undefined) {
+                    document.getElementById('userBalance').textContent = d.totalBalance.toFixed(2);
+                }
+            } catch(e) {}
+        }
+
+        function userLogout() {
+            localStorage.removeItem('wenqu_user');
+            updateAuthUI();
+        }
+
+        // ===== 原有init =====
+        init();
+        // 页面加载后更新认证状态
+        updateAuthUI();
+    </script>
+</body>
+</html>

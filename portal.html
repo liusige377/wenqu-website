@@ -112,7 +112,7 @@
         <!-- 注册页 -->
         <div id="pageRegister" class="hidden">
             <div class="card">
-                <h2>📝 注册账号</h2>
+                <h2>📝 注册账号 <span style="color:red;font-size:12px">[v2.0新]</span></h2>
                 <div class="form-group">
                     <label>邮箱</label>
                     <input type="email" id="regEmail" placeholder="your@email.com">
@@ -132,7 +132,7 @@
         <!-- 登录页 -->
         <div id="pageLogin" class="hidden">
             <div class="card">
-                <h2>🔑 登录</h2>
+                <h2>🔑 登录 <span style="color:red;font-size:12px">[v2.0新]</span></h2>
                 <div class="form-group">
                     <label>邮箱</label>
                     <input type="email" id="loginEmail" placeholder="your@email.com">
@@ -295,9 +295,16 @@ Authorization: Bearer wq-your-api-key</div>
     
     <script>
         const API_BASE = 'http://101.133.136.55:3000';
+        const IS_HTTPS = window.location.protocol === 'https:';
 
         // allorigins代理fetch：处理响应包装
         async function wenquFetch(url, opts) {
+            // HTTP环境直接请求，HTTPS环境走代理
+            if (!IS_HTTPS) {
+                try { return await fetch(url, opts); }
+                catch(e) { console.warn('direct fetch failed, trying proxy:', e); }
+            }
+            // HTTPS降级：走CORS代理
             const proxyUrl = 'https://api.allorigins.win/' + (opts?.method === 'POST' ? 'post' : 'get') + '?url=' + encodeURIComponent(url);
             const r = await fetch(proxyUrl, {
                 method: 'POST',
@@ -306,7 +313,12 @@ Authorization: Bearer wq-your-api-key</div>
             });
             const wrapped = await r.json();
             const httpStatus = wrapped.status?.http_code || 200;
-            const data = JSON.parse(wrapped.contents);
+            let data;
+            try { data = JSON.parse(wrapped.contents); }
+            catch(parseErr) { 
+                console.error('Proxy JSON parse error:', parseErr, wrapped.contents?.substring(0,200));
+                throw new Error('代理响应解析失败，请稍后重试'); 
+            }
             const mockResponse = {
                 ok: httpStatus >= 200 && httpStatus < 300,
                 status: httpStatus,
@@ -395,7 +407,7 @@ Authorization: Bearer wq-your-api-key</div>
                 toast('注册成功！即将跳转到AI助手...');
                 setTimeout(() => { window.location.href = 'ai.html'; }, 1200);
             } catch (e) {
-                toast('网络错误: ' + e.message, 'error');
+                console.error('REGISTER_ERROR:', e); alert('调试:\n错误:' + e.message + '\n详情:' + String(e).substring(0,300)); toast('网络错误: ' + e.message, 'error');
             }
         }
         
