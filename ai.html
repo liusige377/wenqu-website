@@ -232,6 +232,7 @@
                             <div class="user-balance">余额: <span id="userBalance">--</span>元</div>
                         </div>
                     </div>
+                    <a href="portal.html" class="btn-logout" style="text-decoration:none;text-align:center;">充值</a>
                     <button class="btn-logout" onclick="userLogout()">退出</button>
                 </span>
                 <select class="model-select" id="modelSelect">
@@ -263,7 +264,7 @@
         </div>
 
         <div class="chat-area" id="chatArea">
-            <div class="message assistant">
+            <div class="message assistant" id="welcomeMsg">
                 <div class="bubble">👋 您好！我是问渠AI助手。
 
 我可以回答各种问题，包括：
@@ -575,6 +576,8 @@
                         const name = user.name || user.email || '用户';
                         document.getElementById('userName').textContent = name;
                         document.getElementById('userAvatar').textContent = name.charAt(0).toUpperCase();
+                        // 更新欢迎消息
+                        updateWelcomeMsg(name);
                         // 显示余额
                         loadUserBalance(user);
                         return;
@@ -584,6 +587,23 @@
             guestEl.style.display = 'inline-flex';
             guestEl.style.gap = '8px';
             userEl.style.display = 'none';
+        }
+
+        function updateWelcomeMsg(name) {
+            const welcomeMsg = document.getElementById('welcomeMsg');
+            if (!welcomeMsg) return;
+            const firstBubble = welcomeMsg.querySelector('.bubble');
+            if (!firstBubble) return;
+            const hasKey = (JSON.parse(localStorage.getItem('wenqu_user')||'{}').apiKeys?.length > 0);
+            firstBubble.innerHTML = `👋 您好，${name}！欢迎回到问渠AI助手。
+
+您的专属AI助手已就绪，支持联网搜索、多模型切换。
+
+• 余额充足：畅享所有AI模型
+• 充值送费：点击右上角「充值」享优惠
+• 管理API Key：<a href="portal.html" style="color:#7c5cfc;text-decoration:underline;">前往用户中心</a>
+
+请选择模型，开始提问吧！`;
         }
 
         async function loadUserBalance(user) {
