@@ -617,24 +617,43 @@
             try {
                 const q = question.toLowerCase();
                 
-                // 检测实时问题类型
+                // 检测实时问题类型（优先级：新闻 > 天气 > 日期时间）
+                const isNews = /新闻|热点|最近发生|最新消息|大事|news|头条|今天.*新闻|今日.*新闻|有什么新闻|发生什么事/i.test(q) && !/代码|程序|函数|API|编程|怎么写|如何实现/i.test(q);
                 const isWeather = /天气|气温|温度|下雨|下雪|晴天|台风|weather/i.test(q) && !/代码|程序|函数|API|编程|怎么写|如何实现/i.test(q);
-                const isNews = /新闻|热点|今日|最近发生|最新消息|大事|news|头条/i.test(q) && !/代码|程序|函数|API|编程|怎么写|如何实现/i.test(q);
                 const isDateTime = /今天|日期|几号|星期|礼拜|几点|时间|现在|当前/i.test(q);
-                const isRealtime = isWeather || isNews || needsRealtime(question);
 
-                // 日期时间直接本地返回
-                if (isDateTime && !isWeather && !isNews) {
+                // 新闻走smart端点（最高优先级，避免被日期匹配覆盖）
+                if (isNews) {
+                    addLoading('获取新闻中...');
+                    const result = await callAI(question, model, true);
                     removeLoading();
-                    addMessage('assistant', getDateTimeInfo(), '系统实时获取');
+                    const tag = result.mode === 'smart-direct' ? 
+                        (result.category + ' · 实时获取') : 
+                        ('模型: ' + result.model.split('/').pop());
+                    addMessage('assistant', result.content, tag);
                     setStatus('就绪');
                     sendBtn.disabled = false;
                     userInput.focus();
                     return;
                 }
 
-                // 天气/新闻等实时问题走smart端点
-                if (isWeather || isNews) {
+                // 天气走smart端点
+                if (isWeather) {
+                    addLoading('查询天气中...');
+                    const result = await callAI(question, model, true);
+                    removeLoading();
+                    const tag = result.mode === 'smart-direct' ? 
+                        (result.category + ' · 实时获取') : 
+                        ('模型: ' + result.model.split('/').pop());
+                    addMessage('assistant', result.content, tag);
+                    setStatus('就绪');
+                    sendBtn.disabled = false;
+                    userInput.focus();
+                    return;
+                }
+
+                // 日期时间直接本地返回（排除已处理的新闻和天气）
+                if (isDateTime) {
                     addLoading(isWeather ? '查询天气中...' : '获取新闻中...');
                     const result = await callAI(question, model, true); // useSmart=true
                     removeLoading();
