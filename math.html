@@ -45,6 +45,10 @@ select{width:auto;min-width:100px}
 .q-opts button{background:rgba(255,255,255,.04);border:1px solid rgba(212,175,55,.15);color:#aaa;padding:7px 12px;border-radius:6px;cursor:pointer;font-size:.85rem;text-align:left;transition:all .2s}
 .q-opts button:hover{background:rgba(212,175,55,.1);color:#d4af37}
 .q-opts button.selected{background:rgba(212,175,55,.2);color:#d4af37;border-color:#d4af37}
+.k-card{background:rgba(255,255,255,.03);border:1px solid rgba(212,175,55,.12);border-radius:8px;padding:14px;margin-bottom:12px}
+.k-card h4{color:#d4af37;font-size:.95rem;margin-bottom:8px}
+.k-card .formula{color:#fff;font-family:"Courier New",monospace;font-size:.9rem;margin:6px 0;padding:6px 10px;background:rgba(212,175,55,.08);border-radius:4px}
+.k-card .desc{color:#aaa;font-size:.8rem;line-height:1.5;margin-top:6px}
 footer{text-align:center;padding:30px 0;color:#555;font-size:.8rem}
 </style>
 </head>
@@ -191,6 +195,96 @@ footer{text-align:center;padding:30px 0;color:#555;font-size:.8rem}
         <button class="btn" onclick="calcTizhi()" style="margin-top:16px">查看结果</button>
         <div class="result-box" id="tizhi-result"></div>
         <button class="btn" onclick="resetTizhi()" style="background:rgba(255,255,255,.1);color:#aaa;margin-top:8px">重新测试</button>
+      </div>
+    </div>
+
+    <div class="tool-card" id="knowledge">
+      <button class="tool-header" onclick="toggle(this)">
+        <h3>📖 数学知识点</h3>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="tool-body">
+        <div class="tab-bar" id="k-tabs">
+          <button class="active" onclick="switchK(0)">代数</button>
+          <button onclick="switchK(1)">几何</button>
+          <button onclick="switchK(2)">函数</button>
+          <button onclick="switchK(3)">概率统计</button>
+        </div>
+        <div id="k-panels">
+          <div class="k-panel" id="kp0">
+            <div class="k-card">
+              <h4>📌 一元二次方程求根公式</h4>
+              <p class="formula">x = (-b ± √(b²-4ac)) / 2a</p>
+              <p class="desc">对于 ax² + bx + c = 0，当判别式 Δ = b²-4ac > 0 时有两个不等实根，= 0 时有两个相等实根，< 0 时无实根。</p>
+            </div>
+            <div class="k-card">
+              <h4>📌 韦达定理</h4>
+              <p class="formula">x₁ + x₂ = -b/a, x₁·x₂ = c/a</p>
+              <p class="desc">一元二次方程两根之和与两根之积与系数的关系，常用于不求根直接求相关代数式的值。</p>
+            </div>
+            <div class="k-card">
+              <h4>📌 二项式定理</h4>
+              <p class="formula">(a+b)ⁿ = Σ C(n,k)·aⁿ⁻ᵏ·bᵏ</p>
+              <p class="desc">展开式中第k+1项的系数为组合数C(n,k)，常用于求特定项系数或证明恒等式。</p>
+            </div>
+          </div>
+          <div class="k-panel" id="kp1" style="display:none">
+            <div class="k-card">
+              <h4>📌 三角形面积公式</h4>
+              <p class="formula">S = ½ab·sinC = √[s(s-a)(s-b)(s-c)]</p>
+              <p class="desc">海伦公式中 s = (a+b+c)/2 为半周长，适用于已知三边求面积。</p>
+            </div>
+            <div class="k-card">
+              <h4>📌 正弦定理与余弦定理</h4>
+              <p class="formula">a/sinA = b/sinB = c/sinC = 2R</p>
+              <p class="formula">c² = a² + b² - 2ab·cosC</p>
+              <p class="desc">R为外接圆半径，正弦定理用于已知两角一边求其他边，余弦定理用于已知两边夹角求第三边。</p>
+            </div>
+            <div class="k-card">
+              <h4>📌 圆锥曲线标准方程</h4>
+              <p class="formula">椭圆: x²/a² + y²/b² = 1</p>
+              <p class="formula">双曲线: x²/a² - y²/b² = 1</p>
+              <p class="formula">抛物线: y² = 2px</p>
+            </div>
+          </div>
+          <div class="k-panel" id="kp2" style="display:none">
+            <div class="k-card">
+              <h4>📌 二次函数顶点式</h4>
+              <p class="formula">y = a(x-h)² + k</p>
+              <p class="desc">顶点坐标为(h, k)，a > 0 时开口向上，a < 0 时开口向下。|a| 越大开口越窄。</p>
+            </div>
+            <div class="k-card">
+              <h4>📌 指数与对数运算法则</h4>
+              <p class="formula">aᵐ·aⁿ = aᵐ⁺ⁿ, (aᵐ)ⁿ = aᵐⁿ</p>
+              <p class="formula">logₐ(MN) = logₐM + logₐN</p>
+              <p class="formula">logₐ(M/N) = logₐM - logₐN</p>
+            </div>
+            <div class="k-card">
+              <h4>📌 导数基本公式</h4>
+              <p class="formula">(xⁿ)' = nxⁿ⁻¹, (eˣ)' = eˣ, (ln x)' = 1/x</p>
+              <p class="formula">(sin x)' = cos x, (cos x)' = -sin x</p>
+            </div>
+          </div>
+          <div class="k-panel" id="kp3" style="display:none">
+            <div class="k-card">
+              <h4>📌 排列与组合</h4>
+              <p class="formula">A(n,m) = n!/(n-m)!</p>
+              <p class="formula">C(n,m) = n!/[m!(n-m)!]</p>
+              <p class="desc">排列讲究顺序，组合不讲究顺序。C(n,m) = C(n, n-m)。</p>
+            </div>
+            <div class="k-card">
+              <h4>📌 期望与方差</h4>
+              <p class="formula">E(X) = Σ xᵢ·pᵢ</p>
+              <p class="formula">D(X) = E(X²) - [E(X)]²</p>
+              <p class="desc">期望反映随机变量的平均水平，方差反映离散程度。</p>
+            </div>
+            <div class="k-card">
+              <h4>📌 正态分布</h4>
+              <p class="formula">X ~ N(μ, σ²)</p>
+              <p class="desc">约68%数据在(μ-σ, μ+σ)内，约95%在(μ-2σ, μ+2σ)内，约99.7%在(μ-3σ, μ+3σ)内。</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -483,6 +577,14 @@ function showSciRef(){
   if(el.classList.contains('show')){
     show(el,'<div class="item"><span class="label">光速</span><span class="value">2.998 × 10⁸ m/s</span></div><div class="item"><span class="label">普朗克常数</span><span class="value">6.626 × 10⁻³⁴ J·s</span></div><div class="item"><span class="label">阿伏伽德罗常数</span><span class="value">6.022 × 10²³ mol⁻¹</span></div><div class="item"><span class="label">地球质量</span><span class="value">5.972 × 10²⁴ kg</span></div><div class="item"><span class="label">太阳质量</span><span class="value">1.989 × 10³⁰ kg</span></div><div class="item"><span class="label">宇宙年龄</span><span class="value">4.35 × 10¹⁷ s (138亿年)</span></div>');
   }
+}
+
+// 知识点切换
+function switchK(i){
+  document.querySelectorAll('#k-panels>div').forEach(function(p){p.style.display='none'});
+  document.querySelectorAll('#k-tabs button').forEach(function(b){b.classList.remove('active')});
+  document.getElementById('kp'+i).style.display='block';
+  document.getElementById('k-tabs').children[i].classList.add('active');
 }
 
 // ========== 页面加载完成后初始化 ==========
