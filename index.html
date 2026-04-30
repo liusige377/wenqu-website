@@ -112,7 +112,40 @@ body{font-family:'Microsoft YaHei',sans-serif;background:var(--bg);height:100vh;
   .logo-title{font-size:28px}
   .tools-grid{grid-template-columns:1fr}
   .tool-btn .icon{font-size:28px}
+  .stats-banner,.suggested-questions,.feature-carousel,.feature-panel{display:none}
 }
+
+/* 统计横幅 */
+.stats-banner{background:linear-gradient(135deg,#2c1810,#4a3728);color:#fff;padding:12px 20px;display:flex;justify-content:center;gap:40px;font-size:13px}
+.stats-banner .stat{display:flex;align-items:center;gap:6px}
+.stats-banner .stat-num{font-size:22px;font-weight:bold;color:var(--accent)}
+.stats-banner .stat-label{color:#bbb;font-size:11px}
+
+/* 推荐问题 */
+.suggested-questions{padding:10px 15px;background:var(--panel);border-bottom:1px solid var(--border)}
+.suggested-questions .label{font-size:12px;color:#999;margin-bottom:8px}
+.suggested-questions .questions{display:flex;flex-wrap:wrap;gap:8px}
+.suggested-questions .q-btn{background:#fff;border:1px solid var(--border);border-radius:15px;padding:6px 12px;font-size:12px;color:#666;cursor:pointer;transition:all 0.2s}
+.suggested-questions .q-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent)11}
+
+/* 功能轮播 */
+.feature-carousel{padding:15px 20px;background:var(--panel);border-top:1px solid var(--border);overflow:hidden}
+.carousel-track{display:flex;gap:15px;animation:carouselScroll 20s linear infinite}
+@keyframes carouselScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.carousel-item{flex-shrink:0;background:#fff;border:1px solid var(--border);border-radius:8px;padding:10px 15px;min-width:200px}
+.carousel-item .title{font-size:13px;font-weight:bold;color:var(--text);margin-bottom:4px}
+.carousel-item .desc{font-size:11px;color:#888}
+
+/* 右侧功能面板 */
+.feature-panel{flex:1;min-width:200px;max-width:240px;background:var(--panel);display:flex;flex-direction:column;padding:15px;border-left:1px solid var(--border)}
+.feature-panel h3{font-size:14px;color:var(--text);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--accent)}
+.feature-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px;cursor:pointer;transition:all 0.2s}
+.feature-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 4px 12px rgba(201,169,110,0.2)}
+.feature-card .icon{font-size:28px;margin-bottom:6px}
+.feature-card .name{font-size:14px;font-weight:bold;color:var(--text);margin-bottom:4px}
+.feature-card .desc{font-size:11px;color:#888}
+.feature-card.hot{border-color:#e74c3c}
+.feature-card.hot::before{content:'🔥热门';font-size:10px;background:#e74c3c;color:#fff;padding:2px 6px;border-radius:10px;position:absolute;top:-6px;right:8px}
 </style>
 </head>
 <body>
@@ -212,10 +245,29 @@ body{font-family:'Microsoft YaHei',sans-serif;background:var(--bg);height:100vh;
 
 <!-- 主对话区 -->
 <div class="main-area">
+  <!-- 统计横幅 -->
+  <div class="stats-banner">
+    <div class="stat"><span class="stat-num" id="statUsers">1,280+</span><span class="stat-label">注册用户</span></div>
+    <div class="stat"><span class="stat-num" id="statQuestions">5.2万+</span><span class="stat-label">问题回答</span></div>
+    <div class="stat"><span class="stat-num" id="statTools">13</span><span class="stat-label">实用工具</span></div>
+    <div class="stat"><span class="stat-num">99%</span><span class="stat-label">满意度</span></div>
+  </div>
+  
   <div class="chat-section">
     <div class="chat-header">
       <div class="status-dot"></div>
       <h2>问渠AI助手</h2>
+    </div>
+    
+    <!-- 推荐问题 -->
+    <div class="suggested-questions">
+      <div class="label">💡 试试问我：</div>
+      <div class="questions">
+        <button class="q-btn" onclick="quickAsk('李白有哪些著名诗作？')">李白有哪些著名诗作？</button>
+        <button class="q-btn" onclick="quickAsk('帮我算一下房贷月供')">帮我算一下房贷月供</button>
+        <button class="q-btn" onclick="quickAsk('今日运势怎么样？')">今日运势怎么样？</button>
+        <button class="q-btn" onclick="quickAsk('光年换算成公里是多少？')">光年换算成公里</button>
+      </div>
     </div>
     
     <div class="chat-messages" id="chatMessages">
@@ -230,15 +282,59 @@ body{font-family:'Microsoft YaHei',sans-serif;background:var(--bg);height:100vh;
         <button class="send-btn" onclick="sendMessage()">&#10148;</button>
       </div>
     </div>
+    
+    <!-- 功能轮播 -->
+    <div class="feature-carousel">
+      <div class="carousel-track">
+        <div class="carousel-item"><div class="title">📐 数理医学</div><div class="desc">支持复杂公式计算、单位换算、函数绘图</div></div>
+        <div class="carousel-item"><div class="title">📜 历史文化</div><div class="desc">朝代时间轴、历史事件查询、名人介绍</div></div>
+        <div class="carousel-item"><div class="title">🌍 天文地理</div><div class="desc">地理知识速查、人口密度、地貌特征</div></div>
+        <div class="carousel-item"><div class="title">💻 现代科技</div><div class="desc">AI技术、编程开发、网络工具集</div></div>
+        <div class="carousel-item"><div class="title">🏠 生活综合</div><div class="desc">个税计算、贷款计算、汇率换算</div></div>
+        <div class="carousel-item"><div class="title">🎯 玄学民俗</div><div class="desc">今日运势、周公解梦、星座运势</div></div>
+        <!-- 复制一份实现无缝滚动 -->
+        <div class="carousel-item"><div class="title">📐 数理医学</div><div class="desc">支持复杂公式计算、单位换算、函数绘图</div></div>
+        <div class="carousel-item"><div class="title">📜 历史文化</div><div class="desc">朝代时间轴、历史事件查询、名人介绍</div></div>
+        <div class="carousel-item"><div class="title">🌍 天文地理</div><div class="desc">地理知识速查、人口密度、地貌特征</div></div>
+        <div class="carousel-item"><div class="title">💻 现代科技</div><div class="desc">AI技术、编程开发、网络工具集</div></div>
+        <div class="carousel-item"><div class="title">🏠 生活综合</div><div class="desc">个税计算、贷款计算、汇率换算</div></div>
+        <div class="carousel-item"><div class="title">🎯 玄学民俗</div><div class="desc">今日运势、周公解梦、星座运势</div></div>
+      </div>
+    </div>
   </div>
   
-  <!-- 右侧面板 -->
-  <div class="side-panel">
-    <div class="panel-section">
-      <h4>&#128203; 重要纪要</h4>
-      <div class="content" id="memoryPanel">
-        <p id="panelText">登录后查看重要纪要</p>
-      </div>
+  <!-- 右侧功能面板 -->
+  <div class="feature-panel">
+    <h3>🔥 热门功能</h3>
+    <div class="feature-card hot" onclick="location.href='/metaphysics.html'">
+      <div class="icon">🎯</div>
+      <div class="name">今日运势</div>
+      <div class="desc">查看每日运势，规划美好一天</div>
+    </div>
+    <div class="feature-card" onclick="location.href='/life.html'">
+      <div class="icon">💰</div>
+      <div class="name">贷款计算</div>
+      <div class="desc">房贷、车贷、利息一键算清</div>
+    </div>
+    <div class="feature-card" onclick="location.href='/math.html'">
+      <div class="icon">📊</div>
+      <div class="name">公式计算</div>
+      <div class="desc">复杂数学公式快速求解</div>
+    </div>
+    <div class="feature-card" onclick="location.href='/units.html'">
+      <div class="icon">🔄</div>
+      <div class="name">单位换算</div>
+      <div class="desc">长度、重量、温度全支持</div>
+    </div>
+    <div class="feature-card" onclick="location.href='/history.html'">
+      <div class="icon">📜</div>
+      <div class="name">历史查询</div>
+      <div class="desc">朝代、人物、事件一查便知</div>
+    </div>
+    <div class="feature-card" onclick="location.href='https://liusige377.github.io/wenqu-dl/'">
+      <div class="icon">📥</div>
+      <div class="name">问渠下载器</div>
+      <div class="desc">一键下载各类工具软件</div>
     </div>
   </div>
 </div>
@@ -670,6 +766,12 @@ var WELCOME=[
   '👋 来啦！问渠AI在线等您提问。<br><br>💡 <b>小贴士：</b><br>• 左侧「学习资源」「帮助中心」有常用链接<br>• 「问渠下载器」可下载工具软件<br>• 登录后获得专属API Key，无限对话<br><br>问渠那得清如许？为有源头活水来 📚'
 ];
 document.getElementById('welcomeMsg').innerHTML=WELCOME[Math.floor(Math.random()*WELCOME.length)];
+
+// ========== 推荐问题快速发送 ==========
+function quickAsk(text){
+  document.getElementById('userInput').value = text;
+  sendMessage();
+}
 
 // ========== 扩充历史上的今天 ==========
 function loadHistory(){
