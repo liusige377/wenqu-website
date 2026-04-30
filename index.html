@@ -277,6 +277,10 @@ function saveAllUsers(users) {
 const API_BASE_URL = 'http://101.133.136.55:3000';
 const IS_HTTPS = window.location.protocol === 'https:';
 
+// 智谱免费API（游客模式直接调用）
+const ZHIPU_API = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
+const ZHIPU_KEY = '61df839b60cf46f7ae86b3f017a0de32.V3Ir5M1gcUzyrub5';
+
 // 统一API请求函数（自动处理HTTPS代理）
 async function wenquApi(endpoint, data) {
   const url = API_BASE_URL + endpoint;
@@ -533,40 +537,27 @@ async function sendMessage() {
       return;
     }
     
-    // 游客模式调用API（使用系统默认key）
+    // 游客模式调用智谱API（直接调用，绕过ECS，支持HTTPS）
     try {
       addGuestCount();
       chatHistory.push({role:'user', content:text});
       
-      const url = API_BASE_URL + '/v1/chat/completions';
-      const body = JSON.stringify({
-        model:'glm-4-flash',
-        messages:chatHistory,
-        max_tokens:1024,
-        temperature:0.7
+      const r = await fetch(ZHIPU_API, {
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'Authorization':'Bearer '+ZHIPU_KEY
+        },
+        body: JSON.stringify({
+          model:'glm-4-flash',
+          messages:chatHistory,
+          max_tokens:1024,
+          temperature:0.7
+        })
       });
       
-      let d;
-      if (IS_HTTPS) {
-        // HTTPS代理（corsproxy.io支持POST）
-        const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
-        const r = await fetch(proxyUrl, {
-          method:'POST',
-          headers:{ 'Content-Type':'application/json' },
-          body: body
-        });
-        if (!r.ok) throw new Error('代理请求失败');
-        d = await r.json();
-      } else {
-        const r = await fetch(url, {
-          method:'POST',
-          headers:{ 'Content-Type':'application/json' },
-          body: body
-        });
-        d = await r.json();
-      }
-      
       showTyping(false);
+      const d = await r.json();
       let reply = '';
       if(d.choices && d.choices[0]) {
         reply = d.choices[0].message.content || '（空回复）';
@@ -578,7 +569,6 @@ async function sendMessage() {
       addMsg(reply, 'ai');
       chatHistory.push({role:'assistant', content:reply});
       
-      // 显示剩余次数
       const newRemaining = getRemainingGuestCount();
       if (newRemaining <= 3) {
         addMsg('💡 今日剩余' + newRemaining + '次免费对话。登录后无限制！', 'ai');
@@ -590,39 +580,41 @@ async function sendMessage() {
     return;
   }
   
-  // 登录用户：使用自己的API Key
+  // 登录用户：HTTP走ECS，HTTPS直接调智谱
   try {
     chatHistory.push({role:'user', content:text});
     
-    const url = API_BASE_URL + '/v1/chat/completions';
-    const body = JSON.stringify({
-      model:'glm-4-flash',
-      messages:chatHistory,
-      max_tokens:1024,
-      temperature:0.7
-    });
-    
     let d;
     if (IS_HTTPS) {
-      const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
-      const r = await fetch(proxyUrl, {
+      // HTTPS环境：直接调智谱API（绕过ECS）
+      const r = await fetch(ZHIPU_API, {
         method:'POST',
         headers:{
           'Content-Type':'application/json',
-          'Authorization':'Bearer '+userKey
+          'Authorization':'Bearer '+ZHIPU_KEY
         },
-        body: body
+        body: JSON.stringify({
+          model:'glm-4-flash',
+          messages:chatHistory,
+          max_tokens:1024,
+          temperature:0.7
+        })
       });
-      if (!r.ok) throw new Error('代理请求失败');
       d = await r.json();
     } else {
-      const r = await fetch(url, {
+      // HTTP环境：走ECS服务器
+      const r = await fetch(API_BASE_URL + '/v1/chat/completions', {
         method:'POST',
         headers:{
           'Content-Type':'application/json',
           'Authorization':'Bearer '+userKey
         },
-        body: body
+        body: JSON.stringify({
+          model:'glm-4-flash',
+          messages:chatHistory,
+          max_tokens:1024,
+          temperature:0.7
+        })
       });
       d = await r.json();
     }
