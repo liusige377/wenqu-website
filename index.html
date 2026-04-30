@@ -351,7 +351,7 @@ async function doLogin() {
   try {
     const data = await wenquApi('/v1/auth/login', { email, password });
     
-    if (!res.ok) {
+    if (data.error) {
       errEl.textContent = data.error || '登录失败';
       errEl.style.display = 'block';
       return;
@@ -405,7 +405,7 @@ async function doRegister() {
   try {
     const data = await wenquApi('/v1/auth/register', { name, email, password });
     
-    if (!res.ok) {
+    if (data.error) {
       errEl.textContent = data.error || '注册失败';
       errEl.style.display = 'block';
       return;
@@ -548,15 +548,15 @@ async function sendMessage() {
       
       let d;
       if (IS_HTTPS) {
-        // HTTPS代理
-        const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
+        // HTTPS代理（corsproxy.io支持POST）
+        const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
         const r = await fetch(proxyUrl, {
           method:'POST',
           headers:{ 'Content-Type':'application/json' },
           body: body
         });
-        const wrapped = await r.json();
-        d = typeof wrapped === 'string' ? JSON.parse(wrapped) : wrapped;
+        if (!r.ok) throw new Error('代理请求失败');
+        d = await r.json();
       } else {
         const r = await fetch(url, {
           method:'POST',
@@ -604,7 +604,7 @@ async function sendMessage() {
     
     let d;
     if (IS_HTTPS) {
-      const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
+      const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
       const r = await fetch(proxyUrl, {
         method:'POST',
         headers:{
@@ -613,8 +613,8 @@ async function sendMessage() {
         },
         body: body
       });
-      const wrapped = await r.json();
-      d = typeof wrapped === 'string' ? JSON.parse(wrapped) : wrapped;
+      if (!r.ok) throw new Error('代理请求失败');
+      d = await r.json();
     } else {
       const r = await fetch(url, {
         method:'POST',
@@ -648,7 +648,16 @@ function addMsg(text, who) {
   const box = document.getElementById('chatMessages');
   const div = document.createElement('div');
   div.className = 'msg '+who;
-  div.innerHTML = '<div class="bubble">'+escHtml(text)+'</div>';
+  var safe = escHtml(text);
+  // 换行
+  safe = safe.replace(/\n/g, '<br>');
+  // 代码块 ```...``` → <pre><code>
+  safe = safe.replace(/```(\w*)\n?([\s\S]*?)```/g, '<pre style="background:#1a1a2e;color:#e8e8e8;padding:12px;border-radius:8px;overflow-x:auto;font-size:13px;margin:8px 0"><code>$2</code></pre>');
+  // 行内代码 `...` → <code>
+  safe = safe.replace(/`([^`]+)`/g, '<code style="background:#f0e6d3;padding:2px 6px;border-radius:4px;font-size:13px">$1</code>');
+  // 粗体 **...**
+  safe = safe.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+  div.innerHTML = '<div class="bubble">'+safe+'</div>';
   box.appendChild(div);
   box.scrollTop = box.scrollHeight;
 }
@@ -702,7 +711,7 @@ function loadHistory(){
 '06-25':[{y:'1950',e:'朝鲜战争爆发'}],
 '07-01':[{y:'1921',e:'中国共产党成立'},{y:'1997',e:'香港回归'}],
 '07-04':[{y:'1776',e:'美国独立宣言'}],
-'07-07':[{y:'1937',e:'卢沟桥事变'},{y:'1937',e:'七七事变'}],
+'07-07':[{y:'1937',e:'卢沟桥事变'}],
 '07-20':[{y:'1969',e:'阿波罗11号登月'}],
 '07-28':[{y:'1914',e:'第一次世界大战爆发'}],
 '08-01':[{y:'1927',e:'南昌起义'},{y:'1944',e:'华沙起义'}],
@@ -724,10 +733,10 @@ function loadHistory(){
 '10-25':[{y:'1971',e:'恢复联合国合法席位'}],
 '10-31':[{y:'1517',e:'马丁·路德宗教改革'}],
 '11-01':[{y:'1512',e:'米开朗基罗西斯廷天顶画完成'}],
-'11-11':[{y:'1918',e:'一战结束'},{y:'1918',e:'一战停战纪念日'}],
+'11-11':[{y:'1918',e:'一战结束·停战纪念日'}],
 '11-12':[{y:'1866',e:'孙中山诞辰'}],
 '11-19':[{y:'1863',e:'林肯葛底斯堡演说'}],
-'12-01':[{y:'1955',e:'罗莎·帕克斯拒绝让座'},{y:'1955',e:'世界艾滋病日'}],
+'12-01':[{y:'1955',e:'罗莎·帕克斯拒绝让座·世界艾滋病日'}],
 '12-05':[{y:'1901',e:'迪士尼诞辰'},{y:'2013',e:'曼德拉逝世'}],
 '12-09':[{y:'1935',e:'一二·九运动'}],
 '12-10':[{y:'1948',e:'世界人权宣言'},{y:'1901',e:'诺贝尔首次颁奖'}],
