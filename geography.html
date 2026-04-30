@@ -35,6 +35,7 @@ select{width:auto;min-width:120px}
 .result-box .value{color:#fff;font-weight:500;margin-left:8px}
 .result-box .highlight{color:#d4af37;font-weight:700}
 .country-flag{font-size:2rem;margin-right:8px}
+.geo-card{background:rgba(212,175,55,.06);border:1px solid rgba(212,175,55,.15);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s}.geo-card:hover{border-color:rgba(212,175,55,.4)}.geo-card-header{padding:12px 14px;color:#d4af37;font-weight:600;font-size:.95rem}.geo-card-body{padding:0 14px 12px}.geo-item{color:#ccc;font-size:.83rem;line-height:1.8;padding:3px 0;border-bottom:1px solid rgba(212,175,55,.08)}.geo-item:last-child{border:none}
 footer{text-align:center;padding:30px 0;color:#555;font-size:.8rem}
 </style>
 </head>
@@ -101,6 +102,17 @@ footer{text-align:center;padding:30px 0;color:#555;font-size:.8rem}
     </div>
 
   </div>
+    <div class="tool-card" id="geo-knowledge">
+      <button class="tool-header" onclick="toggle(this)">
+        <h3>🌍 地理知识速查</h3>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="tool-body">
+        <p style="color:#888;font-size:.85rem;margin-bottom:12px">点击卡片展开查看详细内容</p>
+        <div id="geo-cards"></div>
+      </div>
+    </div>
+
   <footer>&copy; 2026 问渠 &middot; 有问必有答</footer>
 </div>
 <script>
@@ -187,6 +199,34 @@ function calcCompare(){
   }
   show(el,html);
 }
+
+// ========== 地理知识卡片 ==========
+var GEO_CARDS=[
+  {icon:'🏔️',title:'世界之最',items:['最高峰：珠穆朗玛峰 8848.86m','最深海沟：马里亚纳海沟 11034m','最大沙漠：撒哈拉沙漠 906万km²','最长河流：尼罗河 6670km','最大湖泊：里海 37.1万km²','最大岛屿：格陵兰岛 216.6万km²']},
+  {icon:'🇨🇳',title:'中国地理速记',items:['面积：约960万km²（世界第三）','人口：约14.1亿（世界第二）','最长的河：长江 6300km','最大的湖：青海湖（咸水）/鄱阳湖（淡水）','最高的山：珠穆朗玛峰','最大的盆地：塔里木盆地 53万km²','最大的平原：东北平原 35万km²','最热的省：新疆（吐鲁番49.6°C）']},
+  {icon:'🌍',title:'七大洲四大洋',items:['七大洲：亚非北南美、南极欧（按面积排序）','四大洋：太平洋、大西洋、印度洋、北冰洋','跨洲国家：俄罗斯（亚欧）、土耳其（亚欧）、埃及（亚非）','面积最大：亚洲（4457万km²）','人口最多：亚洲（47亿）']},
+  {icon:'🌡️',title:'气候带知识',items:['热带：年均温>20°C，无霜期全年','亚热带：年均温15-20°C，四季分明','温带：年均温0-15°C，四季分明','寒带：年均温<0°C，长冬无夏','赤道多雨：全年高温多雨','地中海：夏干冬雨']}
+];
+
+function initGeoCards(){
+  var box=document.getElementById('geo-cards');
+  var html='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px">';
+  GEO_CARDS.forEach(function(c,i){
+    html+='<div class="geo-card" onclick="toggleGeoCard('+i+')"><div class="geo-card-header">'+c.icon+' '+c.title+'</div>';
+    html+='<div class="geo-card-body" id="geo-card-'+i+'" style="display:none">';
+    c.items.forEach(function(item){html+='<div class="geo-item">'+item+'</div>'});
+    html+='</div></div>';
+  });
+  html+='</div>';
+  box.innerHTML=html;
+}
+
+function toggleGeoCard(idx){
+  var el=document.getElementById('geo-card-'+idx);
+  el.style.display=el.style.display==='none'?'block':'none';
+}
+
+initGeoCards();
 
 document.querySelector('.tool-body').classList.add('open');
 document.querySelector('.tool-header .arrow').innerHTML='&#9650;';
