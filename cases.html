@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>用户案例 - 问渠AI</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#f5f0e8;--sidebar:#2c1810;--accent:#c9a96e;--text:#3d2b1f;--panel:#faf7f2;--border:#d4c5b0}
+body{font-family:'Microsoft YaHei',sans-serif;background:var(--bg);min-height:100vh}
+
+/* 顶部导航 */
+.nav{background:var(--sidebar);padding:15px 30px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-size:32px;font-family:'KaiTi','STKaiti','楷体',serif;color:var(--accent)}
+.nav-links{display:flex;gap:20px}
+.nav-links a{color:#fff;text-decoration:none;font-size:14px;opacity:0.8;transition:opacity 0.2s}
+.nav-links a:hover{opacity:1}
+
+/* 主内容区 */
+.container{max-width:1200px;margin:0 auto;padding:40px 20px}
+.page-title{text-align:center;margin-bottom:50px}
+.page-title h1{font-size:36px;color:var(--text);margin-bottom:10px}
+.page-title p{color:#666;font-size:16px}
+
+/* 统计数据 */
+.stats{display:flex;justify-content:center;gap:60px;margin-bottom:60px}
+.stat-item{text-align:center}
+.stat-num{font-size:48px;font-weight:bold;color:var(--accent);display:block}
+.stat-label{font-size:14px;color:#666;margin-top:5px}
+
+/* 案例卡片 */
+.cases-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(350px,1fr));gap:30px;margin-bottom:60px}
+.case-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.08)}
+.case-header{padding:25px;border-bottom:1px solid var(--border)}
+.case-user{display:flex;align-items:center;gap:15px}
+.case-avatar{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#ddb87a);display:flex;align-items:center;justify-content:center;font-size:24px;color:#fff}
+.case-info h3{font-size:18px;color:var(--text);margin-bottom:5px}
+.case-info p{font-size:13px;color:#999}
+.case-body{padding:25px}
+.case-title{font-size:16px;font-weight:bold;color:var(--text);margin-bottom:12px}
+.case-content{font-size:14px;color:#666;line-height:1.8;margin-bottom:20px}
+.case-tags{display:flex;gap:8px;flex-wrap:wrap}
+.case-tag{padding:5px 12px;background:var(--panel);border-radius:15px;font-size:12px;color:var(--accent)}
+.case-footer{padding:20px 25px;background:var(--panel);display:flex;justify-content:space-between;align-items:center}
+.case-result{font-size:14px;color:var(--text)}
+.case-result strong{color:#27ae60}
+
+/* CTA区域 */
+.cta-section{text-align:center;padding:50px;background:#fff;border-radius:16px;box-shadow:0 4px 12px rgba(0,0,0,0.08)}
+.cta-section h2{font-size:28px;color:var(--text);margin-bottom:15px}
+.cta-section p{color:#666;margin-bottom:30px;font-size:16px}
+.cta-btn{display:inline-block;padding:15px 40px;background:var(--accent);color:#fff;text-decoration:none;border-radius:25px;font-size:16px;font-weight:bold;transition:transform 0.2s}
+.cta-btn:hover{transform:scale(1.05)}
+
+/* 页脚 */
+.footer{text-align:center;padding:40px 20px;color:#999;font-size:14px;border-top:1px solid var(--border);margin-top:60px}
+</style>
+</head>
+<body>
+
+<!-- 顶部导航 -->
+<nav class="nav">
+  <div class="nav-logo">问渠</div>
+  <div class="nav-links">
+    <a href="/">首页</a>
+    <a href="/resources.html">学习资源</a>
+    <a href="/cases.html">用户案例</a>
+    <a href="/faq.html">帮助中心</a>
+    <a href="/about.html">关于我们</a>
+  </div>
+</nav>
+
+<!-- 主内容 -->
+<div class="container">
+  <div class="page-title">
+    <h1>🌟 用户成功案例</h1>
+    <p>看看大家如何用问渠AI提升学习效率</p>
+  </div>
+  
+  <!-- 统计数据 -->
+  <div class="stats">
+    <div class="stat-item">
+      <span class="stat-num">50,000+</span>
+      <span class="stat-label">活跃用户</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">200万+</span>
+      <span class="stat-label">问题解答</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">98.5%</span>
+      <span class="stat-label">满意度</span>
+    </div>
+  </div>
+  
+  <!-- 案例列表 -->
+  <div class="cases-grid">
+    <div class="case-card">
+      <div class="case-header">
+        <div class="case-user">
+          <div class="case-avatar">👨‍🎓</div>
+          <div class="case-info">
+            <h3>李同学 · 大三学生</h3>
+            <p>计算机科学与技术专业</p>
+          </div>
+        </div>
+      </div>
+      <div class="case-body">
+        <h4 class="case-title">高数不再头疼</h4>
+        <p class="case-content">以前微积分总是学不明白，用问渠AI的数理医学模块，把抽象概念用生活例子解释，配合公式推导，期末考从60分提到了92分！</p>
+        <div class="case-tags">
+          <span class="case-tag">高等数学</span>
+          <span class="case-tag">期末备考</span>
+        </div>
+      </div>
+      <div class="case-footer">
+        <span class="case-result">成绩提升 <strong>+32分</strong></span>
+        <span style="color:#999;font-size:13px">2026年3月</span>
+      </div>
+    </div>
+    
+    <div class="case-card">
+      <div class="case-header">
+        <div class="case-user">
+          <div class="case-avatar">👩‍🏫</div>
+          <div class="case-info">
+            <h3>王老师 · 高中教师</h3>
+            <p>历史学科带头人</p>
+          </div>
+        </div>
+      </div>
+      <div class="case-body">
+        <h4 class="case-title">备课效率翻倍</h4>
+        <p class="case-content">用历史文化模块快速查找史料、生成时间轴、整理考点。以前备课要3小时，现在1小时搞定，还能生成课堂互动问题。</p>
+        <div class="case-tags">
+          <span class="case-tag">历史教学</span>
+          <span class="case-tag">备课辅助</span>
+        </div>
+      </div>
+      <div class="case-footer">
+        <span class="case-result">备课时间 <strong>节省67%</strong></span>
+        <span style="color:#999;font-size:13px">2026年2月</span>
+      </div>
+    </div>
+    
+    <div class="case-card">
+      <div class="case-header">
+        <div class="case-user">
+          <div class="case-avatar">👨‍💼</div>
+          <div class="case-info">
+            <h3>张先生 · 产品经理</h3>
+            <p>互联网行业从业者</p>
+          </div>
+        </div>
+      </div>
+      <div class="case-body">
+        <h4 class="case-title">快速了解新领域</h4>
+        <p class="case-content">做农业科技项目时，用农业百科模块快速补课。从零基础到能和客户专业沟通，只用了一周时间。</p>
+        <div class="case-tags">
+          <span class="case-tag">农业百科</span>
+          <span class="case-tag">跨行业学习</span>
+        </div>
+      </div>
+      <div class="case-footer">
+        <span class="case-result">学习周期 <strong>缩短80%</strong></span>
+        <span style="color:#999;font-size:13px">2026年4月</span>
+      </div>
+    </div>
+    
+    <div class="case-card">
+      <div class="case-header">
+        <div class="case-user">
+          <div class="case-avatar">👩‍🎓</div>
+          <div class="case-info">
+            <h3>陈同学 · 高三学生</h3>
+            <p>理科实验班</p>
+          </div>
+        </div>
+      </div>
+      <div class="case-body">
+        <h4 class="case-title">物理难题攻克</h4>
+        <p class="case-content">电磁学总是搞不清，问渠AI把麦克斯韦方程组拆解成可视化步骤，配合典型例题，高考模拟考物理满分！</p>
+        <div class="case-tags">
+          <span class="case-tag">电磁学</span>
+          <span class="case-tag">高考冲刺</span>
+        </div>
+      </div>
+      <div class="case-footer">
+        <span class="case-result">物理成绩 <strong>满分</strong></span>
+        <span style="color:#999;font-size:13px">2026年4月</span>
+      </div>
+    </div>
+    
+    <div class="case-card">
+      <div class="case-header">
+        <div class="case-user">
+          <div class="case-avatar">👨‍🔬</div>
+          <div class="case-info">
+            <h3>刘博士 · 研究员</h3>
+            <p>材料科学研究所</p>
+          </div>
+        </div>
+      </div>
+      <div class="case-body">
+        <h4 class="case-title">文献阅读助手</h4>
+        <p class="case-content">看英文文献时，用现代科技模块快速理解专业术语，还能追问细节。阅读效率提升明显，不再被术语卡住。</p>
+        <div class="case-tags">
+          <span class="case-tag">科技文献</span>
+          <span class="case-tag">科研辅助</span>
+        </div>
+      </div>
+      <div class="case-footer">
+        <span class="case-result">阅读速度 <strong>提升2倍</strong></span>
+        <span style="color:#999;font-size:13px">2026年3月</span>
+      </div>
+    </div>
+    
+    <div class="case-card">
+      <div class="case-header">
+        <div class="case-user">
+          <div class="case-avatar">👵</div>
+          <div class="case-info">
+            <h3>赵阿姨 · 退休教师</h3>
+            <p>终身学习者</p>
+          </div>
+        </div>
+      </div>
+      <div class="case-body">
+        <h4 class="case-title">活到老学到老</h4>
+        <p class="case-content">退休后想学天文，用天文地理模块了解星座、宇宙演化。界面简洁，解释通俗易懂，现在能给孙子讲银河系了！</p>
+        <div class="case-tags">
+          <span class="case-tag">天文地理</span>
+          <span class="case-tag">兴趣学习</span>
+        </div>
+      </div>
+      <div class="case-footer">
+        <span class="case-result">学习新技能 <strong>天文入门</strong></span>
+        <span style="color:#999;font-size:13px">2026年1月</span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- CTA -->
+  <div class="cta-section">
+    <h2>开始你的学习之旅</h2>
+    <p>加入5万+用户，体验AI赋能的高效学习</p>
+    <a href="/" class="cta-btn">立即体验</a>
+  </div>
+</div>
+
+<!-- 页脚 -->
+<footer class="footer">
+  <p>© 2026 问渠AI wenquso.cn · 让知识触手可及</p>
+</footer>
+</body>
+</html>

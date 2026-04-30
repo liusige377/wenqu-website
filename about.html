@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>关于我们 - 问渠AI</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#f5f0e8;--sidebar:#2c1810;--accent:#c9a96e;--text:#3d2b1f;--panel:#faf7f2;--border:#d4c5b0}
+body{font-family:'Microsoft YaHei',sans-serif;background:var(--bg);min-height:100vh}
+
+/* 顶部导航 */
+.nav{background:var(--sidebar);padding:15px 30px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-size:32px;font-family:'KaiTi','STKaiti','楷体',serif;color:var(--accent)}
+.nav-links{display:flex;gap:20px}
+.nav-links a{color:#fff;text-decoration:none;font-size:14px;opacity:0.8;transition:opacity 0.2s}
+.nav-links a:hover{opacity:1}
+
+/* 主内容区 */
+.container{max-width:1000px;margin:0 auto;padding:40px 20px}
+
+/* Hero区域 */
+.hero{text-align:center;padding:60px 20px;background:#fff;border-radius:20px;margin-bottom:50px;box-shadow:0 4px 12px rgba(0,0,0,0.08)}
+.hero h1{font-size:48px;font-family:'KaiTi','STKaiti','楷体',serif;color:var(--text);margin-bottom:20px}
+.hero-subtitle{font-size:20px;color:#666;margin-bottom:30px;line-height:1.6}
+.hero-poem{font-size:16px;color:var(--accent);font-style:italic;margin-top:20px}
+
+/* 使命愿景 */
+.mission{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-bottom:50px}
+.mission-card{background:#fff;border-radius:16px;padding:40px;box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+.mission-card h2{font-size:24px;color:var(--text);margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.mission-card p{font-size:15px;color:#666;line-height:1.8}
+
+/* 发展历程 */
+.timeline{background:#fff;border-radius:16px;padding:40px;margin-bottom:50px;box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+.timeline h2{font-size:24px;color:var(--text);margin-bottom:30px;text-align:center}
+.timeline-list{position:relative;padding-left:30px}
+.timeline-item{position:relative;padding-bottom:30px;padding-left:30px;border-left:2px solid var(--border)}
+.timeline-item:last-child{border-left:none}
+.timeline-dot{position:absolute;left:-8px;top:0;width:14px;height:14px;background:var(--accent);border-radius:50%}
+.timeline-date{font-size:14px;color:var(--accent);margin-bottom:5px}
+.timeline-content h3{font-size:16px;color:var(--text);margin-bottom:8px}
+.timeline-content p{font-size:14px;color:#666;line-height:1.6}
+
+/* 团队介绍 */
+.team{text-align:center;margin-bottom:50px}
+.team h2{font-size:24px;color:var(--text);margin-bottom:30px}
+.team-desc{font-size:15px;color:#666;max-width:600px;margin:0 auto 40px;line-height:1.8}
+.team-features{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.team-feature{background:#fff;border-radius:12px;padding:30px;box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+.team-feature-icon{font-size:40px;margin-bottom:15px}
+.team-feature h3{font-size:16px;color:var(--text);margin-bottom:10px}
+.team-feature p{font-size:13px;color:#666;line-height:1.6}
+
+/* 联系我们 */
+.contact{background:linear-gradient(135deg,var(--sidebar),#3d2b1f);border-radius:16px;padding:50px;text-align:center;color:#fff}
+.contact h2{font-size:28px;margin-bottom:20px}
+.contact p{opacity:0.8;margin-bottom:30px;font-size:16px}
+.contact-info{display:flex;justify-content:center;gap:50px;flex-wrap:wrap}
+.contact-item{text-align:left}
+.contact-item h4{font-size:14px;opacity:0.6;margin-bottom:8px}
+.contact-item p{font-size:16px;opacity:1;margin:0}
+
+/* 页脚 */
+.footer{text-align:center;padding:40px 20px;color:#999;font-size:14px;border-top:1px solid var(--border);margin-top:60px}
+
+@media(max-width:768px){
+  .mission{grid-template-columns:1fr}
+  .team-features{grid-template-columns:1fr}
+  .contact-info{flex-direction:column;gap:20px;align-items:center}
+}
+</style>
+</head>
+<body>
+
+<!-- 顶部导航 -->
+<nav class="nav">
+  <div class="nav-logo">问渠</div>
+  <div class="nav-links">
+    <a href="/">首页</a>
+    <a href="/resources.html">学习资源</a>
+    <a href="/cases.html">用户案例</a>
+    <a href="/faq.html">帮助中心</a>
+    <a href="/about.html">关于我们</a>
+  </div>
+</nav>
+
+<!-- 主内容 -->
+<div class="container">
+  <!-- Hero -->
+  <div class="hero">
+    <h1>问渠那得清如许</h1>
+    <p class="hero-subtitle">
+      问渠AI致力于用人工智能技术<br>
+      让知识获取更简单、更高效、更有趣
+    </p>
+    <p class="hero-poem">"问渠那得清如许？为有源头活水来。" —— 朱熹《观书有感》</p>
+  </div>
+  
+  <!-- 使命愿景 -->
+  <div class="mission">
+    <div class="mission-card">
+      <h2>🎯 我们的使命</h2>
+      <p>打破知识壁垒，让每个人都能平等地获取优质教育资源。无论你是学生、教师、研究者还是终身学习者，问渠AI都愿做你探索知识海洋的向导。</p>
+    </div>
+    <div class="mission-card">
+      <h2>🌟 我们的愿景</h2>
+      <p>成为最懂中文用户的知识问答平台。不只是回答问题，更是激发思考、培养学习能力。让AI不再是冰冷的工具，而是温暖的学习伙伴。</p>
+    </div>
+  </div>
+  
+  <!-- 发展历程 -->
+  <div class="timeline">
+    <h2>📅 发展历程</h2>
+    <div class="timeline-list">
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">2025年6月</div>
+        <div class="timeline-content">
+          <h3>项目启动</h3>
+          <p>问渠AI项目正式立项，开始技术研发和内容建设</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">2025年9月</div>
+        <div class="timeline-content">
+          <h3>内测上线</h3>
+          <p>首个版本上线，支持基础问答和学科模块</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">2025年12月</div>
+        <div class="timeline-content">
+          <h3>功能完善</h3>
+          <p>新增用户系统、对话历史、收藏功能，体验大幅提升</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">2026年4月</div>
+        <div class="timeline-content">
+          <h3>全面升级</h3>
+          <p>接入多个AI模型，响应速度和质量显著提升，用户突破5万</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 团队介绍 -->
+  <div class="team">
+    <h2>👨‍💻 团队理念</h2>
+    <p class="team-desc">我们是一支热爱教育、懂技术的团队。相信AI应该服务于人，而不是替代人。每一项功能设计，都以"真正帮助用户学习"为出发点。</p>
+    <div class="team-features">
+      <div class="team-feature">
+        <div class="team-feature-icon">🎓</div>
+        <h3>教育优先</h3>
+        <p>不是炫技，而是真正解决学习痛点。每个回答都力求准确、易懂、有用。</p>
+      </div>
+      <div class="team-feature">
+        <div class="team-feature-icon">💡</div>
+        <h3>持续创新</h3>
+        <p>紧跟AI技术发展，不断优化模型选择、提示工程、知识库质量。</p>
+      </div>
+      <div class="team-feature">
+        <div class="team-feature-icon">❤️</div>
+        <h3>用户至上</h3>
+        <p>认真对待每一条反馈，快速迭代改进。用户的成长就是我们的成就。</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 联系我们 -->
+  <div class="contact">
+    <h2>联系问渠</h2>
+    <p>欢迎合作咨询、问题反馈、功能建议</p>
+    <div class="contact-info">
+      <div class="contact-item">
+        <h4>商务邮箱</h4>
+        <p>contact@wenquso.cn</p>
+      </div>
+      <div class="contact-item">
+        <h4>技术支持</h4>
+        <p>support@wenquso.cn</p>
+      </div>
+      <div class="contact-item">
+        <h4>微信公众号</h4>
+        <p>问渠AI</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 页脚 -->
+<footer class="footer">
+  <p>© 2026 问渠AI wenquso.cn · 让知识触手可及</p>
+</footer>
+</body>
+</html>

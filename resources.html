@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学习资源 - 问渠AI</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#f5f0e8;--sidebar:#2c1810;--accent:#c9a96e;--text:#3d2b1f;--panel:#faf7f2;--border:#d4c5b0}
+body{font-family:'Microsoft YaHei',sans-serif;background:var(--bg);min-height:100vh}
+
+/* 顶部导航 */
+.nav{background:var(--sidebar);padding:15px 30px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-size:32px;font-family:'KaiTi','STKaiti','楷体',serif;color:var(--accent)}
+.nav-links{display:flex;gap:20px}
+.nav-links a{color:#fff;text-decoration:none;font-size:14px;opacity:0.8;transition:opacity 0.2s}
+.nav-links a:hover{opacity:1}
+
+/* 主内容区 */
+.container{max-width:1200px;margin:0 auto;padding:40px 20px}
+.page-title{text-align:center;margin-bottom:40px}
+.page-title h1{font-size:36px;color:var(--text);margin-bottom:10px}
+.page-title p{color:#666;font-size:16px}
+
+/* 分类标签 */
+.categories{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:40px}
+.cat-btn{padding:10px 20px;background:#fff;border:2px solid var(--border);border-radius:20px;font-size:14px;cursor:pointer;transition:all 0.2s;color:var(--text)}
+.cat-btn:hover{border-color:var(--accent);color:var(--accent)}
+.cat-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* 资源卡片网格 */
+.resources-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
+.resource-card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);transition:transform 0.2s,box-shadow 0.2s}
+.resource-card:hover{transform:translateY(-5px);box-shadow:0 8px 20px rgba(0,0,0,0.12)}
+.card-img{height:160px;background:linear-gradient(135deg,var(--accent),#ddb87a);display:flex;align-items:center;justify-content:center;font-size:48px}
+.card-content{padding:20px}
+.card-tag{display:inline-block;padding:4px 10px;background:var(--panel);border-radius:12px;font-size:12px;color:var(--accent);margin-bottom:10px}
+.card-title{font-size:18px;font-weight:bold;color:var(--text);margin-bottom:8px}
+.card-desc{font-size:14px;color:#666;line-height:1.5;margin-bottom:15px}
+.card-meta{display:flex;justify-content:space-between;font-size:12px;color:#999}
+.card-meta span{display:flex;align-items:center;gap:4px}
+
+/* 视频资源特殊样式 */
+.video-card .card-img{background:linear-gradient(135deg,#e74c3c,#c0392b)}
+.pdf-card .card-img{background:linear-gradient(135deg,#3498db,#2980b9)}
+.doc-card .card-img{background:linear-gradient(135deg,#27ae60,#229954)}
+
+/* 页脚 */
+.footer{text-align:center;padding:40px 20px;color:#999;font-size:14px;border-top:1px solid var(--border);margin-top:60px}
+</style>
+</head>
+<body>
+
+<!-- 顶部导航 -->
+<nav class="nav">
+  <div class="nav-logo">问渠</div>
+  <div class="nav-links">
+    <a href="/">首页</a>
+    <a href="/resources.html">学习资源</a>
+    <a href="/cases.html">用户案例</a>
+    <a href="/faq.html">帮助中心</a>
+    <a href="/about.html">关于我们</a>
+  </div>
+</nav>
+
+<!-- 主内容 -->
+<div class="container">
+  <div class="page-title">
+    <h1>📚 学习资源中心</h1>
+    <p>精选优质学习资料，助您快速掌握各领域知识</p>
+  </div>
+  
+  <!-- 分类标签 -->
+  <div class="categories">
+    <button class="cat-btn active" onclick="filterResources('all')">全部</button>
+    <button class="cat-btn" onclick="filterResources('video')">视频教程</button>
+    <button class="cat-btn" onclick="filterResources('pdf')">PDF文档</button>
+    <button class="cat-btn" onclick="filterResources('doc')">在线文档</button>
+    <button class="cat-btn" onclick="filterResources('math')">数理化</button>
+    <button class="cat-btn" onclick="filterResources('history')">历史人文</button>
+    <button class="cat-btn" onclick="filterResources('tech')">科技工程</button>
+  </div>
+  
+  <!-- 资源列表 -->
+  <div class="resources-grid" id="resourcesGrid">
+    <!-- 视频资源 -->
+    <div class="resource-card video-card" data-type="video" data-category="math">
+      <div class="card-img">🎬</div>
+      <div class="card-content">
+        <span class="card-tag">视频教程</span>
+        <h3 class="card-title">高等数学入门精讲</h3>
+        <p class="card-desc">从零开始学习微积分、线性代数、概率统计，适合大学生和自学者</p>
+        <div class="card-meta">
+          <span>👁 12.5万</span>
+          <span>⏱ 32课时</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="resource-card video-card" data-type="video" data-category="history">
+      <div class="card-img">🎬</div>
+      <div class="card-content">
+        <span class="card-tag">视频教程</span>
+        <h3 class="card-title">中国通史100讲</h3>
+        <p class="card-desc">从上古时代到近代中国，系统梳理五千年文明脉络</p>
+        <div class="card-meta">
+          <span>👁 28.3万</span>
+          <span>⏱ 100课时</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- PDF资源 -->
+    <div class="resource-card pdf-card" data-type="pdf" data-category="math">
+      <div class="card-img">📄</div>
+      <div class="card-content">
+        <span class="card-tag">PDF文档</span>
+        <h3 class="card-title">大学物理公式手册</h3>
+        <p class="card-desc">涵盖力学、热学、电磁学、光学、近代物理全部核心公式</p>
+        <div class="card-meta">
+          <span>📥 8.6万</span>
+          <span>📑 156页</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="resource-card pdf-card" data-type="pdf" data-category="tech">
+      <div class="card-img">📄</div>
+      <div class="card-content">
+        <span class="card-tag">PDF文档</span>
+        <h3 class="card-title">Python编程入门</h3>
+        <p class="card-desc">从基础语法到实战项目，零基础也能学会的编程教材</p>
+        <div class="card-meta">
+          <span>📥 15.2万</span>
+          <span>📑 280页</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 在线文档 -->
+    <div class="resource-card doc-card" data-type="doc" data-category="history">
+      <div class="card-img">📖</div>
+      <div class="card-content">
+        <span class="card-tag">在线文档</span>
+        <h3 class="card-title">世界历史大事年表</h3>
+        <p class="card-desc">按时间轴整理全球重大历史事件，支持交互式浏览</p>
+        <div class="card-meta">
+          <span>👁 6.8万</span>
+          <span>📅 持续更新</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="resource-card doc-card" data-type="doc" data-category="tech">
+      <div class="card-img">📖</div>
+      <div class="card-content">
+        <span class="card-tag">在线文档</span>
+        <h3 class="card-title">人工智能基础教程</h3>
+        <p class="card-desc">机器学习、深度学习入门，配套代码示例和练习题</p>
+        <div class="card-meta">
+          <span>👁 9.4万</span>
+          <span>📅 持续更新</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="resource-card video-card" data-type="video" data-category="tech">
+      <div class="card-img">🎬</div>
+      <div class="card-content">
+        <span class="card-tag">视频教程</span>
+        <h3 class="card-title">Web前端开发实战</h3>
+        <p class="card-desc">HTML/CSS/JavaScript从入门到项目实战，包含Vue/React框架</p>
+        <div class="card-meta">
+          <span>👁 18.7万</span>
+          <span>⏱ 48课时</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="resource-card pdf-card" data-type="pdf" data-category="history">
+      <div class="card-img">📄</div>
+      <div class="card-content">
+        <span class="card-tag">PDF文档</span>
+        <h3 class="card-title">古诗词鉴赏辞典</h3>
+        <p class="card-desc">唐诗宋词元曲精选，每首配有详细注释和赏析</p>
+        <div class="card-meta">
+          <span>📥 11.3万</span>
+          <span>📑 420页</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 页脚 -->
+<footer class="footer">
+  <p>© 2026 问渠AI wenquso.cn · 让知识触手可及</p>
+</footer>
+
+<script>
+function filterResources(type) {
+  // 更新按钮状态
+  document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+  
+  // 过滤资源
+  const cards = document.querySelectorAll('.resource-card');
+  cards.forEach(card => {
+    if (type === 'all') {
+      card.style.display = 'block';
+    } else if (card.dataset.type === type || card.dataset.category === type) {
+      card.style.display = 'block';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+</script>
+</body>
+</html>
