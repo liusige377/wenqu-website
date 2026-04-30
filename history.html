@@ -38,6 +38,7 @@ select{width:auto;min-width:120px}
 .result-box .event-item{color:#aaa;margin:4px 0;padding-left:12px;position:relative}
 .result-box .event-item::before{content:'•';position:absolute;left:0;color:#d4af37}
 .tip{color:#888;font-size:.8rem;margin-top:8px}
+.tl-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;margin-bottom:4px}.tl-item:hover,.tl-item.active{background:rgba(212,175,55,.1);border-color:rgba(212,175,55,.3)}.tl-dot{width:10px;height:10px;border-radius:50%;background:#d4af37;flex-shrink:0}.tl-name{color:#e8e8e8;font-size:.88rem;flex:1}.tl-period{color:#888;font-size:.78rem;flex-shrink:0}.tl-detail-title{color:#d4af37;font-size:1.1rem;font-weight:600;margin-bottom:10px}.tl-detail-row{color:#ccc;font-size:.85rem;line-height:1.8;margin:4px 0}.tl-detail-row span{color:#d4af37;font-weight:600}
 footer{text-align:center;padding:30px 0;color:#555;font-size:.8rem}
 </style>
 </head>
@@ -174,6 +175,71 @@ footer{text-align:center;padding:30px 0;color:#555;font-size:.8rem}
       </div>
     </div>
 
+    <div class="tool-card" id="timeline">
+      <button class="tool-header" onclick="toggle(this)">
+        <h3>⏳ 中国历史时间轴</h3>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="tool-body">
+        <div class="tab-bar" id="t-tabs">
+          <button class="active" onclick="switchT(0)">上古-秦汉</button>
+          <button onclick="switchT(1)">三国-隋唐</button>
+          <button onclick="switchT(2)">五代-明清</button>
+          <button onclick="switchT(3)">近现代</button>
+        </div>
+        <div id="t-panels">
+          <div class="t-panel" id="tp0">
+            <div class="timeline-item"><span class="t-year">约前2070年</span><span class="t-event">夏朝建立</span><span class="t-desc">中国第一个世袭制王朝</span></div>
+            <div class="timeline-item"><span class="t-year">前1600年</span><span class="t-event">商朝建立</span><span class="t-desc">青铜器文明鼎盛，甲骨文出现</span></div>
+            <div class="timeline-item"><span class="t-year">前1046年</span><span class="t-event">西周建立</span><span class="t-desc">分封制、宗法制确立</span></div>
+            <div class="timeline-item"><span class="t-year">前770年</span><span class="t-event">东周开始</span><span class="t-desc">春秋战国时期，百家争鸣</span></div>
+            <div class="timeline-item"><span class="t-year">前221年</span><span class="t-event">秦朝统一</span><span class="t-desc">秦始皇统一六国，建立中央集权</span></div>
+            <div class="timeline-item"><span class="t-year">前206年</span><span class="t-event">西汉建立</span><span class="t-desc">刘邦建汉，文景之治，丝绸之路开通</span></div>
+            <div class="timeline-item"><span class="t-year">25年</span><span class="t-event">东汉建立</span><span class="t-desc">光武帝刘秀中兴，造纸术发明</span></div>
+          </div>
+          <div class="t-panel" id="tp1" style="display:none">
+            <div class="timeline-item"><span class="t-year">220年</span><span class="t-event">三国鼎立</span><span class="t-desc">魏蜀吴三分天下，英雄辈出</span></div>
+            <div class="timeline-item"><span class="t-year">280年</span><span class="t-event">西晋统一</span><span class="t-desc">短暂统一，八王之乱后分裂</span></div>
+            <div class="timeline-item"><span class="t-year">317年</span><span class="t-event">东晋建立</span><span class="t-desc">衣冠南渡，江南开发</span></div>
+            <div class="timeline-item"><span class="t-year">581年</span><span class="t-event">隋朝建立</span><span class="t-desc">结束分裂，开创科举，开凿大运河</span></div>
+            <div class="timeline-item"><span class="t-year">618年</span><span class="t-event">唐朝建立</span><span class="t-desc">贞观之治、开元盛世，诗歌黄金时代</span></div>
+            <div class="timeline-item"><span class="t-year">755年</span><span class="t-event">安史之乱</span><span class="t-desc">唐朝由盛转衰的转折点</span></div>
+            <div class="timeline-item"><span class="t-year">907年</span><span class="t-event">唐朝灭亡</span><span class="t-desc">五代十国时期开始</span></div>
+          </div>
+          <div class="t-panel" id="tp2" style="display:none">
+            <div class="timeline-item"><span class="t-year">960年</span><span class="t-event">北宋建立</span><span class="t-desc">赵匡胤陈桥兵变，重文轻武</span></div>
+            <div class="timeline-item"><span class="t-year">1127年</span><span class="t-event">靖康之变</span><span class="t-desc">金灭北宋，南宋偏安江南</span></div>
+            <div class="timeline-item"><span class="t-year">1271年</span><span class="t-event">元朝建立</span><span class="t-desc">忽必烈建元，疆域空前辽阔</span></div>
+            <div class="timeline-item"><span class="t-year">1368年</span><span class="t-event">明朝建立</span><span class="t-desc">朱元璋推翻元朝，郑和下西洋</span></div>
+            <div class="timeline-item"><span class="t-year">1405年</span><span class="t-event">郑和下西洋</span><span class="t-desc">世界航海史上的壮举</span></div>
+            <div class="timeline-item"><span class="t-year">1644年</span><span class="t-event">清朝入关</span><span class="t-desc">满族建立清朝，康乾盛世</span></div>
+            <div class="timeline-item"><span class="t-year">1840年</span><span class="t-event">鸦片战争</span><span class="t-desc">中国近代史开端</span></div>
+          </div>
+          <div class="t-panel" id="tp3" style="display:none">
+            <div class="timeline-item"><span class="t-year">1911年</span><span class="t-event">辛亥革命</span><span class="t-desc">推翻清朝，结束两千多年封建帝制</span></div>
+            <div class="timeline-item"><span class="t-year">1919年</span><span class="t-event">五四运动</span><span class="t-desc">新民主主义革命开端</span></div>
+            <div class="timeline-item"><span class="t-year">1921年</span><span class="t-event">中共成立</span><span class="t-desc">中国共产党诞生</span></div>
+            <div class="timeline-item"><span class="t-year">1937年</span><span class="t-event">全面抗战</span><span class="t-desc">抗日战争全面爆发</span></div>
+            <div class="timeline-item"><span class="t-year">1949年</span><span class="t-event">新中国成立</span><span class="t-desc">中华人民共和国成立</span></div>
+            <div class="timeline-item"><span class="t-year">1978年</span><span class="t-event">改革开放</span><span class="t-desc">经济腾飞，现代化建设</span></div>
+            <div class="timeline-item"><span class="t-year">2021年</span><span class="t-event">建党百年</span><span class="t-desc">全面建成小康社会</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tool-card" id="timeline">
+      <button class="tool-header" onclick="toggle(this)">
+        <h3>📜 中国朝代速记</h3>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="tool-body">
+        <p style="color:#888;font-size:.85rem;margin-bottom:12px">一图看懂五千年朝代更替，点击朝代查看详情</p>
+        <div id="timeline-list"></div>
+        <div class="result-box" id="timeline-detail"></div>
+      </div>
+    </div>
+
   <footer>© 2026 问渠 · 有问必有答</footer>
 </div>
 <script>
@@ -293,9 +359,60 @@ function calcSurname(){
   else show(el,'<span class="value">'+s+'</span>未进入前100名常见姓氏');
 }
 
+// ========== 朝代速记时间轴 ==========
+var DYNASTIES=[
+  {n:'夏',p:'约前2070-前1600',y:2070,c:'斟鄩（今河南）',f:'禹→桀',h:'中国第一个世袭制王朝，大禹治水，开创家天下',a:'二里头遗址（可能为夏都）'},
+  {n:'商',p:'约前1600-前1046',y:1600,c:'殷（今河南安阳）',f:'汤→纣',h:'甲骨文发源，青铜器鼎盛，有文字记载的历史开端',a:'殷墟、司母戊鼎、甲骨文'},
+  {n:'西周',p:'前1046-前771',y:1046,c:'镐京（今西安）',f:'武王→幽王',h:'分封制、宗法制、礼乐制度，周公制礼作乐',a:'烽火戏诸侯、周公旦'},
+  {n:'东周·春秋',p:'前770-前476',y:770,c:'洛邑（今洛阳）',f:'平王→',h:'诸侯争霸，百家争鸣开端，孔子、老子活跃',a:'孔子、老子、孙子兵法'},
+  {n:'东周·战国',p:'前475-前221',y:475,c:'洛邑',f:'',h:'七雄并立，商鞅变法，百家争鸣鼎盛',a:'商鞅变法、屈原、都江堰'},
+  {n:'秦',p:'前221-前207',y:221,c:'咸阳（今西安）',f:'始皇→子婴',h:'统一六国、书同文车同轨、修长城、建郡县制',a:'兵马俑、长城、阿房宫'},
+  {n:'西汉',p:'前206-公元8年',y:206,c:'长安（今西安）',f:'刘邦→孺子婴',h:'文景之治、汉武盛世、丝绸之路开辟、独尊儒术',a:'司马迁《史记》、张骞出使西域'},
+  {n:'东汉',p:'25-220年',y:25,c:'洛阳',f:'刘秀→献帝',h:'光武中兴、蔡伦造纸、张衡发明地动仪、佛教传入',a:'蔡伦造纸、张衡地动仪、华佗'},
+  {n:'三国',p:'220-280年',y:220,c:'魏洛阳/蜀成都/吴建业',f:'曹丕/刘备/孙权',h:'魏蜀吴三足鼎立，英雄辈出',a:'诸葛亮、曹操、赤壁之战'},
+  {n:'西晋',p:'265-316年',y:265,c:'洛阳',f:'司马炎→愍帝',h:'短暂统一，八王之乱后衰亡',a:'王羲之、顾恺之'},
+  {n:'东晋',p:'317-420年',y:317,c:'建康（今南京）',f:'元帝→恭帝',h:'衣冠南渡，门阀政治，书圣王羲之',a:'淝水之战、王羲之《兰亭序》'},
+  {n:'南北朝',p:'420-589年',y:420,c:'南朝建康/北朝平城→洛阳',f:'多朝更迭',h:'民族融合，佛教兴盛，石窟艺术',a:'龙门石窟、云冈石窟、《水经注》'},
+  {n:'隋',p:'581-618年',y:581,c:'大兴城（今西安）',f:'文帝→炀帝',h:'再次统一，开凿大运河，创立科举制',a:'大运河、科举制、赵州桥'},
+  {n:'唐',p:'618-907年',y:618,c:'长安（今西安）',f:'李渊→哀帝',h:'贞观之治、开元盛世，中国封建社会巅峰',a:'李白、杜甫、玄奘西行、长安城'},
+  {n:'五代十国',p:'907-960年',y:907,c:'中原更迭',f:'多朝更迭',h:'分裂动荡，后周柴荣最有作为',a:'词的兴起、顾闳中《韩熙载夜宴图》'},
+  {n:'北宋',p:'960-1127年',y:960,c:'开封',f:'赵匡胤→钦宗',h:'重文抑武，经济文化空前繁荣，活字印刷发明',a:'毕昇活字印刷、清明上河图、包拯'},
+  {n:'南宋',p:'1127-1279年',y:1127,c:'临安（今杭州）',f:'高宗→赵昺',h:'偏安江南，岳飞抗金，经济重心南移完成',a:'岳飞、文天祥、朱熹理学'},
+  {n:'元',p:'1271-1368年',y:1271,c:'大都（今北京）',f:'忽必烈→妥懽帖睦尔',h:'版图最大，行省制度，元曲兴盛',a:'马可波罗来华、关汉卿、《农书》'},
+  {n:'明',p:'1368-1644年',y:1368,c:'北京',f:'朱元璋→崇祯',h:'郑和下西洋，修建紫禁城，资本主义萌芽',a:'郑和下西洋、紫禁城、《本草纲目》'},
+  {n:'清',p:'1644-1912年',y:1644,c:'北京',f:'皇太极→溥仪',h:'康乾盛世，疆域奠定，晚期列强入侵',a:'康乾盛世、红楼梦、鸦片战争'}
+];
+
+function initTimeline(){
+  var list=document.getElementById('timeline-list');
+  var html='';
+  DYNASTIES.forEach(function(d,i){
+    html+='<div class="tl-item" onclick="showDynasty('+i+')"><div class="tl-dot"></div><div class="tl-name">'+d.n+'</div><div class="tl-period">'+d.p+'</div></div>';
+  });
+  list.innerHTML=html;
+}
+
+function showDynasty(idx){
+  var d=DYNASTIES[idx];
+  var el=document.getElementById('timeline-detail');
+  // 高亮选中项
+  document.querySelectorAll('.tl-item').forEach(function(item,i){
+    item.classList.toggle('active',i===idx);
+  });
+  show(el,'<div class="tl-detail-title">'+d.n+'（'+d.p+'）</div>'+
+    '<div class="tl-detail-row"><span>都城：</span>'+d.c+'</div>'+
+    '<div class="tl-detail-row"><span>君王：</span>'+d.f+'</div>'+
+    '<div class="tl-detail-row"><span>概述：</span>'+d.h+'</div>'+
+    '<div class="tl-detail-row"><span>代表：</span>'+d.a+'</div>'+
+    '<div class="tl-detail-row" style="color:#888;font-size:.8rem;margin-top:8px">💡 记忆口令：夏商周秦西东汉，三国两晋南北朝，隋唐五代又十国，辽宋夏金元明清</div>');
+}
+
+// 页面初始化
+initTimeline();
+
 // 默认展开第一个
-document.querySelector('.tool-body').classList.add('open');
-document.querySelector('.tool-header .arrow').textContent='▲';
+var firstBody = document.querySelector('.tool-body');
+if(firstBody){firstBody.classList.add('open');document.querySelector('.tool-header .arrow').textContent='▲';}
 
 // 成语数据库
 var IDIOMS={
