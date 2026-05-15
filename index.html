@@ -1,932 +1,130 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>����AI - wenquso.cn</title>
+<title>问渠AI - wenquso.cn</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#f5f0e8;--sidebar:#2c1810;--accent:#c9a96e;--text:#3d2b1f;--chat-bg:#fff;--panel:#faf7f2;--border:#d4c5b0}
 body{font-family:'Microsoft YaHei',sans-serif;background:var(--bg);height:100vh;display:flex;overflow:hidden}
-
-/* ������ */
 .sidebar{width:260px;background:var(--sidebar);color:#fff;display:flex;flex-direction:column;padding:20px 0;flex-shrink:0}
 .logo{text-align:center;padding:15px 0 5px}
-.logo-title{font-size:52px;font-family:'KaiTi','STKaiti','����',serif;color:var(--accent);text-shadow:2px 2px 8px rgba(0,0,0,0.5);line-height:1.2}
+.logo-title{font-size:52px;font-family:'KaiTi','STKaiti','楷体',serif;color:var(--accent);text-shadow:2px 2px 8px rgba(0,0,0,0.5);line-height:1.2}
 .logo-poem{font-size:13px;color:#c9a96e99;font-style:italic;margin-top:8px;line-height:1.5;padding:0 15px}
 .divider{height:1px;background:linear-gradient(90deg,transparent,#c9a96e55,transparent);margin:12px 20px}
-
 .history-widget{margin:0 15px;background:#ffffff10;border-radius:8px;padding:10px 12px}
 .history-widget h4{font-size:11px;color:var(--accent);margin-bottom:6px}
 .history-widget p{font-size:12px;color:#ccc;line-height:1.4}
-
 .tools-section{flex:1;padding:0 15px;overflow-y:auto}
 .tools-section h3{font-size:12px;color:#c9a96e99;margin:8px 0 8px;text-transform:uppercase;letter-spacing:1px}
 .tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:15px}
-.tool-btn{background:#ffffff10;border:1px solid #ffffff15;border-radius:8px;padding:10px 6px;text-align:center;cursor:pointer;transition:all 0.2s;text-decoration:none;color:#fff}
+.tool-btn{background:#ffffff10;border:1px solid #ffffff15;border-radius:8px;padding:10px 6px;text-align:center;cursor:pointer;transition:all 0.2s;text-decoration:none;color:#fff;display:block}
 .tool-btn:hover{background:#c9a96e33;border-color:var(--accent);transform:translateY(-2px)}
 .tool-btn .icon{font-size:22px;display:block;margin-bottom:4px}
 .tool-btn .name{font-size:11px;color:#ccc}
-
-.auth-section{padding:0 15px}
-.auth-btn{width:100%;padding:10px;background:var(--accent);color:#2c1810;border:none;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer}
-.auth-btn:hover{background:#ddb87a}
-.auth-user{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#ffffff15;border-radius:8px}
-.auth-user-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#2c1810;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:bold}
-.auth-user-info{flex:1;min-width:0}
-.auth-user-name{font-size:13px;font-weight:bold;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.auth-user-email{font-size:11px;color:#aaa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.auth-logout-btn{background:none;border:none;color:#c9a96e;font-size:12px;cursor:pointer;padding:4px 8px;border-radius:4px;white-space:nowrap}
-.auth-logout-btn:hover{background:#c9a96e33}
-
-/* ��¼ע�ᵯ�� */
-.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:9999;align-items:center;justify-content:center}
-.modal-overlay.show{display:flex}
-.modal{background:#fff;border-radius:16px;width:380px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,0.3);overflow:hidden;animation:modalIn 0.25s ease}
-@keyframes modalIn{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:scale(1)}}
-.modal-header{background:var(--sidebar);color:#fff;padding:20px;display:flex;align-items:center;justify-content:space-between}
-.modal-header h3{font-size:18px}
-.modal-close{background:none;border:none;color:#fff;font-size:24px;cursor:pointer;line-height:1}
-.modal-tabs{display:flex;border-bottom:2px solid var(--border)}
-.modal-tab{flex:1;padding:14px;text-align:center;font-size:15px;cursor:pointer;color:#666;background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all 0.2s}
-.modal-tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:bold}
-.modal-tab:hover{color:var(--accent)}
-.modal-body{padding:24px}
-.form-group{margin-bottom:16px}
-.form-group label{display:block;font-size:13px;color:#666;margin-bottom:6px}
-.form-group input{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;outline:none;transition:border-color 0.2s}
-.form-group input:focus{border-color:var(--accent)}
-.form-submit{width:100%;padding:14px;background:var(--accent);color:#2c1810;border:none;border-radius:8px;font-size:15px;font-weight:bold;cursor:pointer;transition:background 0.2s}
-.form-submit:hover{background:#ddb87a}
-.form-submit:disabled{background:#ccc;cursor:not-allowed}
-.form-error{color:#e74c3c;font-size:13px;margin-top:8px;display:none}
-.form-success{color:#27ae60;font-size:13px;margin-top:8px;display:none}
-.form-info{font-size:12px;color:#999;margin-top:12px;text-align:center}
-
-/* �Ҳ������� */
-.main-area{flex:1;display:flex;overflow:hidden}
-
-/* AI�Ի��� */
-.chat-section{flex:4;display:flex;flex-direction:column;border-right:1px solid var(--border)}
-.chat-header{background:var(--panel);padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
-.chat-header h2{font-size:16px;color:var(--text)}
-.status-dot{width:8px;height:8px;background:#4caf50;border-radius:50%;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
-
-.chat-messages{flex:1;overflow-y:auto;padding:20px;background:var(--chat-bg)}
-.msg{margin-bottom:15px;animation:fadeIn 0.3s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.msg.user{text-align:right}
-.msg.user .bubble{background:var(--accent);color:#fff;display:inline-block;padding:10px 15px;border-radius:15px 15px 3px 15px;max-width:75%;text-align:left}
-.msg.ai .bubble{background:var(--panel);color:var(--text);display:inline-block;padding:10px 15px;border-radius:15px 15px 15px 3px;max-width:75%;border:1px solid var(--border)}
-
-.typing{color:#999;font-size:13px;padding:5px 0;display:none}
-.typing.active{display:block}
-
-.chat-input-area{padding:15px 20px;background:var(--panel);border-top:1px solid var(--border)}
-.input-row{display:flex;gap:10px;align-items:center}
-#userInput{flex:1;padding:12px 15px;border:1px solid var(--border);border-radius:25px;background:#fff;font-size:14px;outline:none}
-#userInput:focus{border-color:var(--accent)}
-.send-btn{width:44px;height:44px;background:var(--accent);border:none;border-radius:50%;cursor:pointer;font-size:18px;transition:transform 0.2s}
-.send-btn:hover{transform:scale(1.1)}
-
-/* �Ҳ�1/5���?*/
-.side-panel{flex:1;min-width:180px;max-width:220px;background:var(--panel);display:flex;flex-direction:column;padding:15px}
-.panel-section{flex:1;background:#fff;border-radius:10px;border:1px solid var(--border);padding:12px;margin-bottom:10px;overflow:hidden}
-.panel-section h4{font-size:12px;color:var(--accent);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
-.panel-section .content{font-size:12px;color:#666;line-height:1.5;overflow-y:auto;max-height:120px}
-.panel-section .content p{margin-bottom:5px}
-
-.ad-placeholder{background:linear-gradient(135deg,#f0e6d3,#e8dcc8);border-radius:10px;border:2px dashed var(--border);padding:20px;text-align:center;flex-shrink:0}
-.ad-placeholder p{font-size:12px;color:#aaa}
-
-/* ��Ӧʽ */
-@media(max-width:900px){
-  .side-panel{display:none}
-  .chat-section{flex:1}
-  .sidebar{width:200px}
-}
-@media(max-width:600px){
-  .sidebar{width:60px}
-  .logo-poem,.tools-section h3,.tool-btn .name,.history-widget{display:none}
-  .logo-title{font-size:28px}
-  .tools-grid{grid-template-columns:1fr}
-  .tool-btn .icon{font-size:28px}
-  .stats-banner,.suggested-questions,.feature-carousel,.feature-panel{display:none}
-}
-
-/* ͳ�ƺ��?*/
-.stats-banner{background:linear-gradient(135deg,#2c1810,#4a3728);color:#fff;padding:12px 20px;display:flex;justify-content:center;gap:40px;font-size:13px}
-.stats-banner .stat{display:flex;align-items:center;gap:6px}
-.stats-banner .stat-num{font-size:22px;font-weight:bold;color:var(--accent)}
-.stats-banner .stat-label{color:#bbb;font-size:11px}
-
-/* �Ƽ����� */
-.suggested-questions{padding:10px 15px;background:var(--panel);border-bottom:1px solid var(--border)}
-.suggested-questions .label{font-size:12px;color:#999;margin-bottom:8px}
-.suggested-questions .questions{display:flex;flex-wrap:wrap;gap:8px}
-.suggested-questions .q-btn{background:#fff;border:1px solid var(--border);border-radius:15px;padding:6px 12px;font-size:12px;color:#666;cursor:pointer;transition:all 0.2s}
-.suggested-questions .q-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent)11}
-
-/* �����ֲ� */
-.feature-carousel{padding:15px 20px;background:var(--panel);border-top:1px solid var(--border);overflow:hidden}
-.carousel-track{display:flex;gap:15px;animation:carouselScroll 20s linear infinite}
-@keyframes carouselScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.carousel-item{flex-shrink:0;background:#fff;border:1px solid var(--border);border-radius:8px;padding:10px 15px;min-width:200px}
-.carousel-item .title{font-size:13px;font-weight:bold;color:var(--text);margin-bottom:4px}
-.carousel-item .desc{font-size:11px;color:#888}
-
-/* �Ҳ๦�����?*/
-.feature-panel{flex:1;min-width:200px;max-width:240px;background:var(--panel);display:flex;flex-direction:column;padding:15px;border-left:1px solid var(--border)}
-.feature-panel h3{font-size:14px;color:var(--text);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--accent)}
-.feature-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px;cursor:pointer;transition:all 0.2s}
-.feature-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 4px 12px rgba(201,169,110,0.2)}
-.feature-card .icon{font-size:28px;margin-bottom:6px}
-.feature-card .name{font-size:14px;font-weight:bold;color:var(--text);margin-bottom:4px}
-.feature-card .desc{font-size:11px;color:#888}
-.feature-card.hot{border-color:#e74c3c}
-.feature-card.hot::before{content:'??����';font-size:10px;background:#e74c3c;color:#fff;padding:2px 6px;border-radius:10px;position:absolute;top:-6px;right:8px}
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.header{background:var(--panel);padding:15px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:20px;color:var(--text);font-weight:400}
+.header .status{font-size:12px;color:#888}
+.chat-container{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:15px}
+.message{padding:15px 18px;border-radius:12px;max-width:85%;line-height:1.6}
+.message.user{align-self:flex-end;background:var(--chat-bg);border:1px solid var(--border)}
+.message.ai{background:var(--chat-bg);border:1px solid var(--border)}
+.message .thinking{font-size:12px;color:#888;margin-bottom:8px;font-style:italic}
+.input-area{background:var(--panel);padding:15px 20px;border-top:1px solid var(--border);display:flex;gap:10px}
+.input-area textarea{flex:1;padding:12px 15px;border:1px solid var(--border);border-radius:8px;font-size:14px;resize:none;font-family:inherit;outline:none;min-height:44px;max-height:120px}
+.input-area textarea:focus{border-color:var(--accent)}
+.input-area button{padding:12px 25px;background:var(--sidebar);color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer;transition:all 0.2s}
+.input-area button:hover{background:var(--accent)}
 </style>
 </head>
 <body>
-
-<!-- ��¼ע�ᵯ�� -->
-<div class="modal-overlay" id="authModal">
-  <div class="modal">
-    <div class="modal-header">
-      <h3 id="modalTitle">��¼ / ע��</h3>
-      <button class="modal-close" onclick="closeModal()">&times;</button>
-    </div>
-    <div class="modal-tabs">
-      <button class="modal-tab active" id="tabLogin" onclick="switchTab('login')">��¼</button>
-      <button class="modal-tab" id="tabRegister" onclick="switchTab('register')">ע��</button>
-    </div>
-    <div class="modal-body">
-      <!-- ��¼���� -->
-      <div id="loginForm">
-        <div class="form-group">
-          <label>������?/label>
-          <input type="email" id="loginEmail" placeholder="����������" onkeydown="if(event.key==='Enter')doLogin()">
-        </div>
-        <div class="form-group">
-          <label>����</label>
-          <input type="password" id="loginPassword" placeholder="����������" onkeydown="if(event.key==='Enter')doLogin()">
-        </div>
-        <div class="form-error" id="loginError"></div>
-        <button class="form-submit" onclick="doLogin()">��¼</button>
-        <p class="form-info">�״ε�¼���Զ�ע��</p>
-      </div>
-      <!-- ע�����?-->
-      <div id="registerForm" style="display:none">
-        <div class="form-group">
-          <label>����</label>
-          <input type="text" id="regName" placeholder="����������" maxlength="20">
-        </div>
-        <div class="form-group">
-          <label>������?/label>
-          <input type="email" id="regEmail" placeholder="����������" onkeydown="if(event.key==='Enter')doRegister()">
-        </div>
-        <div class="form-group">
-          <label>����</label>
-          <input type="password" id="regPassword" placeholder="���������루����6λ��" minlength="6">
-        </div>
-        <div class="form-error" id="regError"></div>
-        <button class="form-submit" onclick="doRegister()">ע��</button>
-        <p class="form-info">ע�ἴ��ʾͬ�⡶�����û�Э�顷</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ������ -->
 <div class="sidebar">
-  <div class="logo">
-    <div class="logo-title">����</div>
-    <div class="logo-poem">�����ǵ���������<br>Ϊ��Դͷ��ˮ����</div>
-  </div>
-  
-  <div class="divider"></div>
-  
-  <div class="history-widget">
-    <h4>��ʷ�ϵĽ���</h4>
-    <div id="historyToday" style="font-size:11px;color:#999;text-align:center;padding:5px">������...</div>
-  </div>
-  
-  <div class="divider"></div>
-  
-  <div class="tools-section">
-    <h3>���ߵ���</h3>
-    <div class="tools-grid">
-      <a href="/math.html" class="tool-btn"><span class="icon">&#128290;</span><span class="name">����ҽѧ</span></a>
-      <a href="/history.html" class="tool-btn"><span class="icon">&#128220;</span><span class="name">��ʷ�Ļ�</span></a>
-      <a href="/tech.html" class="tool-btn"><span class="icon">&#128187;</span><span class="name">�ִ��Ƽ�</span></a>
-      <a href="/geography.html" class="tool-btn"><span class="icon">&#127758;</span><span class="name">���ĵ���</span></a>
-      <a href="/units.html" class="tool-btn"><span class="icon">&#8635;</span><span class="name">������λ</span></a>
-      <a href="/agriculture.html" class="tool-btn"><span class="icon">&#127806;</span><span class="name">ũҵ�ٿ�</span></a>
-      <a href="/metaphysics.html" class="tool-btn"><span class="icon">&#128172;</span><span class="name">��ѧ����</span></a>
-      <a href="/life.html" class="tool-btn"><span class="icon">&#127968;</span><span class="name">�����ۺ�</span></a>
-      <a href="https://liusige377.github.io/wenqu-dl/" class="tool-btn" target="_blank"><span class="icon">&#11015;</span><span class="name">����������</span></a>
-      <a href="/resources.html" class="tool-btn"><span class="icon">&#128218;</span><span class="name">ѧϰ��Դ</span></a>
-      <a href="/cases.html" class="tool-btn"><span class="icon">&#127775;</span><span class="name">�û�����</span></a>
-      <a href="/faq.html" class="tool-btn"><span class="icon">&#10067;</span><span class="name">��������</span></a>
-      <a href="/about.html" class="tool-btn"><span class="icon">&#128101;</span><span class="name">��������</span></a>
-    </div>
-  </div>
-  
-  <!-- ��¼��ť���򣨸���״̬��̬�л��� -->
-  <div class="divider"></div>
-  <div style="padding:0 15px">
-  </div>
-  
-  <div class="auth-section" id="authSection">
-    <button class="auth-btn" id="authBtn" onclick="openModal('login')">��¼ / ע��</button>
-  </div>
+<div class="logo">
+<div class="logo-title">问渠</div>
+<div class="logo-poem">问渠那得清如许<br>为有源头活水来</div>
 </div>
-
-<!-- ���Ի��� -->
-<div class="main-area">
-  <!-- ͳ�ƺ��?-->
-  <div class="stats-banner">
-    <div class="stat"><span class="stat-num" id="statUsers">1,280+</span><span class="stat-label">ע���û�</span></div>
-    <div class="stat"><span class="stat-num" id="statQuestions">5.2��+</span><span class="stat-label">����ش�?/span></div>
-    <div class="stat"><span class="stat-num" id="statTools">13</span><span class="stat-label">ʵ�ù���</span></div>
-    <div class="stat"><span class="stat-num">99%</span><span class="stat-label">�����?/span></div>
-  </div>
-  
-  <div class="chat-section">
-    <div class="chat-header">
-      <div class="status-dot"></div>
-      <h2>����AI����</h2>
-    </div>
-    
-    <!-- �Ƽ����� -->
-    <div class="suggested-questions">
-      <div class="label">?? �������ң�</div>
-      <div class="questions">
-        <button class="q-btn" onclick="quickAsk('�������Щ����ʫ����?)">�������Щ����ʫ����?/button>
-        <button class="q-btn" onclick="quickAsk('������һ�·����¹�')">������һ�·����¹�</button>
-        <button class="q-btn" onclick="quickAsk('����������ô����')">����������ô����</button>
-        <button class="q-btn" onclick="quickAsk('���껻��ɹ����Ƕ��٣�?)">���껻��ɹ���?/button>
-      </div>
-    </div>
-    
-    <div class="chat-messages" id="chatMessages">
-      <div class="msg ai"><div class="bubble" id="welcomeMsg">&#128075; ���ã���������AI���֣���ʲô���԰���������</div></div>
-    </div>
-    
-    <div class="typing" id="typingIndicator">AI����˼����...</div>
-    
-    <div class="chat-input-area">
-      <div class="input-row">
-        <input type="text" id="userInput" placeholder="�������⣬���س�����..." onkeydown="if(event.key==='Enter')sendMessage()">
-        <button class="send-btn" onclick="sendMessage()">&#10148;</button>
-      </div>
-    </div>
-    
-    <!-- �����ֲ� -->
-    <div class="feature-carousel">
-      <div class="carousel-track">
-        <div class="carousel-item"><div class="title">?? ����ҽѧ</div><div class="desc">֧�ָ��ӹ�ʽ���㡢��λ���㡢������ͼ</div></div>
-        <div class="carousel-item"><div class="title">?? ��ʷ�Ļ�</div><div class="desc">����ʱ���ᡢ��ʷ�¼���ѯ�����˽���</div></div>
-        <div class="carousel-item"><div class="title">?? ���ĵ���</div><div class="desc">����֪ʶ�ٲ顢�˿��ܶȡ���ò����</div></div>
-        <div class="carousel-item"><div class="title">?? �ִ��Ƽ�</div><div class="desc">AI��������̿��������繤�߼�?/div></div>
-        <div class="carousel-item"><div class="title">?? �����ۺ�</div><div class="desc">��˰���㡢������㡢���ʻ���?/div></div>
-        <div class="carousel-item"><div class="title">?? ��ѧ����</div><div class="desc">�������ơ��ܹ����Ρ���������</div></div>
-        <!-- ����һ��ʵ���޷����?-->
-        <div class="carousel-item"><div class="title">?? ����ҽѧ</div><div class="desc">֧�ָ��ӹ�ʽ���㡢��λ���㡢������ͼ</div></div>
-        <div class="carousel-item"><div class="title">?? ��ʷ�Ļ�</div><div class="desc">����ʱ���ᡢ��ʷ�¼���ѯ�����˽���</div></div>
-        <div class="carousel-item"><div class="title">?? ���ĵ���</div><div class="desc">����֪ʶ�ٲ顢�˿��ܶȡ���ò����</div></div>
-        <div class="carousel-item"><div class="title">?? �ִ��Ƽ�</div><div class="desc">AI��������̿��������繤�߼�?/div></div>
-        <div class="carousel-item"><div class="title">?? �����ۺ�</div><div class="desc">��˰���㡢������㡢���ʻ���?/div></div>
-        <div class="carousel-item"><div class="title">?? ��ѧ����</div><div class="desc">�������ơ��ܹ����Ρ���������</div></div>
-      </div>
-    </div>
-  </div>
-  
-  <!-- �Ҳ๦�����?-->
-  <div class="feature-panel">
-    <h3>?? ���Ź���</h3>
-    <div class="feature-card hot" onclick="location.href='/metaphysics.html'">
-      <div class="icon">??</div>
-      <div class="name">��������</div>
-      <div class="desc">�鿴ÿ�����ƣ��滮����һ��</div>
-    </div>
-    <div class="feature-card" onclick="location.href='/life.html'">
-      <div class="icon">??</div>
-      <div class="name">�������?/div>
-      <div class="desc">��������������Ϣһ������</div>
-    </div>
-    <div class="feature-card" onclick="location.href='/math.html'">
-      <div class="icon">??</div>
-      <div class="name">��ʽ����</div>
-      <div class="desc">������ѧ��ʽ�������?/div>
-    </div>
-    <div class="feature-card" onclick="location.href='/units.html'">
-      <div class="icon">??</div>
-      <div class="name">��λ����</div>
-      <div class="desc">���ȡ��������¶�ȫ֧��</div>
-    </div>
-    <div class="feature-card" onclick="location.href='/history.html'">
-      <div class="icon">??</div>
-      <div class="name">��ʷ��ѯ</div>
-      <div class="desc">����������¼�һ����?/div>
-    </div>
-    <div class="feature-card" onclick="location.href='https://liusige377.github.io/wenqu-dl/'">
-      <div class="icon">??</div>
-      <div class="name">����������</div>
-      <div class="desc">һ�����ظ��๤������</div>
-    </div>
-  </div>
+<div class="divider"></div>
+<div class="history-widget">
+<h4>📅 历史上的今天</h4>
+<p><strong>1948</strong> 以色列</p><p><strong>1972</strong> 卫星</p><p><strong>2021</strong> 天宫</p>
 </div>
-
+<div class="divider"></div>
+<div class="tools-section">
+<h3>🔧 工具箱</h3>
+<div class="tools-grid">
+<a href="https://wenquso.cn/ai.html" target="_blank" class="tool-btn"><span class="icon">🤖</span><span class="name">AI助手</span></a>
+<a href="https://liusige377.github.io/wenqu-dl/" target="_blank" class="tool-btn"><span class="icon">📥</span><span class="name">下载器</span></a>
+<a href="http://101.133.136.55:3000/admin.html" target="_blank" class="tool-btn"><span class="icon">⚙️</span><span class="name">管理</span></a>
+<a href="https://liusige377.github.io/xintengfei-website/" target="_blank" class="tool-btn"><span class="icon">🏢</span><span class="name">鑫腾飞</span></a>
+</div>
+</div>
+</div>
+<div class="main">
+<div class="header">
+<h1>💬 问渠AI助手</h1>
+<span class="status">在线</span>
+</div>
+<div class="chat-container" id="chat">
+<div class="message ai">
+<span class="thinking">🤔 思考中...</span>
+<div>您好！我是问渠AI助手，有什么可以帮您的？</div>
+</div>
+</div>
+<div class="input-area">
+<textarea id="userInput" placeholder="输入您的问题..." rows="1"></textarea>
+<button onclick="sendMessage()">发送</button>
+</div>
+</div>
 <script>
-// ==================== ��¼ע��ϵͳ ====================
-const STORAGE_KEY = 'wenqu_user';
-
-function getUser() {
-  try {
-    const d = localStorage.getItem(STORAGE_KEY);
-    return d ? JSON.parse(d) : null;
-  } catch(e) { return null; }
-}
-
-function saveUser(user) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-}
-
-function clearUser() {
-  localStorage.removeItem(STORAGE_KEY);
-}
-
-function getAllUsers() {
-  try {
-    const d = localStorage.getItem(STORAGE_KEY + '_all');
-    return d ? JSON.parse(d) : {};
-  } catch(e) { return {}; }
-}
-
-function saveAllUsers(users) {
-  localStorage.setItem(STORAGE_KEY + '_all', JSON.stringify(users));
-}
-
-// ���API��ַ
-const API_BASE_URL = 'http://101.133.136.55:3000';
-const IS_HTTPS = window.location.protocol === 'https:';
-
-// �������API���ο�ģʽֱ�ӵ��ã�
-const ZHIPU_API = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
-const ZHIPU_KEY = '61df839b60cf46f7ae86b3f017a0de32.V3Ir5M1gcUzyrub5';
-
-// ͳһAPI���������Զ�����HTTPS������
-async function wenquApi(endpoint, data) {
-  const url = API_BASE_URL + endpoint;
-  const body = JSON.stringify(data);
-  
-  if (IS_HTTPS) {
-    // HTTPS������ʹ��֧��POST��CORS����
-    // ����1: corsproxy.io��֧�����ⷽ����
-    const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
-    const r = await fetch(proxyUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: body
-    });
-    if (!r.ok) throw new Error('�������?HTTP ' + r.status + ')');
-    const text = await r.text();
-    try { return JSON.parse(text); } catch(e) { throw new Error('��������Ӧ�쳣'); }
-  } else {
-    // HTTP������ֱ������
-    const r = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: body
-    });
-    if (!r.ok) throw new Error('�������?HTTP ' + r.status + ')');
-    return await r.json();
-  }
-}
-
-// ====== �ο�ģʽ��ÿ�����?0�� =====
-const GUEST_LIMIT = 10;
-const GUEST_KEY = 'wenqu_guest_count';
-
-function getGuestCount() {
-  const today = new Date().toDateString();
-  const saved = localStorage.getItem(GUEST_KEY);
-  if (!saved) return 0;
-  try {
-    const data = JSON.parse(saved);
-    if (data.date === today) return data.count;
-    return 0; // �µ�һ������
-  } catch(e) { return 0; }
-}
-
-function addGuestCount() {
-  const today = new Date().toDateString();
-  const count = getGuestCount() + 1;
-  localStorage.setItem(GUEST_KEY, JSON.stringify({ date: today, count: count }));
-  return count;
-}
-
-function getRemainingGuestCount() {
-  return Math.max(0, GUEST_LIMIT - getGuestCount());
-}
-
-async function doLogin() {
-  const email = document.getElementById('loginEmail').value.trim();
-  const password = document.getElementById('loginPassword').value;
-  const errEl = document.getElementById('loginError');
-  
-  if (!email) {
-    errEl.textContent = '������������?;
-    errEl.style.display = 'block';
-    return;
-  }
-  if (!password) {
-    errEl.textContent = '����������';
-    errEl.style.display = 'block';
-    return;
-  }
-  
-  try {
-    const data = await wenquApi('/v1/auth/login', { email, password });
-    
-    if (data.error) {
-      errEl.textContent = data.error || '��¼ʧ��';
-      errEl.style.display = 'block';
-      return;
-    }
-    
-    // �����û���Ϣ��API key
-    const user = {
-      name: data.user.name || email.split('@')[0],
-      email: data.user.email,
-      apiKey: data.token,
-      loginAt: new Date().toISOString()
-    };
-    saveUser(user);
-    
-    closeModal();
-    updateAuthUI();
-    addMsg('��ӭ������' + user.name + '���ѻ�ȡAPI Key��', 'ai');
-  } catch (e) {
-    errEl.textContent = '����������Ժ�����?;
-    errEl.style.display = 'block';
-  }
-}
-
-async function doRegister() {
-  const name = document.getElementById('regName').value.trim();
-  const email = document.getElementById('regEmail').value.trim();
-  const password = document.getElementById('regPassword').value;
-  const errEl = document.getElementById('regError');
-  
-  if (!name) {
-    errEl.textContent = '����������';
-    errEl.style.display = 'block';
-    return;
-  }
-  if (!email) {
-    errEl.textContent = '������������?;
-    errEl.style.display = 'block';
-    return;
-  }
-  if (!email.includes('@')) {
-    errEl.textContent = '�����ʽ�����?;
-    errEl.style.display = 'block';
-    return;
-  }
-  if (!password || password.length < 6) {
-    errEl.textContent = '��������6λ';
-    errEl.style.display = 'block';
-    return;
-  }
-  
-  try {
-    const data = await wenquApi('/v1/auth/register', { name, email, password });
-    
-    if (data.error) {
-      errEl.textContent = data.error || 'ע��ʧ��';
-      errEl.style.display = 'block';
-      return;
-    }
-    
-    // �����û���Ϣ��API key
-    const user = {
-      name: data.user.name,
-      email: data.user.email,
-      apiKey: data.token,
-      registeredAt: new Date().toISOString()
-    };
-    saveUser(user);
-    
-    closeModal();
-    updateAuthUI();
-    addMsg('ע��ɹ������?' + name + ' ��������������API Key�����ɡ�', 'ai');
-  } catch (e) {
-    errEl.textContent = '����������Ժ�����?;
-    errEl.style.display = 'block';
-  }
-}
-
-function doLogout() {
-  clearUser();
-  updateAuthUI();
-  document.getElementById('panelText').textContent = '��¼��鿴��Ҫ���?;
-}
-
-function updateAuthUI() {
-  const user = getUser();
-  const section = document.getElementById('authSection');
-  
-  if (user) {
-    const initial = user.name ? user.name.charAt(0).toUpperCase() : 'U';
-    // ͷ������ת�û�����
-    section.innerHTML = '<div class="auth-user" style="cursor:pointer" onclick="window.location.href=\'portal.html\'">' +
-      '<div class="auth-user-avatar" title="��������û�����?>'+escHtml(initial)+'</div>' +
-      '<div class="auth-user-info">' +
-        '<div class="auth-user-name">'+escHtml(user.name)+'</div>' +
-        '<div class="auth-user-email">'+escHtml(user.email)+'</div>' +
-      '</div>' +
-      '<button class="auth-logout-btn" onclick="event.stopPropagation();doLogout()">�˳�</button>' +
-    '</div>';
-    
-    // �����Ҳ����?- ��ʾAPI Key
-    const panel = document.getElementById('panelText');
-    const apiKeyShort = user.apiKey ? user.apiKey.substring(0, 12) + '...' : 'δ��ȡ';
-    panel.innerHTML = '<p><b>'+escHtml(user.name)+'</b>����ӭ������</p>' +
-      '<p style="margin-top:8px;font-size:12px;color:#7c5cfc">API Key: '+apiKeyShort+'</p>' +
-      '<p style="margin-top:6px;font-size:11px;color:#999">ʹ������APIƽ̨�����ģ��?/p>';
-  } else {
-    section.innerHTML = '<button class="auth-btn" onclick="openModal(\'login\')">��¼ / ע��</button>';
-  }
-}
-
-function openModal(tab) {
-  document.getElementById('authModal').classList.add('show');
-  if (tab === 'register') {
-    switchTab('register');
-  } else {
-    switchTab('login');
-  }
-  // ��ձ���?
-  document.getElementById('loginEmail').value = '';
-  document.getElementById('loginPassword').value = '';
-  document.getElementById('regName').value = '';
-  document.getElementById('regEmail').value = '';
-  document.getElementById('regPassword').value = '';
-  document.getElementById('loginError').style.display = 'none';
-  document.getElementById('regError').style.display = 'none';
-}
-
-function closeModal() {
-  document.getElementById('authModal').classList.remove('show');
-}
-
-function switchTab(tab) {
-  document.getElementById('tabLogin').className = 'modal-tab' + (tab === 'login' ? ' active' : '');
-  document.getElementById('tabRegister').className = 'modal-tab' + (tab === 'register' ? ' active' : '');
-  document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
-  document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
-  document.getElementById('modalTitle').textContent = tab === 'login' ? '��¼' : 'ע��';
-  document.getElementById('loginError').style.display = 'none';
-  document.getElementById('regError').style.display = 'none';
-}
-
-// ������ֹر�?
-document.getElementById('authModal').addEventListener('click', function(e) {
-  if (e.target === this) closeModal();
-});
-
-// ESC�ر�
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') closeModal();
-});
-
-// ==================== ����API���û���¼��ʹ���Լ���API Key�� ====================
+const API_URL = "http://101.133.136.55:3000";
 let chatHistory = [];
 
-function getUserApiKey() {
-  const user = getUser();
-  return user ? user.apiKey : null;
-}
-
-// API Key设置弹窗
-function showApiKeySetting() {
-  const current = localStorage.getItem('wenqu_custom_api_key') || '';
-  const html = '<div style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10000;display:flex;align-items:center;justify-content:center" id="apiKeyModal" onclick="if(event.target==this)this.remove()">' +
-    '<div style="background:#1a1a2e;padding:30px;border-radius:16px;max-width:500px;width:90%;color:#fff">' +
-    '<div style="font-size:20px;font-weight:bold;margin-bottom:15px">⚙️ API Key 设置</div>' +
-    '<div style="color:#888;font-size:13px;margin-bottom:15px">设置后跳过登录，直接使用自己的API Key对话</div>' +
-    '<input type="password" id="customApiKey" value="'+current+'" placeholder="sk-xxxxxxxx" style="width:100%;padding:12px;border:1px solid #333;border-radius:8px;background:#252540;color:#fff;font-size:14px;box-sizing:border-box;margin-bottom:15px">' +
-    '<div style="display:flex;gap:10px">' +
-    '<button onclick="saveCustomApiKey()" style="flex:1;padding:12px;background:#7c5cfc;border:none;border-radius:8px;color:#fff;cursor:pointer;font-size:14px">保存</button>' +
-    '<button onclick="document.getElementById(\'apiKeyModal\').remove()" style="flex:1;padding:12px;background:#333;border:none;border-radius:8px;color:#fff;cursor:pointer;font-size:14px">关闭</button>' +
-    '</div>' +
-    '<div style="margin-top:15px;padding:12px;background:#252540;border-radius:8px;font-size:12px">' +
-    '<div style="color:#888;margin-bottom:5px">推荐免费API�?/div>' +
-    '<div>�?<a href="https://account.siliconflow.cn" target="_blank" style="color:#4a9eff">硅基流动</a>（注册送余额，支持OpenAI格式�?/div>' +
-    '<div>�?<a href="https://open.bigmodel.cn" target="_blank" style="color:#4a9eff">智谱AI</a>（GLM-4-Flash永久免费�?/div>' +
-    '</div></div></div>';
-  document.body.insertAdjacentHTML('beforeend', html);
-}
-function saveCustomApiKey() {
-  const key = document.getElementById('customApiKey').value.trim();
-  if(key) localStorage.setItem('wenqu_custom_api_key', key);
-  else localStorage.removeItem('wenqu_custom_api_key');
-  document.getElementById('apiKeyModal').remove();
-  alert(key ? 'API Key已保存！' : '已清�?);
-}
-
-// ������Ϣ
 async function sendMessage() {
-  const input = document.getElementById('userInput');
-  const text = input.value.trim();
-  if(!text) return;
-  input.value = '';
-  addMsg(text, 'user');
-  showTyping(true);
-  
-  const userKey = getUserApiKey();
-  const customKey = localStorage.getItem('wenqu_custom_api_key');
-  
-  // 优先使用自定义API Key
-  if (customKey) {
-    try {
-      chatHistory.push({role:'user', content:text});
-      const r = await fetch('https://api.siliconflow.cn/v1/chat/completions', {
-        method:'POST',
-        headers:{'Content-Type':'application/json','Authorization':'Bearer '+customKey},
-        body: JSON.stringify({model:'Qwen/Qwen2.5-7B-Instruct',messages:chatHistory,max_tokens:1024,temperature:0.7})
-      });
-      const d = await r.json();
-      showTyping(false);
-      let reply = '';
-      if(d.choices && d.choices[0]) reply = d.choices[0].message.content || '（空回复�?;
-      else if(d.error) reply = '错误�?+(d.error.message || JSON.stringify(d.error));
-      else reply = '未知响应';
-      addMsg(reply, 'ai');
-      chatHistory.push({role:'assistant', content:reply});
-    } catch(e) { showTyping(false); addMsg('请求失败�?+e.message, 'ai'); }
-    return;
-  }
-  
-  // 游客模式逻辑
-  if (!userKey) {
-    const remaining = getRemainingGuestCount();
-    if (remaining <= 0) {
-      showTyping(false);
-      addMsg('?? ������Ѵ��������꣨ÿ��?0�Σ������¼ע���ȡAPI Key���������޶Ի���', 'ai');
-      openModal('login');
-      return;
-    }
+    const input = document.getElementById("userInput");
+    const msg = input.value.trim();
+    if (!msg) return;
     
-    // �ο�ģʽ��������API��ֱ�ӵ��ã��ƹ�ECS��֧��HTTPS��
+    addMessage(msg, "user");
+    input.value = "";
+    
+    const thinkingMsg = document.createElement("div");
+    thinkingMsg.className = "message ai";
+    thinkingMsg.innerHTML = "<span class="thinking">🤔 思考中...</span><div></div>";
+    document.getElementById("chat").appendChild(thinkingMsg);
+    
     try {
-      addGuestCount();
-      chatHistory.push({role:'user', content:text});
-      
-      const r = await fetch(ZHIPU_API, {
-        method:'POST',
-        headers:{
-          'Content-Type':'application/json',
-          'Authorization':'Bearer '+ZHIPU_KEY
-        },
-        body: JSON.stringify({
-          model:'glm-4-flash',
-          messages:chatHistory,
-          max_tokens:1024,
-          temperature:0.7
-        })
-      });
-      
-      showTyping(false);
-      const d = await r.json();
-      let reply = '';
-      if(d.choices && d.choices[0]) {
-        reply = d.choices[0].message.content || '���ջظ���';
-      } else if(d.error) {
-        reply = '����'+(d.error.message || JSON.stringify(d.error));
-      } else {
-        reply = 'δ֪��Ӧ';
-      }
-      addMsg(reply, 'ai');
-      chatHistory.push({role:'assistant', content:reply});
-      
-      const newRemaining = getRemainingGuestCount();
-      if (newRemaining <= 3) {
-        addMsg('?? ����ʣ��' + newRemaining + '����ѶԻ�����¼�������ƣ�?, 'ai');
-      }
+        const resp = await fetch(API_URL + "/v1/chat/completions", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                model: "default",
+                messages: [...chatHistory, {role: "user", content: msg}]
+            })
+        });
+        const data = await resp.json();
+        const reply = data.choices?.[0]?.message?.content || "抱歉，我暂时无法回答。";
+        thinkingMsg.querySelector(".thinking").textContent = "✨";
+        thinkingMsg.querySelector("div").textContent = reply;
+        chatHistory.push({role: "user", content: msg}, {role: "assistant", content: reply});
     } catch(e) {
-      showTyping(false);
-      addMsg('�������?+e.message, 'ai');
+        thinkingMsg.querySelector(".thinking").textContent = "❌";
+        thinkingMsg.querySelector("div").textContent = "网络错误，请稍后重试。";
     }
-    return;
-  }
-  
-  // ��¼�û���HTTP��ECS��HTTPSֱ�ӵ�����
-  try {
-    chatHistory.push({role:'user', content:text});
-    
-    let d;
-    if (IS_HTTPS) {
-      // HTTPS������ֱ�ӵ�����API���ƹ�ECS��
-      const r = await fetch(ZHIPU_API, {
-        method:'POST',
-        headers:{
-          'Content-Type':'application/json',
-          'Authorization':'Bearer '+ZHIPU_KEY
-        },
-        body: JSON.stringify({
-          model:'glm-4-flash',
-          messages:chatHistory,
-          max_tokens:1024,
-          temperature:0.7
-        })
-      });
-      d = await r.json();
-    } else {
-      // HTTP��������ECS������
-      const r = await fetch(API_BASE_URL + '/v1/chat/completions', {
-        method:'POST',
-        headers:{
-          'Content-Type':'application/json',
-          'Authorization':'Bearer '+userKey
-        },
-        body: JSON.stringify({
-          model:'glm-4-flash',
-          messages:chatHistory,
-          max_tokens:1024,
-          temperature:0.7
-        })
-      });
-      d = await r.json();
-    }
-    
-    showTyping(false);
-    let reply = '';
-    if(d.choices && d.choices[0]) {
-      reply = d.choices[0].message.content || '���ջظ���';
-    } else if(d.error) {
-      reply = '����'+(d.error.message || JSON.stringify(d.error));
-    } else {
-      reply = 'δ֪��Ӧ';
-    }
-    addMsg(reply, 'ai');
-    chatHistory.push({role:'assistant', content:reply});
-  } catch(e) {
-    showTyping(false);
-    addMsg('�������?+e.message, 'ai');
-  }
 }
 
-function addMsg(text, who) {
-  const box = document.getElementById('chatMessages');
-  const div = document.createElement('div');
-  div.className = 'msg '+who;
-  var safe = escHtml(text);
-  // ����
-  safe = safe.replace(/\n/g, '<br>');
-  // �����?```...``` �� <pre><code>
-  safe = safe.replace(/```(\w*)\n?([\s\S]*?)```/g, '<pre style="background:#1a1a2e;color:#e8e8e8;padding:12px;border-radius:8px;overflow-x:auto;font-size:13px;margin:8px 0"><code>$2</code></pre>');
-  // ���ڴ��� `...` �� <code>
-  safe = safe.replace(/`([^`]+)`/g, '<code style="background:#f0e6d3;padding:2px 6px;border-radius:4px;font-size:13px">$1</code>');
-  // ���� **...**
-  safe = safe.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
-  div.innerHTML = '<div class="bubble">'+safe+'</div>';
-  box.appendChild(div);
-  box.scrollTop = box.scrollHeight;
+function addMessage(content, role) {
+    const div = document.createElement("div");
+    div.className = "message " + role;
+    div.innerHTML = "<div>" + content + "</div>";
+    document.getElementById("chat").appendChild(div);
+    div.scrollIntoView();
 }
 
-function showTyping(show) {
-  document.getElementById('typingIndicator').className = show ? 'typing active' : 'typing';
-}
-
-function escHtml(t) {
-  if (!t) return '';
-  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-// ========== �ḻ�Ļ�ӭ�ʣ������?==========
-var WELCOME=[
-  '?? ���ã���������AI���֡�<br><br>?? <b>�����ٿ�</b>�����ʱش�<br>? ������ɽ�����๤�ߣ���ѧ����ʷ�������ȣ�<br>? �ο�ÿ�����?0�ζԻ�����¼��������<br>? ���κ����⣬ֱ�����뼴��<br><br>�������ң�"�������Щ����ʫ����? �� "�����������?',
-  '?? ��ӭ������AI��ʱΪ������<br><br>?? ���տ��ù��ߣ�<br>? <b>����ҽѧ</b> �� ��ʽ���㡢��λ����<br>? <b>��ʷ�Ļ�</b> �� ����ʱ���ᡢ֪ʶ�ٲ�<br>? <b>���ĵ���</b> �� ����֪ʶ���˿��ܶ�<br>? <b>�����ۺ�</b> �� ��˰��������ʼ���<br><br>���������κ�����ɣ�?,
-  '?? ����������AI���ߵ������ʡ�<br><br>?? <b>С��ʿ��</b><br>? ��ࡸѧϰ��Դ�����������ġ��г�������?br>? �������������������ع�������<br>? ��¼����ר��API Key�����޶Ի�<br><br>�����ǵ���������Ϊ��Դͷ��ˮ�� ??'
-];
-document.getElementById('welcomeMsg').innerHTML=WELCOME[Math.floor(Math.random()*WELCOME.length)];
-
-// ========== �Ƽ�������ٷ���?==========
-function quickAsk(text){
-  document.getElementById('userInput').value = text;
-  sendMessage();
-}
-
-// ========== ������ʷ�ϵĽ��� ==========
-function loadHistory(){
-  var el=document.getElementById('historyToday');
-  var now=new Date();
-  var key=(now.getMonth()+1).toString().padStart(2,'0')+'-'+now.getDate().toString().padStart(2,'0');
-  var data={
-'01-01':[{y:'1912',e:'�л��������?},{y:'1942',e:'�����Ϲ����ԡ�ǩ��'}],
-'01-15':[{y:'1929',e:'������·�¡��𵮳�'}],
-'02-04':[{y:'2004',e:'Facebook����'}],
-'03-12':[{y:'1925',e:'����ɽ����'},{y:'1947',e:'��³��������?}],
-'03-14':[{y:'1879',e:'����˹̹����'}],
-'03-21':[{y:'1685',e:'�ͺյ���'}],
-'04-01':[{y:'1976',e:'ƻ����˾����'},{y:'2001',e:'�����Ϻ�ײ���¼�'}],
-'04-07':[{y:'1948',e:'����������֯����'}],
-'04-12':[{y:'1961',e:'�Ӽ����״�̫�շ���'}],
-'04-15':[{y:'1912',e:'̩̹��˺ų��?},{y:'1452',e:'����浮��?}],
-'04-22':[{y:'1970',e:'��һ��������'},{y:'1724',e:'���µ���'}],
-'04-23':[{y:'1564',e:'ɯʿ���ǵ���'},{y:'1616',e:'ɯʿ��������'}],
-'04-24':[{y:'1915',e:'�������Ǵ���ɱ'},{y:'1990',e:'������Զ������'}],
-'04-25':[{y:'1945',e:'���Ϲ��������?}],
-'04-26':[{y:'1986',e:'�ж�ŵ�������¹�'}],
-'05-01':[{y:'1886',e:'֥�Ӹ繤�˴�չ�?},{y:'2011',e:'�����Ǳ�����'}],
-'05-04':[{y:'1919',e:'�����˶�'},{y:'1979',e:'���ж����˵�ѡ'}],
-'05-12':[{y:'2008',e:'�봨�����?}],
-'05-15':[{y:'1948',e:'��ɫ�н���'}],
-'05-20':[{y:'1927',e:'�ֵ²����Խ������?}],
-'06-01':[{y:'1925',e:'���ʶ�ͯ��ȷ��'}],
-'06-04':[{y:'1989',e:'�찲���¼�'}],
-'06-06':[{y:'1944',e:'ŵ���׵�½'}],
-'06-25':[{y:'1950',e:'����ս������'}],
-'07-01':[{y:'1921',e:'�й�����������'},{y:'1997',e:'��ۻع�?}],
-'07-04':[{y:'1776',e:'������������'}],
-'07-07':[{y:'1937',e:'¬�����±�'}],
-'07-20':[{y:'1969',e:'������11�ŵ���'}],
-'07-28':[{y:'1914',e:'��һ�������ս����?}],
-'08-01':[{y:'1927',e:'�ϲ�����'},{y:'1944',e:'��ɳ����'}],
-'08-06':[{y:'1945',e:'�㵺ԭ�ӵ�'}],
-'08-09':[{y:'1945',e:'����ԭ�ӵ�'}],
-'08-15':[{y:'1945',e:'�ձ�Ͷ��'},{y:'1947',e:'ӡ�ȶ���'}],
-'09-01':[{y:'1939',e:'�ڶ��������ս����?}],
-'09-03':[{y:'1945',e:'����ս��ʤ��������'}],
-'09-09':[{y:'1976',e:'ë������'}],
-'09-10':[{y:'1985',e:'�й���һ����ʦ��'}],
-'09-11':[{y:'2001',e:'9��11�¼�'}],
-'09-18':[{y:'1931',e:'��һ���±�'}],
-'09-28':[{y:'551BC',e:'���ӵ���'}],
-'10-01':[{y:'1949',e:'�л����񹲺͹�����'}],
-'10-04':[{y:'1957',e:'�������Ƿ���ɹ�?}],
-'10-10':[{y:'1911',e:'��������'},{y:'1945',e:'����˫ʮЭ��'}],
-'10-16':[{y:'1964',e:'�й���һ��ԭ�ӵ���ը'}],
-'10-24':[{y:'1945',e:'���Ϲ�����'}],
-'10-25':[{y:'1971',e:'�ָ����Ϲ��Ϸ�ϯλ'}],
-'10-31':[{y:'1517',e:'������·���ڽ̸ĸ�'}],
-'11-01':[{y:'1512',e:'�׿��ʻ�����˹͢�춥�����?}],
-'11-11':[{y:'1918',e:'һս������ͣս������'}],
-'11-12':[{y:'1866',e:'����ɽ����'}],
-'11-19':[{y:'1863',e:'�ֿϸ��˹�����?}],
-'12-01':[{y:'1955',e:'��ɯ������˹�ܾ����������簬�̲���'}],
-'12-05':[{y:'1901',e:'��ʿ�ᵮ��'},{y:'2013',e:'����������'}],
-'12-09':[{y:'1935',e:'һ�������˶�'}],
-'12-10':[{y:'1948',e:'������Ȩ����'},{y:'1901',e:'ŵ�����״ΰ佱'}],
-'12-13':[{y:'1937',e:'�Ͼ�����ɱ'}],
-'12-17':[{y:'1903',e:'�����ֵ��״η���'}],
-'12-20':[{y:'1999',e:'���Żع�'}],
-'12-25':[{y:'1642',e:'ţ�ٵ���'}],
-'12-26':[{y:'1893',e:'ë�󶫵���'}],
-'12-31':[{y:'1600',e:'��ӡ�ȹ�˾����'}]
-  };
-  var def=[{y:'??',e:'�����Ǹ������ӣ�'}];
-  var events=data[key]||def;
-  var html='';
-  for(var i=0;i<events.length&&i<3;i++){
-    html+='<p style="margin:3px 0"><b>'+events[i].y+'</b> '+events[i].e+'</p>';
-  }
-  el.innerHTML=html||'<p>��������</p>';
-}
-
-// ========== ÿ��һ�� ==========
-var DAILY_QUOTES=[
-  'ѧ����˼���裬˼����ѧ�����?�� ����',
-  '·��������Զ�⣬�Ὣ���¶������� �� ��ԭ',
-  '���н�����������ǿ��Ϣ�� �� �����ס�',
-  'ǧ��֮�У�ʼ�����¡� �� ����',
-  '֪֮Ϊ֪֮����֪Ϊ��֪����֪Ҳ�� �� ����',
-  'ֽ�ϵ����վ�ǳ����֪����Ҫ���С� �� ½��',
-  '��ѧ֮������֮����˼֮������֮������֮�� �� ����ӹ��',
-  '������飬������·��?�� ����',
-  '�����Ͳ���������ǧ� �� ����',
-  '�����У�������ʦ�ɡ� �� ����',
-  '���������£������������� �� ����',
-  '�¹ʶ�֪�£�����Ϊʦ�ӡ� �� ����'
-];
-(function(){
-  var panel=document.getElementById('panelText');
-  var today=new Date().toDateString();
-  var saved=localStorage.getItem('wenqu_daily_quote');
-  var quote=DAILY_QUOTES[new Date().getDate()%DAILY_QUOTES.length];
-  if(!getUser()&&panel){
-    panel.innerHTML='<p style="margin-bottom:8px;color:#888;font-size:11px">?? ÿ��һ��</p><p style="color:#555;font-size:12px;line-height:1.6">"'+quote+'"</p><p style="margin-top:12px;color:#aaa;font-size:11px">��¼���ʹ��AI�Ի��Ͳ鿴��Ҫ</p>';
-  }
-})();
-
-// ����
-loadHistory();
-updateAuthUI();
-document.getElementById('userInput').focus();
+document.getElementById("userInput").addEventListener("keypress", e => {
+    if(e.key === "Enter" && !e.shiftKey) {e.preventDefault(); sendMessage();}
+});
 </script>
 </body>
 </html>
